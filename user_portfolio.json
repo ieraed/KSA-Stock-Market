@@ -1,0 +1,14 @@
+[
+  {
+    "symbol": "1150",
+    "company": "AL INMA BANK",
+    "shares": 1000,
+    "avg_cost": 26.2
+  },
+  {
+    "symbol": "2222",
+    "company": "SAUDI ARAMCO",
+    "shares": 500,
+    "avg_cost": 26.61
+  }
+]
