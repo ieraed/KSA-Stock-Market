@@ -1,14 +1,72 @@
 [
   {
-    "symbol": "1150",
-    "company": "AL INMA BANK",
-    "shares": 1000,
-    "avg_cost": 26.2
+    "symbol": "1010",
+    "quantity": 3811,
+    "purchase_price": 27.18,
+    "purchase_date": "2024-12-31",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T11:04:25.594761"
   },
   {
-    "symbol": "2222",
-    "company": "SAUDI ARAMCO",
-    "shares": 500,
-    "avg_cost": 26.61
+    "symbol": "1020",
+    "quantity": 10546,
+    "purchase_price": 13.67,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T11:05:07.283252"
+  },
+  {
+    "symbol": "1080",
+    "quantity": 3666,
+    "purchase_price": 21.78,
+    "purchase_date": "2024-12-31",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T11:05:28.144461"
+  },
+  {
+    "symbol": "1120",
+    "quantity": 500,
+    "purchase_price": 92.6,
+    "purchase_date": "2024-12-31",
+    "last_updated": "2025-08-17T10:40:37.450055"
+  },
+  {
+    "symbol": "1140",
+    "quantity": 1500,
+    "purchase_price": 27.31,
+    "purchase_date": "2025-08-17",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T11:03:51.388685"
+  },
+  {
+    "symbol": "1150",
+    "quantity": 3722,
+    "purchase_price": 27.02,
+    "purchase_date": "2025-08-17",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T11:06:49.729756"
+  },
+  {
+    "symbol": "1180",
+    "quantity": 2000,
+    "purchase_price": 36.04,
+    "purchase_date": "2025-08-17",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T11:08:07.331247"
+  },
+  {
+    "symbol": "1303",
+    "quantity": 2250,
+    "purchase_price": 6.73,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T11:09:03.650466"
   }
 ]

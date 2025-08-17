@@ -1,0 +1,58 @@
+{
+  "continuous_fetching": {
+    "enabled": true,
+    "update_interval": 30,
+    "max_retries": 3,
+    "timeout": 30
+  },
+  "saudi_exchange": {
+    "base_url": "https://www.saudiexchange.sa",
+    "target_url": "https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch/theoritical-market-watch-today?locale=en",
+    "backup_urls": [
+      "https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch"
+    ]
+  },
+  "market_hours": {
+    "trading_days": [0, 1, 2, 3, 4],
+    "open_time": "10:00",
+    "close_time": "15:00",
+    "timezone": "Asia/Riyadh"
+  },
+  "database": {
+    "main_file": "saudi_stocks_database.json",
+    "backup_directory": "backup",
+    "sqlite_file": "saudi_stocks_continuous.db",
+    "max_history_days": 30,
+    "auto_backup": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "saudi_exchange_fetcher.log",
+    "max_file_size": "10MB",
+    "backup_count": 5
+  },
+  "data_validation": {
+    "min_stocks_count": 100,
+    "max_price_change_percent": 50,
+    "required_fields": ["symbol", "name", "price"]
+  },
+  "export": {
+    "auto_export": false,
+    "export_interval": 3600,
+    "formats": ["json", "csv"],
+    "export_directory": "exports"
+  },
+  "alerts": {
+    "enabled": true,
+    "email_notifications": false,
+    "slack_notifications": false,
+    "price_change_threshold": 5.0,
+    "volume_spike_threshold": 2.0
+  },
+  "application_integration": {
+    "update_main_database": true,
+    "preserve_existing_metadata": true,
+    "default_sector": "Unknown",
+    "add_sr_suffix": true
+  }
+}
