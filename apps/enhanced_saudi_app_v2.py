@@ -245,25 +245,70 @@ def save_portfolio(portfolio):
         st.error(f"Error saving portfolio: {e}")
         return False
 
+@st.cache_data(ttl=300)  # Cache for 5 minutes, then refresh
 def load_saudi_stocks_database():
-    """Load Saudi stocks database with unified data management"""
+    """Load Saudi stocks database with OFFICIAL 262-stock coverage (User-verified count)"""
+    import sys
+    import os
+    
+    # Get the root directory (parent of apps)
+    root_dir = os.path.dirname(os.path.dirname(__file__))
+    
     try:
-        from unified_stock_manager import get_unified_stocks_database
-        return get_unified_stocks_database()
-    except ImportError:
-        # Fallback to corrected database if unified manager not available
-        try:
-            with open('saudi_stocks_database_corrected.json', 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            # Final fallback - minimal database with correct data
-            return {
-                "1010": {"symbol": "1010", "name_en": "Saudi National Bank", "name_ar": "البنك الأهلي السعودي", "sector": "Banking"},
-                "1120": {"symbol": "1120", "name_en": "Al Rajhi Bank", "name_ar": "مصرف الراجحي", "sector": "Banking"},
-                "2030": {"symbol": "2030", "name_en": "Saudi Arabian Oil Company", "name_ar": "أرامكو السعودية", "sector": "Energy"},
-                "2010": {"symbol": "2010", "name_en": "Saudi Basic Industries Corporation", "name_ar": "سابك", "sector": "Materials"},
-                "7010": {"symbol": "7010", "name_en": "Saudi Telecom Company", "name_ar": "الاتصالات السعودية", "sector": "Telecommunication Services"}
-            }
+        # FIRST PRIORITY: Load from our complete JSON database
+        data_path = os.path.join(root_dir, 'data', 'saudi_stocks_database.json')
+        with open(data_path, 'r', encoding='utf-8') as f:
+            stocks = json.load(f)
+            if len(stocks) == 262:
+                print(f"✅ Loaded OFFICIAL Tadawul database with {len(stocks)} stocks from {data_path}")
+                return stocks
+            elif len(stocks) != 262:
+                print(f"⚠️ WARNING: Database has {len(stocks)} stocks but should have 262!")
+                print("🚨 NOTIFY USER: Stock count mismatch detected!")
+                return stocks
+    except Exception as e:
+        print(f"Could not load JSON database: {e}")
+    
+    try:
+        # Second option: Try the complete database Python module
+        sys.path.append(root_dir)
+        from complete_tadawul_database import create_extended_database
+        stocks = create_extended_database()
+        if len(stocks) >= 250:
+            print(f"✅ Loaded database from Python module with {len(stocks)} stocks")
+            return stocks
+    except Exception as e:
+        print(f"Warning: Could not load Python module database: {e}")
+        
+    try:
+        # Try loading from root directory
+        root_path = os.path.join(root_dir, 'saudi_stocks_database.json')
+        with open(root_path, 'r', encoding='utf-8') as f:
+            stocks = json.load(f)
+            print(f"✅ Loaded {len(stocks)} stocks from root directory")
+            return stocks
+    except Exception as e:
+        print(f"Could not load from root directory: {e}")
+    
+    # Final fallback - CORRECTED minimal database
+    print("⚠️ Using minimal fallback database")
+    return {
+        # BANKING SECTOR - CORRECTED
+        "1010": {"symbol": "1010", "name_en": "Riyad Bank", "name_ar": "بنك الرياض", "sector": "Banking"},
+        "1180": {"symbol": "1180", "name_en": "Saudi National Bank", "name_ar": "البنك الأهلي السعودي", "sector": "Banking"},
+        "1120": {"symbol": "1120", "name_en": "Al Rajhi Bank", "name_ar": "مصرف الراجحي", "sector": "Banking"},
+        "1050": {"symbol": "1050", "name_en": "Banque Saudi Fransi", "name_ar": "البنك السعودي الفرنسي", "sector": "Banking"},
+        
+        # ENERGY SECTOR - CORRECTED
+        "2030": {"symbol": "2030", "name_en": "Saudi Arabia Refineries Co.", "name_ar": "مصافي أرامكو السعودية", "sector": "Energy"},
+        "2222": {"symbol": "2222", "name_en": "Saudi Arabian Oil Company", "name_ar": "أرامكو السعودية", "sector": "Energy"},
+        
+        # MATERIALS
+        "2010": {"symbol": "2010", "name_en": "Saudi Basic Industries Corporation", "name_ar": "سابك", "sector": "Materials"},
+        
+        # TELECOMMUNICATIONS
+        "7010": {"symbol": "7010", "name_en": "Saudi Telecom Company", "name_ar": "الاتصالات السعودية", "sector": "Telecommunication Services"}
+    }
 
 def get_stock_data(symbol):
     """Get stock data with enhanced information"""
@@ -519,6 +564,12 @@ def main():
         
         # Main Navigation Section
         st.markdown("**📋 Main Navigation:**")
+        
+        # Add cache refresh button
+        if st.button("🔄 Refresh Database", help="Clear cache and reload stock database"):
+            st.cache_data.clear()
+            st.rerun()
+            
         selected_page = st.radio(
             "Navigation",
             [
@@ -528,6 +579,7 @@ def main():
                 "📈 Market Analysis",
                 "🔍 Stock Research",
                 "📊 Analytics Dashboard",
+                "🏢 Sector Analyzer",
                 "📁 Import/Export Data"
             ],
             index=0,
@@ -649,7 +701,7 @@ def main():
             st.markdown("### 📋 Your Holdings")
             
             holdings_data = []
-            for stock in portfolio:
+            for idx, stock in enumerate(portfolio, 1):  # Start numbering from 1
                 stock_data = get_stock_data(stock['symbol'])
                 current_price = stock_data.get('current_price', 0)
                 quantity = stock.get('quantity', 0)
@@ -663,6 +715,7 @@ def main():
                 stock_info = stocks_db.get(stock['symbol'], {})
                 
                 holdings_data.append({
+                    '#': idx,  # Add row number as first column
                     'Symbol': stock['symbol'],
                     'Company': stock_info.get('name_en', 'Unknown'),
                     'Quantity': f"{quantity:,.0f}",  # Format with thousands separator
@@ -1262,6 +1315,198 @@ def main():
         else:
             st.info("Add stocks to your portfolio to view analytics")
     
+    elif selected_page == "🏢 Sector Analyzer":
+        st.markdown("## 🏢 TADAWUL SECTOR ANALYZER")
+        st.markdown("**Complete Saudi Exchange (Tadawul) Sector Breakdown with Interactive Tables**")
+        
+        # Load database
+        stocks_db = load_saudi_stocks_database()
+        
+        if not stocks_db:
+            st.error("❌ Could not load stock database")
+            return
+        
+        # Calculate sector distribution
+        sector_counts = {}
+        sector_stocks = {}
+        
+        for symbol, stock_info in stocks_db.items():
+            sector = stock_info.get('sector', 'Unknown')
+            
+            if sector in sector_counts:
+                sector_counts[sector] += 1
+            else:
+                sector_counts[sector] = 1
+            
+            if sector in sector_stocks:
+                sector_stocks[sector].append({
+                    'Symbol': symbol,
+                    'Company (EN)': stock_info.get('name_en', 'N/A'),
+                    'Company (AR)': stock_info.get('name_ar', 'N/A'),
+                    'Sector': sector
+                })
+            else:
+                sector_stocks[sector] = [{
+                    'Symbol': symbol,
+                    'Company (EN)': stock_info.get('name_en', 'N/A'),
+                    'Company (AR)': stock_info.get('name_ar', 'N/A'),
+                    'Sector': sector
+                }]
+        
+        # Sort sectors by count
+        sector_counts = dict(sorted(sector_counts.items(), key=lambda x: x[1], reverse=True))
+        
+        # Display summary metrics
+        total_stocks = len(stocks_db)
+        total_sectors = len(sector_counts)
+        largest_sector = max(sector_counts.items(), key=lambda x: x[1])
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("📊 Total Stocks", total_stocks)
+        with col2:
+            st.metric("🏢 Total Sectors", total_sectors)
+        with col3:
+            st.metric("🥇 Largest Sector", f"{largest_sector[0]} ({largest_sector[1]})")
+        
+        st.markdown("---")
+        
+        # Sector Distribution Overview
+        st.markdown("## 📊 Sector Distribution Overview")
+        
+        # Create charts
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Pie chart
+            fig_pie = px.pie(
+                values=list(sector_counts.values()),
+                names=list(sector_counts.keys()),
+                title="Stock Distribution by Sector",
+                height=500
+            )
+            fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+            st.plotly_chart(fig_pie, use_container_width=True)
+        
+        with col2:
+            # Bar chart
+            fig_bar = px.bar(
+                x=list(sector_counts.keys()),
+                y=list(sector_counts.values()),
+                title="Number of Stocks per Sector",
+                labels={'x': 'Sector', 'y': 'Number of Stocks'},
+                height=500
+            )
+            fig_bar.update_xaxes(tickangle=45)
+            st.plotly_chart(fig_bar, use_container_width=True)
+        
+        st.markdown("---")
+        
+        # Clickable Sector Summary
+        st.markdown("## 🔍 Clickable Sector Summary")
+        st.markdown("*Click on any sector below to see all stocks in that sector*")
+        
+        # Create summary table
+        summary_data = []
+        for sector, count in sector_counts.items():
+            # Get sample companies for preview
+            sample_companies = [stock['Company (EN)'] for stock in sector_stocks[sector][:3]]
+            sample_text = ', '.join(sample_companies)
+            if len(sector_stocks[sector]) > 3:
+                sample_text += f", +{len(sector_stocks[sector]) - 3} more"
+            
+            summary_data.append({
+                'Sector': sector,
+                'Number of Stocks': count,
+                'Sample Companies': sample_text
+            })
+        
+        summary_df = pd.DataFrame(summary_data)
+        
+        # Display the clickable table
+        selected_rows = st.dataframe(
+            summary_df,
+            hide_index=True,
+            use_container_width=True,
+            on_select="rerun",
+            selection_mode="single-row"
+        )
+        
+        # Show detailed sector breakdown when a sector is selected
+        if selected_rows and selected_rows['selection']['rows']:
+            selected_row_idx = selected_rows['selection']['rows'][0]
+            selected_sector = summary_df.iloc[selected_row_idx]['Sector']
+            
+            st.markdown(f"## 📋 All Stocks in **{selected_sector}** Sector")
+            
+            # Get all stocks in the selected sector
+            sector_df = pd.DataFrame(sector_stocks[selected_sector])
+            
+            # Display count
+            st.info(f"Found **{len(sector_df)}** stocks in the **{selected_sector}** sector")
+            
+            # Display the stocks table
+            st.dataframe(
+                sector_df,
+                hide_index=True,
+                use_container_width=True
+            )
+            
+            # Add download button for this sector
+            csv_buffer = io.StringIO()
+            sector_df.to_csv(csv_buffer, index=False)
+            csv_data = csv_buffer.getvalue()
+            
+            st.download_button(
+                label=f"📥 Download {selected_sector} Stocks (CSV)",
+                data=csv_data,
+                file_name=f"tadawul_{selected_sector.lower().replace(' ', '_')}_stocks.csv",
+                mime="text/csv"
+            )
+        
+        st.markdown("---")
+        
+        # Download complete data
+        st.markdown("## 📥 Download Complete Data")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Download sector summary
+            summary_csv = io.StringIO()
+            summary_df.to_csv(summary_csv, index=False)
+            summary_csv_data = summary_csv.getvalue()
+            
+            st.download_button(
+                label="📊 Download Sector Summary (CSV)",
+                data=summary_csv_data,
+                file_name="tadawul_sector_summary.csv",
+                mime="text/csv"
+            )
+        
+        with col2:
+            # Download all stocks
+            all_stocks_data = []
+            for symbol, stock_info in stocks_db.items():
+                all_stocks_data.append({
+                    'Symbol': symbol,
+                    'Company (EN)': stock_info.get('name_en', 'N/A'),
+                    'Company (AR)': stock_info.get('name_ar', 'N/A'),
+                    'Sector': stock_info.get('sector', 'Unknown')
+                })
+            
+            all_stocks_df = pd.DataFrame(all_stocks_data)
+            all_stocks_csv = io.StringIO()
+            all_stocks_df.to_csv(all_stocks_csv, index=False)
+            all_stocks_csv_data = all_stocks_csv.getvalue()
+            
+            st.download_button(
+                label="📋 Download All Stocks (CSV)",
+                data=all_stocks_csv_data,
+                file_name="tadawul_all_stocks.csv",
+                mime="text/csv"
+            )
+    
     elif selected_page == "📁 Import/Export Data":
         st.markdown("## 📁 Import/Export Data")
         
@@ -1311,21 +1556,313 @@ def main():
         # Import portfolio
         st.markdown("### 📥 Import Portfolio")
         
-        uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+        st.info("""
+        **📋 File Format Requirements:**
+        - **Supported formats**: CSV (.csv) and Excel (.xlsx) files
+        - **Required columns**: symbol, quantity, purchase_price, purchase_date
+        - **Optional columns**: broker
+        - **symbol**: Stock symbol (e.g., 1010, 2222, 4001)
+        - **quantity**: Number of shares
+        - **purchase_price**: Price per share in SAR
+        - **purchase_date**: Date (YYYY-MM-DD format)
+        - **broker**: Broker name (optional)
+        """)
+        
+        uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
         
         if uploaded_file is not None:
             try:
-                import_df = pd.read_csv(uploaded_file)
+                # Handle different file types
+                file_extension = uploaded_file.name.split('.')[-1].lower()
                 
-                st.markdown("### 👀 Import Preview")
-                st.dataframe(import_df, hide_index=True)
+                if file_extension == 'csv':
+                    import_df = pd.read_csv(uploaded_file)
+                elif file_extension == 'xlsx':
+                    # Try to read from different sheets
+                    xl_file = pd.ExcelFile(uploaded_file)
+                    sheet_names = xl_file.sheet_names
+                    
+                    # Look for common sheet names first
+                    preferred_sheets = ['Your Portfolio', 'Portfolio', 'Your_Portfolio', 'Portfolio_Template']
+                    selected_sheet = None
+                    
+                    for pref_sheet in preferred_sheets:
+                        if pref_sheet in sheet_names:
+                            selected_sheet = pref_sheet
+                            break
+                    
+                    # If no preferred sheet found, use the first sheet
+                    if not selected_sheet:
+                        selected_sheet = sheet_names[0]
+                    
+                    # Show sheet selection if multiple sheets
+                    if len(sheet_names) > 1:
+                        st.info(f"📋 **Excel file detected with {len(sheet_names)} sheets**")
+                        selected_sheet = st.selectbox(
+                            "Select sheet to import:",
+                            sheet_names,
+                            index=sheet_names.index(selected_sheet) if selected_sheet in sheet_names else 0
+                        )
+                    
+                    import_df = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
+                    st.success(f"✅ Reading from sheet: **{selected_sheet}**")
+                else:
+                    st.error("❌ Unsupported file format. Please use CSV or Excel files.")
+                    import_df = None
                 
-                if st.button("📥 Import Portfolio"):
-                    # Process import
-                    st.success("Portfolio import functionality coming soon!")
+                # Only proceed if we have a valid dataframe
+                if import_df is not None:
+                    st.markdown("### 👀 Import Preview")
+                    st.dataframe(import_df, hide_index=True)
+                    
+                    # Validate required columns
+                    required_cols = ['symbol', 'quantity', 'purchase_price', 'purchase_date']
+                    missing_cols = [col for col in required_cols if col not in import_df.columns]
+                
+                if missing_cols:
+                    st.error(f"❌ Missing required columns: {', '.join(missing_cols)}")
+                else:
+                    # Validate data
+                    validation_errors = []
+                    
+                    for idx, row in import_df.iterrows():
+                        # Clean and validate symbol
+                        symbol_str = str(row['symbol']).strip()
+                        
+                        # Check symbol exists in database
+                        if symbol_str not in stocks_db:
+                            validation_errors.append(f"Row {idx+1}: Symbol '{symbol_str}' not found in database")
+                        
+                        # Check quantity is positive number
+                        try:
+                            quantity_val = float(str(row['quantity']).replace(',', ''))
+                            if quantity_val <= 0:
+                                validation_errors.append(f"Row {idx+1}: Quantity must be positive")
+                        except (ValueError, TypeError):
+                            validation_errors.append(f"Row {idx+1}: Invalid quantity '{row['quantity']}'")
+                        
+                        # Check price is positive number (handle different formats)
+                        try:
+                            price_str = str(row['purchase_price']).replace(',', '').strip()
+                            if price_str in ['', 'nan', 'NaN', 'null', 'NULL']:
+                                validation_errors.append(f"Row {idx+1}: Price cannot be empty")
+                            else:
+                                price_val = float(price_str)
+                                if price_val <= 0:
+                                    validation_errors.append(f"Row {idx+1}: Price must be positive (got {price_val})")
+                        except (ValueError, TypeError):
+                            validation_errors.append(f"Row {idx+1}: Invalid price '{row['purchase_price']}'")
+                        
+                        # Validate date format (support multiple formats)
+                        try:
+                            date_str = str(row['purchase_date']).strip()
+                            if date_str not in ['', 'nan', 'NaN', 'null', 'NULL']:
+                                # Try multiple date formats
+                                date_formats = [
+                                    '%Y-%m-%d',      # 2024-01-15
+                                    '%m/%d/%Y',      # 12/31/2024 (US format)
+                                    '%d/%m/%Y',      # 31/12/2024 (EU format)
+                                    '%Y/%m/%d',      # 2024/12/31
+                                    '%d-%m-%Y',      # 31-12-2024
+                                    '%m-%d-%Y'       # 12-31-2024
+                                ]
+                                
+                                date_parsed = False
+                                for fmt in date_formats:
+                                    try:
+                                        datetime.strptime(date_str, fmt)
+                                        date_parsed = True
+                                        break
+                                    except ValueError:
+                                        continue
+                                
+                                if not date_parsed:
+                                    validation_errors.append(f"Row {idx+1}: Invalid date format '{row['purchase_date']}' (supported: YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY)")
+                        except Exception as e:
+                            validation_errors.append(f"Row {idx+1}: Error processing date '{row['purchase_date']}': {str(e)}")
+                    
+                    if validation_errors:
+                        st.error("❌ **Validation Errors:**")
+                        for error in validation_errors[:10]:  # Show first 10 errors
+                            st.error(f"• {error}")
+                        if len(validation_errors) > 10:
+                            st.error(f"... and {len(validation_errors) - 10} more errors")
+                        
+                        # Show helpful tips
+                        st.info("""
+                        💡 **Quick Fixes:**
+                        - **Missing symbols**: Some stocks may need to be added to the database
+                        - **Price errors**: Check for empty cells, negative values, or text in price column
+                        - **Date format**: Use YYYY-MM-DD format (e.g., 2024-01-15)
+                        """)
+                    else:
+                        st.success("✅ All data validated successfully!")
+                        
+                        col1, col2 = st.columns([1, 1])
+                        with col1:
+                            if st.button("📥 Import Portfolio", type="primary"):
+                                # Load existing portfolio
+                                portfolio_file = Path("user_portfolio.json")
+                                existing_portfolio = []
+                                
+                                if portfolio_file.exists():
+                                    try:
+                                        with open(portfolio_file, 'r') as f:
+                                            existing_portfolio = json.load(f)
+                                    except:
+                                        existing_portfolio = []
+                                
+                                # Helper function to normalize date format
+                                def normalize_date(date_str):
+                                    """Convert various date formats to YYYY-MM-DD"""
+                                    date_str = str(date_str).strip()
+                                    if date_str in ['', 'nan', 'NaN', 'null', 'NULL']:
+                                        return datetime.now().strftime('%Y-%m-%d')
+                                    
+                                    date_formats = [
+                                        '%Y-%m-%d',      # 2024-01-15
+                                        '%m/%d/%Y',      # 12/31/2024 (US format)
+                                        '%d/%m/%Y',      # 31/12/2024 (EU format)
+                                        '%Y/%m/%d',      # 2024/12/31
+                                        '%d-%m-%Y',      # 31-12-2024
+                                        '%m-%d-%Y'       # 12-31-2024
+                                    ]
+                                    
+                                    for fmt in date_formats:
+                                        try:
+                                            parsed_date = datetime.strptime(date_str, fmt)
+                                            return parsed_date.strftime('%Y-%m-%d')
+                                        except ValueError:
+                                            continue
+                                    
+                                    # If no format works, return current date
+                                    return datetime.now().strftime('%Y-%m-%d')
+                                
+                                # Process each row with improved accumulation logic
+                                imported_count = 0
+                                updated_count = 0
+                                
+                                # First, group data by symbol for better accumulation
+                                symbol_data = {}
+                                for _, row in import_df.iterrows():
+                                    symbol = str(row['symbol']).strip()
+                                    quantity = float(str(row['quantity']).replace(',', ''))
+                                    price_str = str(row['purchase_price']).replace(',', '').strip()
+                                    purchase_price = float(price_str)
+                                    purchase_date = normalize_date(row['purchase_date'])  # Normalize date format
+                                    broker = str(row.get('broker', 'Unknown')) if 'broker' in row and pd.notna(row.get('broker')) else 'Unknown'
+                                    
+                                    if symbol in symbol_data:
+                                        # Accumulate same symbol from import file
+                                        old_qty = symbol_data[symbol]['quantity']
+                                        old_price = symbol_data[symbol]['purchase_price']
+                                        
+                                        total_cost = (old_qty * old_price) + (quantity * purchase_price)
+                                        new_quantity = old_qty + quantity
+                                        new_avg_price = total_cost / new_quantity
+                                        
+                                        symbol_data[symbol]['quantity'] = new_quantity
+                                        symbol_data[symbol]['purchase_price'] = round(new_avg_price, 2)
+                                        symbol_data[symbol]['broker'] = broker  # Use latest broker
+                                    else:
+                                        symbol_data[symbol] = {
+                                            'quantity': quantity,
+                                            'purchase_price': purchase_price,
+                                            'purchase_date': purchase_date,
+                                            'broker': broker
+                                        }
+                                
+                                # Now process accumulated data
+                                for symbol, data in symbol_data.items():
+                                    # Check if stock already exists in portfolio
+                                    existing_stock = None
+                                    for stock in existing_portfolio:
+                                        if stock['symbol'] == symbol:
+                                            existing_stock = stock
+                                            break
+                                    
+                                    if existing_stock:
+                                        # Update existing stock (add to quantity and recalculate average price)
+                                        old_quantity = existing_stock['quantity']
+                                        old_price = existing_stock['purchase_price']
+                                        
+                                        total_cost = (old_quantity * old_price) + (data['quantity'] * data['purchase_price'])
+                                        new_quantity = old_quantity + data['quantity']
+                                        new_avg_price = total_cost / new_quantity
+                                        
+                                        existing_stock['quantity'] = new_quantity
+                                        existing_stock['purchase_price'] = round(new_avg_price, 2)
+                                        existing_stock['broker'] = data['broker']  # Update broker info
+                                        existing_stock['last_updated'] = datetime.now().isoformat()
+                                        updated_count += 1
+                                    else:
+                                        # Add new stock
+                                        new_stock = {
+                                            "symbol": symbol,
+                                            "quantity": data['quantity'],
+                                            "purchase_price": data['purchase_price'],
+                                            "purchase_date": data['purchase_date'],
+                                            "broker": data['broker'],
+                                            "notes": "",
+                                            "last_updated": datetime.now().isoformat()
+                                        }
+                                        existing_portfolio.append(new_stock)
+                                        imported_count += 1
+                                        
+                                
+                                # Save updated portfolio
+                                try:
+                                    with open(portfolio_file, 'w') as f:
+                                        json.dump(existing_portfolio, f, indent=2)
+                                    
+                                    st.success(f"""
+                                    ✅ **Portfolio Import Successful!**
+                                    - 📈 New stocks added: {imported_count}
+                                    - 🔄 Existing stocks updated: {updated_count}
+                                    - 📊 Total stocks in portfolio: {len(existing_portfolio)}
+                                    
+                                    *Refreshing portfolio view...*
+                                    """)
+                                    
+                                    # Show balloons and automatically refresh
+                                    st.balloons()
+                                    
+                                    # Set session state to navigate to Portfolio Overview
+                                    st.session_state.main_nav = "🏠 Portfolio Overview"
+                                    
+                                    # Rerun to refresh the app and show updated portfolio
+                                    st.rerun()
+                                    
+                                except Exception as e:
+                                    st.error(f"❌ Error saving portfolio: {e}")
+                        
+                        with col2:
+                            if st.button("📋 Download Sample CSV"):
+                                # Create sample CSV
+                                sample_data = {
+                                    'symbol': ['1010', '2222', '4001'],
+                                    'quantity': [1000, 500, 750],
+                                    'purchase_price': [25.50, 45.20, 67.80],
+                                    'purchase_date': ['2024-01-15', '2024-02-20', '2024-03-10'],
+                                    'broker': ['Al Rajhi Capital', 'SNB Capital', 'Alinma Investment']
+                                }
+                                sample_df = pd.DataFrame(sample_data)
+                                
+                                # Convert to CSV
+                                csv_buffer = io.StringIO()
+                                sample_df.to_csv(csv_buffer, index=False)
+                                csv_data = csv_buffer.getvalue()
+                                
+                                st.download_button(
+                                    label="📥 Download Sample",
+                                    data=csv_data,
+                                    file_name="portfolio_sample.csv",
+                                    mime="text/csv"
+                                )
                     
             except Exception as e:
-                st.error(f"Error reading file: {e}")
+                st.error(f"❌ Error reading file: {e}")
+                st.info("💡 Please ensure your CSV file is properly formatted.")
 
 if __name__ == "__main__":
     main()

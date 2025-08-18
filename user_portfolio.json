@@ -1,0 +1,92 @@
+[
+  {
+    "symbol": "1010",
+    "quantity": 3811,
+    "purchase_price": 27.18,
+    "purchase_date": "2024-12-31",
+    "broker": "Al Rajhi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T16:48:31.678411"
+  },
+  {
+    "symbol": "1020",
+    "quantity": 10546,
+    "purchase_price": 13.67,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T14:50:10.719246"
+  },
+  {
+    "symbol": "1080",
+    "quantity": 3666,
+    "purchase_price": 21.78,
+    "purchase_date": "2024-12-31",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T14:50:44.482106"
+  },
+  {
+    "symbol": "1140",
+    "quantity": 1500,
+    "purchase_price": 27.31,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T16:40:28.374884"
+  },
+  {
+    "symbol": "1150",
+    "quantity": 3722,
+    "purchase_price": 27.02,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T16:41:41.771171"
+  },
+  {
+    "symbol": "1180",
+    "quantity": 2000,
+    "purchase_price": 36.04,
+    "purchase_date": "2024-12-31",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T16:42:41.122717"
+  },
+  {
+    "symbol": "1303",
+    "quantity": 9750,
+    "purchase_price": 8.499230769230769,
+    "purchase_date": "2025-01-31",
+    "broker": "Fransi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T16:44:06.969849"
+  },
+  {
+    "symbol": "1304",
+    "quantity": 1000,
+    "purchase_price": 38.69,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T16:45:02.475532"
+  },
+  {
+    "symbol": "1120",
+    "quantity": 500,
+    "purchase_price": 92.6,
+    "purchase_date": "2025-08-17",
+    "broker": "Al Rajhi Capital",
+    "notes": "",
+    "last_updated": "2025-08-17T16:51:04.147016"
+  },
+  {
+    "symbol": "2010",
+    "quantity": 3000,
+    "purchase_price": 71.97,
+    "purchase_date": "2024-12-31",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-17T17:17:11.716696"
+  }
+]

@@ -1,0 +1,260 @@
+Seq		Symbol		Company Name	    	Sector
+1		2030		SARCO	            	Energy
+2		2222		SAUDI ARAMCO	    	Energy
+3		2380		PETRO RABIGH	    	Energy
+4		2381		ARABIAN DRILLING		Energy
+5		2382		ADES		            Energy
+6		4030		BAHRI		            Energy
+7		4200		ALDREES		            Energy
+8		1201		TAKWEEN		            Materials
+9		1202		MEPCO		            Materials
+10		1210		BCI		                Materials
+11		1211		MAADEN		            Materials
+12		1301		ASLAK		            Materials
+13		1304		ALYAMAMAH STEEL		    Materials
+14		1320		SSP		                Materials
+15		1321		EAST PIPES		        Materials
+16		1322		AMAK		            Materials
+17		1323		UCIC		            Materials
+18		2001		CHEMANOL	        	Materials
+19		2010		SABIC		            Materials
+20		2020		SABIC AGRI-NUTRIENTS	Materials
+21		2060		TASNEE		            Materials
+22		2090		NGC		                Materials
+23		2150		ZOUJAJ	            	Materials
+24		2170		ALUJAIN		            Materials
+25		2180		FIPCO		            Materials
+26		2200		APC		                Materials
+27		2210		NAMA CHEMICALS		    Materials
+28		2220		MAADANIYAH		        Materials
+29		2223		LUBEREF		            Materials
+30		2240		ZAMIL INDUST	    	Materials
+31		2250		SIIG	            	Materials
+32		2290		YANSAB		            Materials
+33		2300		SPM		                Materials
+34		2310		SIPCHEM		            Materials
+35		2330		ADVANCED	        	Materials
+36		2350		SAUDI KAYAN		        Materials
+37		2360		SVCP	            	Materials
+38		3002		NAJRAN CEMENT	    	Materials
+39		3003		CITY CEMENT		       Materials
+40		3004		NORTHERN CEMENT		    Materials
+41		3005		UACC		            Materials
+42		3007		OASIS		            Materials
+43		3008		ALKATHIRI	        	Materials
+44		3010		ACC		                Materials
+45		3020		YC		                Materials
+46		3030		SAUDI CEMENT	    	Materials
+47		3040		QACCO		            Materials
+48		3050		SPCC		            Materials
+49		3060		YCC		                Materials
+50		3080		EPCCO		            Materials
+51		3090		TCC		                Materials
+52		3091		JOUF CEMENT		        Materials
+53		3092		RIYADH CEMENT		    Materials
+54		1212		ASTRA INDUSTRIAL		Capital Goods
+55		1214		SHAKER		            Capital Goods
+56		1302		BAWAN		            Capital Goods
+57		1303		EIC		                Capital Goods
+58		2040		SAUDI CERAMICS	    	Capital Goods
+59		2110		SAUDI CABLE		        Capital Goods
+60		2160		AMIANTIT	        	Capital Goods
+61		2320		ALBABTAIN	        	Capital Goods
+62		2370		MESC		            Capital Goods
+63		4110		BATIC		            Capital Goods
+64		4140		SIECO		            Capital Goods
+65		4141		ALOMRAN		            Capital Goods
+66		4142		RIYADH CABLES	    	Capital Goods
+67		4143		TALCO	            	Capital Goods
+68		4144		RAOOM	            	Capital Goods
+69		4145		OBEIKAN GLASS	    	Capital Goods
+70		1831		MAHARAH	            	Commercial & Professional Svc
+71		1832		SADR	            	Commercial & Professional Svc
+72		1833		ALMAWARID	        	Commercial & Professional Svc
+73		1834		SMASCO		            Commercial & Professional Svc
+74		1835		TAMKEEN		            Commercial & Professional Svc
+75		4270		SPPC		            Commercial & Professional Svc
+76		6004		CATRION		            Commercial & Professional Svc
+77		2190		SISCO HOLDING		    Transportation
+78		4031		SGS		                Transportation
+79		4040		SAPTCO	            	Transportation
+80		4260		BUDGET SAUDI		    Transportation
+81		4261		THEEB		            Transportation
+82		4262		LUMI	            	Transportation
+83		4263		SAL		                Transportation
+84		4264		FLYNAS		            Transportation
+85		1213		NASEEJ		            Consumer Durables & Apparel
+86		2130		SIDC		            Consumer Durables & Apparel
+87		2340		ARTEX		            Consumer Durables & Apparel
+88		4011		LAZURDE		            Consumer Durables & Apparel
+89		4012		ALASEEL		            Consumer Durables & Apparel
+90		4180		FITAIHI GROUP	    	Consumer Durables & Apparel
+91		1810		SEERA		            Consumer Services
+92		1820		BAAN		            Consumer Services
+93		1830		LEEJAM SPORTS		    Consumer Services
+94		4170		TECO		            Consumer Services
+95		4290		ALKHALEEJ TRNG	    	Consumer Services
+96		4291		NCLE		            Consumer Services
+97		4292		ATAA		            Consumer Services
+98		6002		HERFY FOODS		        Consumer Services
+99		6012		RAYDAN		            Consumer Services
+100		6013		DWF		                Consumer Services
+101		6014		ALAMAR		            Consumer Services
+102		6015		AMERICANA		        Consumer Services
+103		6016		BURGERIZZR		        Consumer Services
+104		6017		JAHEZ		            Consumer Services
+105		6018		SPORT CLUBS		        Consumer Services
+106		4070		TAPRCO		            Media and Entertainment
+107		4071		ALARABIA		        Media and Entertainment
+108		4072		MBC GROUP		        Media and Entertainment
+109		4210		SRMG		            Media and Entertainment
+110		4003		EXTRA	            	Consumer Discretionary Distribution & Retail
+111		4008		SACO	            	Consumer Discretionary Distribution & Retail
+112		4050		SASCO		            Consumer Discretionary Distribution & Retail
+113		4051		BAAZEEM		            Consumer Discretionary Distribution & Retail
+114		4190		JARIR		            Consumer Discretionary Distribution & Retail
+115		4191		ABO MOATI	        	Consumer Discretionary Distribution & Retail
+116		4192		ALSAIF GALLERY	    	Consumer Discretionary Distribution & Retail
+117		4193		NICE ONE		        Consumer Discretionary Distribution & Retail
+118		4240		CENOMI RETAIL	    	Consumer Discretionary Distribution & Retail
+119		4001		A.OTHAIM MARKET	    	Consumer Staples Distribution & Retail
+120		4006		FARM SUPERSTORES		Consumer Staples Distribution & Retail
+121		4061		ANAAM HOLDING	    	Consumer Staples Distribution & Retail
+122		4160		THIMAR		            Consumer Staples Distribution & Retail
+123		4161		BINDAWOOD	        	Consumer Staples Distribution & Retail
+124		4162		ALMUNAJEM	        	Consumer Staples Distribution & Retail
+125		4163		ALDAWAA		            Consumer Staples Distribution & Retail
+126		4164		NAHDI		            Consumer Staples Distribution & Retail
+127		2050		SAVOLA GROUP    		Food & Beverages
+128		2100		WAFRAH		            Food & Beverages
+129		2270		SADAFCO		            Food & Beverages
+130		2280		ALMARAI		            Food & Beverages
+131		2281		TANMIAH		            Food & Beverages
+132		2282		NAQI		            Food & Beverages
+133		2283		FIRST MILLS	        	Food & Beverages
+134		2284		MODERN MILLS	    	Food & Beverages
+135		2285		ARABIAN MILLS	    	Food & Beverages
+136		2286		FOURTH MILLING	    	Food & Beverages
+137		2287		ENTAJ		            Food & Beverages
+138		4080		SINAD HOLDING	    	Food & Beverages
+139		6001		HB		                Food & Beverages
+140		6010		NADEC	            	Food & Beverages
+141		6020		GACO	            	Food & Beverages
+142		6040		TADCO	            	Food & Beverages
+143		6050		SFICO	            	Food & Beverages
+144		6060		SHARQIYAH DEV		    Food & Beverages
+145		6070		ALJOUF	            	Food & Beverages
+146		6090		JAZADCO	            	Food & Beverages
+147		4165		ALMAJED OUD		        Household & Personal Products
+148		2140		AYYAN		            Health Care Equipment & Svc
+149		2230		CHEMICAL	        	Health Care Equipment & Svc
+150		4002		MOUWASAT	        	Health Care Equipment & Svc
+151		4004		DALLAH HEALTH	    	Health Care Equipment & Svc
+152		4005		CARE	            	Health Care Equipment & Svc
+153		4007		ALHAMMADI	        	Health Care Equipment & Svc
+154		4009		SAUDI GERMAN HEALTH		Health Care Equipment & Svc
+155		4013		SULAIMAN ALHABIB		Health Care Equipment & Svc
+156		4014		EQUIPMENT HOUSE	    	Health Care Equipment & Svc
+157		4017		FAKEEH CARE		        Health Care Equipment & Svc
+158		4018		ALMOOSA		             Health Care Equipment & Svc
+159		4019		SMC HEALTHCARE		    Health Care Equipment & Svc
+160		2070		SPIMACO		            Pharma, Biotech & Life Science
+161		4015		JAMJOOM PHARMA	    	Pharma, Biotech & Life Science
+162		4016		AVALON PHARMA	    	Pharma, Biotech & Life Science
+163		1010		RIBL		            Banks
+164		1020		BJAZ		            Banks
+165		1030		SAIB		            Banks
+166		1050		BSF		                Banks
+167		1060		SAB		                Banks
+168		1080		ANB		                Banks
+169		1120		ALRAJHI	            	Banks
+170		1140		ALBILAD	            	Banks
+171		1150		ALINMA		            Banks
+172		1180		SNB		                Banks
+173		1111		TADAWUL GROUP	    	Financial Services
+174		1182		AMLAK		            Financial Services
+175		1183		SHL		                Financial Services
+176		2120		SAIC	            	Financial Services
+177		4081		NAYIFAT	            	Financial Services
+178		4082		MRNA	            	Financial Services
+179		4083		TASHEEL	            	Financial Services
+180		4084		DERAYAH	            	Financial Services
+181		4130		SAUDI DARB      		Financial Services
+182		4280		KINGDOM		            Financial Services
+183		8010		TAWUNIYA	        	Insurance
+184		8012		JAZIRA TAKAFUL		    Insurance
+185		8020		MALATH INSURANCE		Insurance
+186		8030		MEDGULF		            Insurance
+187		8040		MUTAKAMELA	        	Insurance
+188		8050		SALAMA		            Insurance
+189		8060		WALAA	            	Insurance
+190		8070		ARABIAN SHIELD		    Insurance
+191		8100		SAICO		            Insurance
+192		8120		GULF UNION ALAHLIA		Insurance
+193		8150		ACIG		            Insurance
+194		8160		AICC		            Insurance
+195		8170		ALETIHAD		        Insurance
+196		8180		ALSAGR INSURANCE		Insurance
+197		8190		UCA	                	Insurance
+198		8200		SAUDI RE	        	Insurance
+199		8210		BUPA ARABIA		        Insurance
+200		8230		ALRAJHI TAKAFUL		    Insurance
+201		8240		CHUBB		            Insurance
+202		8250		GIG		                Insurance
+203		8260		GULF GENERAL	    	Insurance
+204		8270		BURUJ		            Insurance
+205		8280		LIVA		            Insurance
+206		8300		WATANIYA	        	Insurance
+207		8310		AMANA INSURANCE		    Insurance
+208		8311		ENAYA		            Insurance
+209		8313		RASAN		            Insurance
+210		7200		MIS		                Software & Services
+211		7201		ARAB SEA	        	Software & Services
+212		7202		SOLUTIONS	        	Software & Services
+213		7203		ELM		                Software & Services
+214		7204		2P		                Software & Services
+215		7211		AZM		                Software & Services
+216		7010		STC		                Telecommunication Services
+217		7020		ETIHAD ETISALAT	    	Telecommunication Services
+218		7030		ZAIN KSA		        Telecommunication Services
+219		7040		GO TELECOM		        Telecommunication Services
+220		2080		GASCO		            Utilities
+221		2081		AWPT		            Utilities
+222		2082		ACWA POWER		        Utilities
+223		2083		MARAFIQ		            Utilities
+224		2084		MIAHONA		            Utilities
+225		5110		SAUDI ELECTRICITY		Utilities
+226		4330		RIYAD REIT	        	REITs
+227		4331		ALJAZIRA REIT	    	REITs
+228		4332		JADWA REIT ALHARAMAIN	REITs
+229		4333		TALEEM REIT		        REITs
+230		4334		AL MAATHER REIT	    	REITs
+231		4335		MUSHARAKA REIT	    	REITs
+232		4336		MULKIA REIT		        REITs
+233		4337		SICO SAUDI REIT	    	REITs
+234		4338		ALAHLI REIT 1		    REITs
+235		4339		DERAYAH REIT		    REITs
+236		4340		Al RAJHI REIT		    REITs
+237		4342		JADWA REIT SAUDI		REITs
+238		4344		SEDCO CAPITAL REIT		REITs
+239		4345		ALINMA RETAIL REIT		REITs
+240		4346		MEFIC REIT		        REITs
+241		4347		BONYAN REIT		        REITs
+242		4348		ALKHABEER REIT		    REITs
+243		4349		ALINMA HOSPITALITY REIT	REITs
+244		4350		ALISTITHMAR REIT		REITs
+245		4020		ALAKARIA		        Real Estate Mgmt & Dev't
+246		4090		TAIBA		            Real Estate Mgmt & Dev't
+247		4100		MCDC		            Real Estate Mgmt & Dev't
+248		4150		ARDCO		            Real Estate Mgmt & Dev't
+249		4220		EMAAR EC		        Real Estate Mgmt & Dev't
+250		4230		RED SEA		            Real Estate Mgmt & Dev't
+251		4250		JABAL OMAR		        Real Estate Mgmt & Dev't
+252		4300		DAR ALARKAN		        Real Estate Mgmt & Dev't
+253		4310		KEC		                Real Estate Mgmt & Dev't
+254		4320		ALANDALUS		        Real Estate Mgmt & Dev't
+255		4321		CENOMI CENTERS		    Real Estate Mgmt & Dev't
+256		4322		RETAL		            Real Estate Mgmt & Dev't
+257		4323		SUMOU		            Real Estate Mgmt & Dev't
+258		4324		BANAN		            Real Estate Mgmt & Dev't
+259		4325		MASAR		            Real Estate Mgmt & Dev't

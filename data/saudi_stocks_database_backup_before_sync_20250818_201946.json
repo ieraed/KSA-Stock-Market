@@ -1,0 +1,1846 @@
+{
+  "1010": {
+    "symbol": "1010",
+    "name_en": "RIBL",
+    "name_ar": "بنك الرياض",
+    "sector": "Banks"
+  },
+  "1020": {
+    "symbol": "1020",
+    "name_en": "BJAZ",
+    "name_ar": "بنك الجزيرة",
+    "sector": "Banks"
+  },
+  "1030": {
+    "symbol": "1030",
+    "name_en": "SAIB",
+    "name_ar": "البنك السعودي للاستثمار",
+    "sector": "Banks"
+  },
+  "1050": {
+    "symbol": "1050",
+    "name_en": "BSF",
+    "name_ar": "البنك السعودي الفرنسي",
+    "sector": "Banks"
+  },
+  "1060": {
+    "symbol": "1060",
+    "name_en": "SAB",
+    "name_ar": "البنك الأول",
+    "sector": "Banks"
+  },
+  "1080": {
+    "symbol": "1080",
+    "name_en": "ANB",
+    "name_ar": "البنك الأهلي العربي",
+    "sector": "Banks"
+  },
+  "1120": {
+    "symbol": "1120",
+    "name_en": "ALRAJHI",
+    "name_ar": "مصرف الراجحي",
+    "sector": "Banks"
+  },
+  "1140": {
+    "symbol": "1140",
+    "name_en": "ALBILAD",
+    "name_ar": "بنك البلاد",
+    "sector": "Banks"
+  },
+  "1150": {
+    "symbol": "1150",
+    "name_en": "ALINMA",
+    "name_ar": "بنك الإنماء",
+    "sector": "Banks"
+  },
+  "1180": {
+    "symbol": "1180",
+    "name_en": "SNB",
+    "name_ar": "البنك الأهلي السعودي",
+    "sector": "Banks"
+  },
+  "3030": {
+    "symbol": "3030",
+    "name_en": "SAUDI CEMENT",
+    "name_ar": "الأسمنت السعودية",
+    "sector": "Materials"
+  },
+  "3040": {
+    "symbol": "3040",
+    "name_en": "QACCO",
+    "name_ar": "أسمنت القصيم",
+    "sector": "Materials"
+  },
+  "3060": {
+    "symbol": "3060",
+    "name_en": "YCC",
+    "name_ar": "أسمنت الشرقية",
+    "sector": "Materials"
+  },
+  "3080": {
+    "symbol": "3080",
+    "name_en": "EPCCO",
+    "name_ar": "أسمنت الجنوبية",
+    "sector": "Materials"
+  },
+  "4001": {
+    "symbol": "4001",
+    "name_en": "A.OTHAIM MARKET",
+    "name_ar": "الخدمات التجارية",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4002": {
+    "symbol": "4002",
+    "name_en": "MOUWASAT",
+    "name_ar": "الموواساة الطبية",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4009": {
+    "symbol": "4009",
+    "name_en": "SAUDI GERMAN HEALTH",
+    "name_ar": "الفنادق",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4010": {
+    "symbol": "4010",
+    "name_en": "Dur Hospitality Company",
+    "name_ar": "دور الضيافة",
+    "sector": "Consumer Services"
+  },
+  "4011": {
+    "symbol": "4011",
+    "name_en": "LAZURDE",
+    "name_ar": "أسواق العثيم",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "4014": {
+    "symbol": "4014",
+    "name_en": "EQUIPMENT HOUSE",
+    "name_ar": "الخدمات الطبية",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "1111": {
+    "symbol": "1111",
+    "name_en": "TADAWUL GROUP",
+    "name_ar": "مجموعة تداول",
+    "sector": "Financial Services"
+  },
+  "1182": {
+    "symbol": "1182",
+    "name_en": "AMLAK",
+    "name_ar": "أملاك العالمية",
+    "sector": "Financial Services"
+  },
+  "1183": {
+    "symbol": "1183",
+    "name_en": "SHL",
+    "name_ar": "الشركة السعودية للتمويل العقاري",
+    "sector": "Financial Services"
+  },
+  "1201": {
+    "symbol": "1201",
+    "name_en": "TAKWEEN",
+    "name_ar": "تكوين للصناعات المتقدمة",
+    "sector": "Materials"
+  },
+  "1202": {
+    "symbol": "1202",
+    "name_en": "MEPCO",
+    "name_ar": "شركة الشرق الأوسط للورق",
+    "sector": "Materials"
+  },
+  "1210": {
+    "symbol": "1210",
+    "name_en": "BCI",
+    "name_ar": "الصناعات الكيماوية الأساسية",
+    "sector": "Materials"
+  },
+  "1211": {
+    "symbol": "1211",
+    "name_en": "MAADEN",
+    "name_ar": "شركة التعدين العربية السعودية",
+    "sector": "Materials"
+  },
+  "1212": {
+    "symbol": "1212",
+    "name_en": "ASTRA INDUSTRIAL",
+    "name_ar": "أسترا الصناعية",
+    "sector": "Capital Goods"
+  },
+  "1213": {
+    "symbol": "1213",
+    "name_en": "NASEEJ",
+    "name_ar": "ناسيج للتجارة الدولية",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "1214": {
+    "symbol": "1214",
+    "name_en": "SHAKER",
+    "name_ar": "مجموعة شاكر",
+    "sector": "Capital Goods"
+  },
+  "1301": {
+    "symbol": "1301",
+    "name_en": "ASLAK",
+    "name_ar": "أسلاك",
+    "sector": "Materials"
+  },
+  "1302": {
+    "symbol": "1302",
+    "name_en": "BAWAN",
+    "name_ar": "شركة باوان",
+    "sector": "Capital Goods"
+  },
+  "1303": {
+    "symbol": "1303",
+    "name_en": "EIC",
+    "name_ar": "الصناعات الكهربائية",
+    "sector": "Capital Goods"
+  },
+  "1304": {
+    "symbol": "1304",
+    "name_en": "ALYAMAMAH STEEL",
+    "name_ar": "صناعات الحديد والصلب",
+    "sector": "Materials"
+  },
+  "1322": {
+    "symbol": "1322",
+    "name_en": "AMAK",
+    "name_ar": "المعادن المتقدمة",
+    "sector": "Materials"
+  },
+  "1323": {
+    "symbol": "1323",
+    "name_en": "UCIC",
+    "name_ar": "المتحدة للكابلات",
+    "sector": "Materials"
+  },
+  "1810": {
+    "symbol": "1810",
+    "name_en": "SEERA",
+    "name_ar": "مجموعة سيرا",
+    "sector": "Consumer Services"
+  },
+  "1820": {
+    "symbol": "1820",
+    "name_en": "BAAN",
+    "name_ar": "بنان",
+    "sector": "Consumer Services"
+  },
+  "1830": {
+    "symbol": "1830",
+    "name_en": "LEEJAM SPORTS",
+    "name_ar": "ليجام الرياضية",
+    "sector": "Consumer Services"
+  },
+  "1831": {
+    "symbol": "1831",
+    "name_en": "MAHARAH",
+    "name_ar": "مهارة للموارد البشرية",
+    "sector": "Commercial & Professional Svc"
+  },
+  "1832": {
+    "symbol": "1832",
+    "name_en": "SADR",
+    "name_ar": "صدر اللوجستية",
+    "sector": "Commercial & Professional Svc"
+  },
+  "1833": {
+    "symbol": "1833",
+    "name_en": "ALMAWARID",
+    "name_ar": "الموارد الصناعية",
+    "sector": "Commercial & Professional Svc"
+  },
+  "1834": {
+    "symbol": "1834",
+    "name_en": "SMASCO",
+    "name_ar": "الحلول المتكاملة",
+    "sector": "Commercial & Professional Svc"
+  },
+  "1835": {
+    "symbol": "1835",
+    "name_en": "TAMKEEN",
+    "name_ar": "تمكين للتقنيات",
+    "sector": "Commercial & Professional Svc"
+  },
+  "2001": {
+    "symbol": "2001",
+    "name_en": "CHEMANOL",
+    "name_ar": "سابك",
+    "sector": "Materials"
+  },
+  "2002": {
+    "symbol": "2002",
+    "name_en": "Petro Rabigh",
+    "name_ar": "بترو رابغ",
+    "sector": "Materials"
+  },
+  "2010": {
+    "symbol": "2010",
+    "name_en": "SABIC",
+    "name_ar": "سابك",
+    "sector": "Materials",
+    "last_updated": "2025-08-17T14:25:02.495303",
+    "data_source": "tadawul_complete"
+  },
+  "2020": {
+    "symbol": "2020",
+    "name_en": "SABIC AGRI-NUTRIENTS",
+    "name_ar": "سابك للمغذيات الزراعية",
+    "sector": "nan"
+  },
+  "2030": {
+    "symbol": "2030",
+    "name_en": "SARCO",
+    "name_ar": "مصافي أرامكو السعودية",
+    "sector": "Energy"
+  },
+  "2050": {
+    "symbol": "2050",
+    "name_en": "SAVOLA GROUP",
+    "name_ar": "مجموعة صافولا",
+    "sector": "Food & Beverages"
+  },
+  "2060": {
+    "symbol": "2060",
+    "name_en": "TASNEE",
+    "name_ar": "التصنيع الوطنية",
+    "sector": "Materials"
+  },
+  "2070": {
+    "symbol": "2070",
+    "name_en": "SPIMACO",
+    "name_ar": "سبيماكو الأدوية",
+    "sector": "Pharma, Biotech & Life Science"
+  },
+  "2082": {
+    "symbol": "2082",
+    "name_en": "ACWA POWER",
+    "name_ar": "أكوا باور",
+    "sector": "Utilities"
+  },
+  "2083": {
+    "symbol": "2083",
+    "name_en": "MARAFIQ",
+    "name_ar": "مرافق",
+    "sector": "Utilities"
+  },
+  "2084": {
+    "symbol": "2084",
+    "name_en": "MIAHONA",
+    "name_ar": "مياهنا",
+    "sector": "Utilities"
+  },
+  "2100": {
+    "symbol": "2100",
+    "name_en": "WAFRAH",
+    "name_ar": "وفرة للصناعة والتنمية",
+    "sector": "Food & Beverages"
+  },
+  "2120": {
+    "symbol": "2120",
+    "name_en": "SAIC",
+    "name_ar": "السعودية للتنمية الصناعية",
+    "sector": "Financial Services"
+  },
+  "2160": {
+    "symbol": "2160",
+    "name_en": "AMIANTIT",
+    "name_ar": "أميانتيت السعودية",
+    "sector": "Capital Goods"
+  },
+  "2170": {
+    "symbol": "2170",
+    "name_en": "ALUJAIN",
+    "name_ar": "العجين",
+    "sector": "Materials"
+  },
+  "2180": {
+    "symbol": "2180",
+    "name_en": "FIPCO",
+    "name_ar": "فيبكو",
+    "sector": "Materials"
+  },
+  "2190": {
+    "symbol": "2190",
+    "name_en": "SISCO HOLDING",
+    "name_ar": "سيسكو",
+    "sector": "Transportation"
+  },
+  "2200": {
+    "symbol": "2200",
+    "name_en": "APC",
+    "name_ar": "الاستثمار الصناعي",
+    "sector": "Materials"
+  },
+  "2210": {
+    "symbol": "2210",
+    "name_en": "NAMA CHEMICALS",
+    "name_ar": "نماء للكيماويات",
+    "sector": "Materials"
+  },
+  "2220": {
+    "symbol": "2220",
+    "name_en": "MAADANIYAH",
+    "name_ar": "معدنية",
+    "sector": "Materials"
+  },
+  "2222": {
+    "symbol": "2222",
+    "name_en": "SAUDI ARAMCO",
+    "name_ar": "أرامكو السعودية",
+    "sector": "Energy"
+  },
+  "2223": {
+    "symbol": "2223",
+    "name_en": "LUBEREF",
+    "name_ar": "لوبريف",
+    "sector": "Materials"
+  },
+  "2240": {
+    "symbol": "2240",
+    "name_en": "ZAMIL INDUST",
+    "name_ar": "الزامل للاستثمار الصناعي",
+    "sector": "Materials"
+  },
+  "2250": {
+    "symbol": "2250",
+    "name_en": "SIIG",
+    "name_ar": "المجموعة السعودية",
+    "sector": "Materials"
+  },
+  "2270": {
+    "symbol": "2270",
+    "name_en": "SADAFCO",
+    "name_ar": "صدافكو",
+    "sector": "Food & Beverages"
+  },
+  "2280": {
+    "symbol": "2280",
+    "name_en": "ALMARAI",
+    "name_ar": "المراعي",
+    "sector": "Food & Beverages"
+  },
+  "2281": {
+    "symbol": "2281",
+    "name_en": "TANMIAH",
+    "name_ar": "تنمية",
+    "sector": "Food & Beverages"
+  },
+  "2282": {
+    "symbol": "2282",
+    "name_en": "NAQI",
+    "name_ar": "ناقي",
+    "sector": "Food & Beverages"
+  },
+  "2283": {
+    "symbol": "2283",
+    "name_en": "FIRST MILLS",
+    "name_ar": "مطاحن الدقيق الأولى",
+    "sector": "Food & Beverages"
+  },
+  "2284": {
+    "symbol": "2284",
+    "name_en": "MODERN MILLS",
+    "name_ar": "مطاحن الدقيق الحديثة",
+    "sector": "Food & Beverages"
+  },
+  "2285": {
+    "symbol": "2285",
+    "name_en": "ARABIAN MILLS",
+    "name_ar": "مطاحن الدقيق العربية",
+    "sector": "Food & Beverages"
+  },
+  "2290": {
+    "symbol": "2290",
+    "name_en": "YANSAB",
+    "name_ar": "ينساب",
+    "sector": "Materials"
+  },
+  "2320": {
+    "symbol": "2320",
+    "name_en": "ALBABTAIN",
+    "name_ar": "البابطين",
+    "sector": "Capital Goods"
+  },
+  "2330": {
+    "symbol": "2330",
+    "name_en": "ADVANCED",
+    "name_ar": "المتقدمة للبتروكيماويات",
+    "sector": "Materials"
+  },
+  "2370": {
+    "symbol": "2370",
+    "name_en": "MESC",
+    "name_ar": "مسك",
+    "sector": "Capital Goods"
+  },
+  "2381": {
+    "symbol": "2381",
+    "name_en": "ARABIAN DRILLING",
+    "name_ar": "الحفر العربية",
+    "sector": "Energy"
+  },
+  "2382": {
+    "symbol": "2382",
+    "name_en": "ADES",
+    "name_ar": "خدمات الحفر المتقدمة",
+    "sector": "Energy"
+  },
+  "3003": {
+    "symbol": "3003",
+    "name_en": "CITY CEMENT",
+    "name_ar": "أسمنت المدينة",
+    "sector": "Materials"
+  },
+  "3004": {
+    "symbol": "3004",
+    "name_en": "NORTHERN CEMENT",
+    "name_ar": "أسمنت الشمالية",
+    "sector": "Materials"
+  },
+  "3005": {
+    "symbol": "3005",
+    "name_en": "UACC",
+    "name_ar": "الأسمنت العربية",
+    "sector": "Materials"
+  },
+  "3007": {
+    "symbol": "3007",
+    "name_en": "OASIS",
+    "name_ar": "واحة الاستثمار",
+    "sector": "Materials"
+  },
+  "3008": {
+    "symbol": "3008",
+    "name_en": "ALKATHIRI",
+    "name_ar": "الكثيري القابضة",
+    "sector": "Materials"
+  },
+  "3020": {
+    "symbol": "3020",
+    "name_en": "YC",
+    "name_ar": "أسمنت اليمامة",
+    "sector": "Materials"
+  },
+  "3050": {
+    "symbol": "3050",
+    "name_en": "SPCC",
+    "name_ar": "الخرسانة السعودية",
+    "sector": "Materials"
+  },
+  "3090": {
+    "symbol": "3090",
+    "name_en": "TCC",
+    "name_ar": "أسمنت تبوك",
+    "sector": "Materials"
+  },
+  "3091": {
+    "symbol": "3091",
+    "name_en": "JOUF CEMENT",
+    "name_ar": "أسمنت الجوف",
+    "sector": "Materials"
+  },
+  "4003": {
+    "symbol": "4003",
+    "name_en": "EXTRA",
+    "name_ar": "إكسترا",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4004": {
+    "symbol": "4004",
+    "name_en": "DALLAH HEALTH",
+    "name_ar": "دله الصحية",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4005": {
+    "symbol": "4005",
+    "name_en": "CARE",
+    "name_ar": "كير شيلد للتأمين",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4006": {
+    "symbol": "4006",
+    "name_en": "FARM SUPERSTORES",
+    "name_ar": "المزارع",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4007": {
+    "symbol": "4007",
+    "name_en": "ALHAMMADI",
+    "name_ar": "الحمادي للتنمية والاستثمار",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4008": {
+    "symbol": "4008",
+    "name_en": "SACO",
+    "name_ar": "ساكو",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4012": {
+    "symbol": "4012",
+    "name_en": "ALASEEL",
+    "name_ar": "الأصيل",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "4013": {
+    "symbol": "4013",
+    "name_en": "SULAIMAN ALHABIB",
+    "name_ar": "سليمان الحبيب",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4015": {
+    "symbol": "4015",
+    "name_en": "JAMJOOM PHARMA",
+    "name_ar": "جمجوم فارما",
+    "sector": "Pharma, Biotech & Life Science"
+  },
+  "4016": {
+    "symbol": "4016",
+    "name_en": "AVALON PHARMA",
+    "name_ar": "أفالون فارما",
+    "sector": "Pharma, Biotech & Life Science"
+  },
+  "4017": {
+    "symbol": "4017",
+    "name_en": "FAKEEH CARE",
+    "name_ar": "رعاية الدكتور فقيه",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4018": {
+    "symbol": "4018",
+    "name_en": "ALMOOSA",
+    "name_ar": "الموسى التخصصي",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4019": {
+    "symbol": "4019",
+    "name_en": "SMC HEALTHCARE",
+    "name_ar": "الرعاية الطبية السعودية",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4020": {
+    "symbol": "4020",
+    "name_en": "ALAKARIA",
+    "name_ar": "العقارية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4030": {
+    "symbol": "4030",
+    "name_en": "BAHRI",
+    "name_ar": "البحري",
+    "sector": "Energy"
+  },
+  "4031": {
+    "symbol": "4031",
+    "name_en": "SGS",
+    "name_ar": "الخدمات الأرضية",
+    "sector": "Transportation"
+  },
+  "4040": {
+    "symbol": "4040",
+    "name_en": "SAPTCO",
+    "name_ar": "سابتكو",
+    "sector": "Transportation"
+  },
+  "4050": {
+    "symbol": "4050",
+    "name_en": "SASCO",
+    "name_ar": "ساسكو",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4051": {
+    "symbol": "4051",
+    "name_en": "BAAZEEM",
+    "name_ar": "باعظيم",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4061": {
+    "symbol": "4061",
+    "name_en": "ANAAM HOLDING",
+    "name_ar": "أنعام القابضة",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4070": {
+    "symbol": "4070",
+    "name_en": "TAPRCO",
+    "name_ar": "تابركو",
+    "sector": "Media and Entertainment"
+  },
+  "4071": {
+    "symbol": "4071",
+    "name_en": "ALARABIA",
+    "name_ar": "العربية",
+    "sector": "Media and Entertainment"
+  },
+  "4072": {
+    "symbol": "4072",
+    "name_en": "MBC GROUP",
+    "name_ar": "مجموعة أم بي سي",
+    "sector": "Media and Entertainment"
+  },
+  "4080": {
+    "symbol": "4080",
+    "name_en": "SINAD HOLDING",
+    "name_ar": "سند القابضة",
+    "sector": "Food & Beverages"
+  },
+  "4081": {
+    "symbol": "4081",
+    "name_en": "NAYIFAT",
+    "name_ar": "نايفات للتمويل",
+    "sector": "Financial Services"
+  },
+  "4084": {
+    "symbol": "4084",
+    "name_en": "DERAYAH",
+    "name_ar": "درة المالية",
+    "sector": "Financial Services"
+  },
+  "4082": {
+    "symbol": "4082",
+    "name_en": "MRNA",
+    "name_ar": "مهارة للموارد البشرية",
+    "sector": "Financial Services"
+  },
+  "4083": {
+    "symbol": "4083",
+    "name_en": "TASHEEL",
+    "name_ar": "تسهيل للتمويل",
+    "sector": "Financial Services"
+  },
+  "4090": {
+    "symbol": "4090",
+    "name_en": "TAIBA",
+    "name_ar": "طيبة للاستثمار",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4100": {
+    "symbol": "4100",
+    "name_en": "MCDC",
+    "name_ar": "مكة للإنشاء والتعمير",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4110": {
+    "symbol": "4110",
+    "name_en": "BATIC",
+    "name_ar": "باتك",
+    "sector": "Capital Goods"
+  },
+  "4141": {
+    "symbol": "4141",
+    "name_en": "ALOMRAN",
+    "name_ar": "الخضري",
+    "sector": "Capital Goods"
+  },
+  "4150": {
+    "symbol": "4150",
+    "name_en": "ARDCO",
+    "name_ar": "العراب للمقاولات",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4160": {
+    "symbol": "4160",
+    "name_en": "THIMAR",
+    "name_ar": "ثمار للتنمية",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4161": {
+    "symbol": "4161",
+    "name_en": "BINDAWOOD",
+    "name_ar": "بن داود القابضة",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4162": {
+    "symbol": "4162",
+    "name_en": "ALMUNAJEM",
+    "name_ar": "المنجم للأغذية",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4163": {
+    "symbol": "4163",
+    "name_en": "ALDAWAA",
+    "name_ar": "الدواء",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4164": {
+    "symbol": "4164",
+    "name_en": "NAHDI",
+    "name_ar": "النهدي الطبية",
+    "sector": "Consumer Staples Distribution & Retail"
+  },
+  "4165": {
+    "symbol": "4165",
+    "name_en": "ALMAJED OUD",
+    "name_ar": "الماجد للعود",
+    "sector": "Household & Personal Products"
+  },
+  "4170": {
+    "symbol": "4170",
+    "name_en": "TECO",
+    "name_ar": "التحكم التقني",
+    "sector": "Consumer Services"
+  },
+  "4180": {
+    "symbol": "4180",
+    "name_en": "FITAIHI GROUP",
+    "name_ar": "فتيحي",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "4190": {
+    "symbol": "4190",
+    "name_en": "JARIR",
+    "name_ar": "جرير",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4191": {
+    "symbol": "4191",
+    "name_en": "ABO MOATI",
+    "name_ar": "أبو معطي",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4200": {
+    "symbol": "4200",
+    "name_en": "ALDREES",
+    "name_ar": "الدريس",
+    "sector": "Energy"
+  },
+  "4210": {
+    "symbol": "4210",
+    "name_en": "SRMG",
+    "name_ar": "مجموعة سرم",
+    "sector": "Media and Entertainment"
+  },
+  "4220": {
+    "symbol": "4220",
+    "name_en": "EMAAR EC",
+    "name_ar": "إعمار المدينة الاقتصادية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4230": {
+    "symbol": "4230",
+    "name_en": "RED SEA",
+    "name_ar": "البحر الأحمر العالمية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4250": {
+    "symbol": "4250",
+    "name_en": "JABAL OMAR",
+    "name_ar": "جبل عمر",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4261": {
+    "symbol": "4261",
+    "name_en": "THEEB",
+    "name_ar": "ذيب لتأجير السيارات",
+    "sector": "Transportation"
+  },
+  "4264": {
+    "symbol": "4264",
+    "name_en": "FLYNAS",
+    "name_ar": "طيران ناس",
+    "sector": "Transportation"
+  },
+  "4270": {
+    "symbol": "4270",
+    "name_en": "SPPC",
+    "name_ar": "الورق السعودية",
+    "sector": "Commercial & Professional Svc"
+  },
+  "4280": {
+    "symbol": "4280",
+    "name_en": "KINGDOM",
+    "name_ar": "المملكة القابضة",
+    "sector": "Financial Services"
+  },
+  "4290": {
+    "symbol": "4290",
+    "name_en": "ALKHALEEJ TRNG",
+    "name_ar": "الخليج للتدريب والتعليم",
+    "sector": "Consumer Services"
+  },
+  "4291": {
+    "symbol": "4291",
+    "name_en": "NCLE",
+    "name_ar": "التعليم الوطنية",
+    "sector": "Consumer Services"
+  },
+  "4292": {
+    "symbol": "4292",
+    "name_en": "ATAA",
+    "name_ar": "عطاء التعليمية",
+    "sector": "Consumer Services"
+  },
+  "4300": {
+    "symbol": "4300",
+    "name_en": "DAR ALARKAN",
+    "name_ar": "دار الأركان",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4310": {
+    "symbol": "4310",
+    "name_en": "KEC",
+    "name_ar": "مدينة المعرفة الاقتصادية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4320": {
+    "symbol": "4320",
+    "name_en": "ALANDALUS",
+    "name_ar": "الأندلس العقارية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4321": {
+    "symbol": "4321",
+    "name_en": "CENOMI CENTERS",
+    "name_ar": "سنومي سنترز",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4322": {
+    "symbol": "4322",
+    "name_en": "RETAL",
+    "name_ar": "ريتال للتطوير الحضري",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4323": {
+    "symbol": "4323",
+    "name_en": "SUMOU",
+    "name_ar": "سمو العقارية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4324": {
+    "symbol": "4324",
+    "name_en": "BANAN",
+    "name_ar": "بنان العقارية",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4325": {
+    "symbol": "4325",
+    "name_en": "MASAR",
+    "name_ar": "مسار للتطوير العقاري",
+    "sector": "Real Estate Mgmt & Dev't"
+  },
+  "4330": {
+    "symbol": "4330",
+    "name_en": "RIYAD REIT",
+    "name_ar": "صندوق الرياض ريت",
+    "sector": "REITs"
+  },
+  "4331": {
+    "symbol": "4331",
+    "name_en": "ALJAZIRA REIT",
+    "name_ar": "صندوق الجزيرة ريت",
+    "sector": "REITs"
+  },
+  "4332": {
+    "symbol": "4332",
+    "name_en": "JADWA REIT ALHARAMAIN",
+    "name_ar": "صندوق جدوى ريت الحرمين",
+    "sector": "nan"
+  },
+  "4333": {
+    "symbol": "4333",
+    "name_en": "TALEEM REIT",
+    "name_ar": "صندوق تعليم ريت",
+    "sector": "REITs"
+  },
+  "4334": {
+    "symbol": "4334",
+    "name_en": "AL MAATHER REIT",
+    "name_ar": "صندوق المآثر ريت",
+    "sector": "REITs"
+  },
+  "4335": {
+    "symbol": "4335",
+    "name_en": "MUSHARAKA REIT",
+    "name_ar": "صندوق مشاركة ريت",
+    "sector": "REITs"
+  },
+  "4336": {
+    "symbol": "4336",
+    "name_en": "MULKIA REIT",
+    "name_ar": "صندوق ملكية الخليجي ريت",
+    "sector": "REITs"
+  },
+  "4337": {
+    "symbol": "4337",
+    "name_en": "SICO SAUDI REIT",
+    "name_ar": "صندوق سيكو السعودي ريت",
+    "sector": "REITs"
+  },
+  "4338": {
+    "symbol": "4338",
+    "name_en": "ALAHLI REIT 1",
+    "name_ar": "صندوق الأهلي ريت 1",
+    "sector": "REITs"
+  },
+  "4339": {
+    "symbol": "4339",
+    "name_en": "DERAYAH REIT",
+    "name_ar": "صندوق درة ريت",
+    "sector": "REITs"
+  },
+  "4340": {
+    "symbol": "4340",
+    "name_en": "Al RAJHI REIT",
+    "name_ar": "صندوق الراجحي ريت",
+    "sector": "REITs"
+  },
+  "4342": {
+    "symbol": "4342",
+    "name_en": "JADWA REIT SAUDI",
+    "name_ar": "صندوق جدوى ريت السعودي",
+    "sector": "REITs"
+  },
+  "4344": {
+    "symbol": "4344",
+    "name_en": "SEDCO CAPITAL REIT",
+    "name_ar": "صندوق سدكو كابيتال ريت",
+    "sector": "REITs"
+  },
+  "4345": {
+    "symbol": "4345",
+    "name_en": "ALINMA RETAIL REIT",
+    "name_ar": "صندوق الإنماء للمتاجر ريت",
+    "sector": "REITs"
+  },
+  "4346": {
+    "symbol": "4346",
+    "name_en": "MEFIC REIT",
+    "name_ar": "صندوق مفيك ريت",
+    "sector": "REITs"
+  },
+  "4347": {
+    "symbol": "4347",
+    "name_en": "BONYAN REIT",
+    "name_ar": "صندوق بنيان ريت",
+    "sector": "REITs"
+  },
+  "4348": {
+    "symbol": "4348",
+    "name_en": "ALKHABEER REIT",
+    "name_ar": "صندوق الخبير ريت",
+    "sector": "REITs"
+  },
+  "4349": {
+    "symbol": "4349",
+    "name_en": "ALINMA HOSPITALITY REIT",
+    "name_ar": "صندوق الإنماء للضيافة ريت",
+    "sector": "nan"
+  },
+  "4350": {
+    "symbol": "4350",
+    "name_en": "ALISTITHMAR REIT",
+    "name_ar": "صندوق الاستثمار ريت",
+    "sector": "REITs"
+  },
+  "5110": {
+    "symbol": "5110",
+    "name_en": "SAUDI ELECTRICITY",
+    "name_ar": "الكهرباء السعودية",
+    "sector": "Utilities"
+  },
+  "6001": {
+    "symbol": "6001",
+    "name_en": "HB",
+    "name_ar": "الحلواني إخوان",
+    "sector": "Food & Beverages"
+  },
+  "6002": {
+    "symbol": "6002",
+    "name_en": "HERFY FOODS",
+    "name_ar": "هرفي للأغذية",
+    "sector": "Consumer Services"
+  },
+  "6004": {
+    "symbol": "6004",
+    "name_en": "CATRION",
+    "name_ar": "كاتريون",
+    "sector": "Commercial & Professional Svc"
+  },
+  "6010": {
+    "symbol": "6010",
+    "name_en": "NADEC",
+    "name_ar": "نادك",
+    "sector": "Food & Beverages"
+  },
+  "6012": {
+    "symbol": "6012",
+    "name_en": "RAYDAN",
+    "name_ar": "ريدان للأغذية",
+    "sector": "Consumer Services"
+  },
+  "6013": {
+    "symbol": "6013",
+    "name_en": "DWF",
+    "name_ar": "ديوان الإسكان",
+    "sector": "Consumer Services"
+  },
+  "6014": {
+    "symbol": "6014",
+    "name_en": "ALAMAR",
+    "name_ar": "العلمار للأغذية",
+    "sector": "Consumer Services"
+  },
+  "6015": {
+    "symbol": "6015",
+    "name_en": "AMERICANA",
+    "name_ar": "أمريكانا",
+    "sector": "Consumer Services"
+  },
+  "6016": {
+    "symbol": "6016",
+    "name_en": "BURGERIZZR",
+    "name_ar": "برجرايزر",
+    "sector": "Consumer Services"
+  },
+  "6018": {
+    "symbol": "6018",
+    "name_en": "SPORT CLUBS",
+    "name_ar": "الأندية الرياضية",
+    "sector": "Consumer Services"
+  },
+  "6040": {
+    "symbol": "6040",
+    "name_en": "TADCO",
+    "name_ar": "تادكو",
+    "sector": "Food & Beverages"
+  },
+  "6050": {
+    "symbol": "6050",
+    "name_en": "SFICO",
+    "name_ar": "الأسماك",
+    "sector": "Food & Beverages"
+  },
+  "6070": {
+    "symbol": "6070",
+    "name_en": "ALJOUF",
+    "name_ar": "الجوف الزراعية",
+    "sector": "Food & Beverages"
+  },
+  "6090": {
+    "symbol": "6090",
+    "name_en": "JAZADCO",
+    "name_ar": "جازادكو",
+    "sector": "Food & Beverages"
+  },
+  "7010": {
+    "symbol": "7010",
+    "name_en": "STC",
+    "name_ar": "الاتصالات السعودية",
+    "sector": "Telecommunication Services"
+  },
+  "7020": {
+    "symbol": "7020",
+    "name_en": "ETIHAD ETISALAT",
+    "name_ar": "اتحاد اتصالات",
+    "sector": "Telecommunication Services"
+  },
+  "7030": {
+    "symbol": "7030",
+    "name_en": "ZAIN KSA",
+    "name_ar": "زين السعودية",
+    "sector": "Telecommunication Services"
+  },
+  "7040": {
+    "symbol": "7040",
+    "name_en": "GO TELECOM",
+    "name_ar": "جو للاتصالات",
+    "sector": "Telecommunication Services"
+  },
+  "7200": {
+    "symbol": "7200",
+    "name_en": "MIS",
+    "name_ar": "الشرق الأوسط للاستثمار",
+    "sector": "Software & Services"
+  },
+  "7201": {
+    "symbol": "7201",
+    "name_en": "ARAB SEA",
+    "name_ar": "البحر العربي",
+    "sector": "Software & Services"
+  },
+  "7204": {
+    "symbol": "7204",
+    "name_en": "2P",
+    "name_ar": "2 بي الاستثمارية",
+    "sector": "Software & Services"
+  },
+  "7211": {
+    "symbol": "7211",
+    "name_en": "AZM",
+    "name_ar": "عزم للاستثمار",
+    "sector": "Software & Services"
+  },
+  "8010": {
+    "symbol": "8010",
+    "name_en": "TAWUNIYA",
+    "name_ar": "التعاونية للتأمين",
+    "sector": "Insurance"
+  },
+  "8012": {
+    "symbol": "8012",
+    "name_en": "JAZIRA TAKAFUL",
+    "name_ar": "الجزيرة تكافل تعاوني",
+    "sector": "Insurance"
+  },
+  "8020": {
+    "symbol": "8020",
+    "name_en": "MALATH INSURANCE",
+    "name_ar": "ملاذ للتأمين",
+    "sector": "Insurance"
+  },
+  "8030": {
+    "symbol": "8030",
+    "name_en": "MEDGULF",
+    "name_ar": "ميدغلف للتأمين",
+    "sector": "Insurance"
+  },
+  "8040": {
+    "symbol": "8040",
+    "name_en": "MUTAKAMELA",
+    "name_ar": "الأهلية للتأمين",
+    "sector": "Insurance"
+  },
+  "8050": {
+    "symbol": "8050",
+    "name_en": "SALAMA",
+    "name_ar": "سلامة للتأمين",
+    "sector": "Insurance"
+  },
+  "8060": {
+    "symbol": "8060",
+    "name_en": "WALAA",
+    "name_ar": "ولاء للتأمين",
+    "sector": "Insurance"
+  },
+  "8070": {
+    "symbol": "8070",
+    "name_en": "ARABIAN SHIELD",
+    "name_ar": "الدرع العربي للتأمين",
+    "sector": "Insurance"
+  },
+  "8100": {
+    "symbol": "8100",
+    "name_en": "SAICO",
+    "name_ar": "سايكو",
+    "sector": "Insurance"
+  },
+  "8120": {
+    "symbol": "8120",
+    "name_en": "GULF UNION ALAHLIA",
+    "name_ar": "الخليج الأهلية",
+    "sector": "Insurance"
+  },
+  "8150": {
+    "symbol": "8150",
+    "name_en": "ACIG",
+    "name_ar": "العالمية للتأمين",
+    "sector": "Insurance"
+  },
+  "8160": {
+    "symbol": "8160",
+    "name_en": "AICC",
+    "name_ar": "الأهلي للتكافل",
+    "sector": "Insurance"
+  },
+  "8170": {
+    "symbol": "8170",
+    "name_en": "ALETIHAD",
+    "name_ar": "الاتحاد للتأمين",
+    "sector": "Insurance"
+  },
+  "8180": {
+    "symbol": "8180",
+    "name_en": "ALSAGR INSURANCE",
+    "name_ar": "الصقر للتأمين",
+    "sector": "Insurance"
+  },
+  "8190": {
+    "symbol": "8190",
+    "name_en": "UCA",
+    "name_ar": "المتحدة للتأمين",
+    "sector": "Insurance"
+  },
+  "8230": {
+    "symbol": "8230",
+    "name_en": "ALRAJHI TAKAFUL",
+    "name_ar": "الراجحي للتأمين التعاوني",
+    "sector": "Insurance"
+  },
+  "8240": {
+    "symbol": "8240",
+    "name_en": "CHUBB",
+    "name_ar": "شب العربية للتأمين التعاوني",
+    "sector": "Insurance"
+  },
+  "8250": {
+    "symbol": "8250",
+    "name_en": "GIG",
+    "name_ar": "مجموعة الخليج للتأمين",
+    "sector": "Insurance"
+  },
+  "8260": {
+    "symbol": "8260",
+    "name_en": "GULF GENERAL",
+    "name_ar": "الخليج العامة",
+    "sector": "Insurance"
+  },
+  "8300": {
+    "symbol": "8300",
+    "name_en": "WATANIYA",
+    "name_ar": "الوطنية للتأمين",
+    "sector": "Insurance"
+  },
+  "8310": {
+    "symbol": "8310",
+    "name_en": "AMANA INSURANCE",
+    "name_ar": "أمانة للتأمين",
+    "sector": "Insurance"
+  },
+  "9300": {
+    "symbol": "9300",
+    "name_en": "Al Waha REIT Fund",
+    "name_ar": "صندوق الواحة ريت",
+    "sector": "Real Estate"
+  },
+  "9510": {
+    "symbol": "9510",
+    "name_en": "National Building Materials",
+    "name_ar": "مواد البناء الوطنية",
+    "sector": "Materials"
+  },
+  "9513": {
+    "symbol": "9513",
+    "name_en": "Watani Steel",
+    "name_ar": "الوطني للحديد",
+    "sector": "Materials"
+  },
+  "9518": {
+    "symbol": "9518",
+    "name_en": "Capital Market Company for Engineering and Construction",
+    "name_ar": "سوق المال للهندسة والإنشاءات",
+    "sector": "Capital Goods"
+  },
+  "9522": {
+    "symbol": "9522",
+    "name_en": "Al Hasoob Information Systems",
+    "name_ar": "الحاسوب",
+    "sector": "Technology"
+  },
+  "9523": {
+    "symbol": "9523",
+    "name_en": "Group Five",
+    "name_ar": "جروب فايف",
+    "sector": "Capital Goods"
+  },
+  "9530": {
+    "symbol": "9530",
+    "name_en": "Tibbiyah",
+    "name_ar": "طبية",
+    "sector": "Healthcare"
+  },
+  "9537": {
+    "symbol": "9537",
+    "name_en": "Amwaj International",
+    "name_ar": "أمواج العالمية",
+    "sector": "Capital Goods"
+  },
+  "9538": {
+    "symbol": "9538",
+    "name_en": "Naseej Technology",
+    "name_ar": "نسيج التقنية",
+    "sector": "Technology"
+  },
+  "9542": {
+    "symbol": "9542",
+    "name_en": "KEIR",
+    "name_ar": "كير",
+    "sector": "Capital Goods"
+  },
+  "9546": {
+    "symbol": "9546",
+    "name_en": "Naba Alsaha",
+    "name_ar": "نبأ الصحة",
+    "sector": "Healthcare"
+  },
+  "9551": {
+    "symbol": "9551",
+    "name_en": "Knowledge Tower",
+    "name_ar": "برج المعرفة",
+    "sector": "Consumer Services"
+  },
+  "9556": {
+    "symbol": "9556",
+    "name_en": "Nofoth",
+    "name_ar": "نفوث",
+    "sector": "Technology"
+  },
+  "9558": {
+    "symbol": "9558",
+    "name_en": "Al Qemam",
+    "name_ar": "القمم",
+    "sector": "Real Estate"
+  },
+  "9559": {
+    "symbol": "9559",
+    "name_en": "Balady",
+    "name_ar": "بلدي",
+    "sector": "Consumer Services"
+  },
+  "9561": {
+    "symbol": "9561",
+    "name_en": "Knowledge Net",
+    "name_ar": "شبكة المعرفة",
+    "sector": "Technology"
+  },
+  "9569": {
+    "symbol": "9569",
+    "name_en": "Al Muneef",
+    "name_ar": "المنيف",
+    "sector": "Materials"
+  },
+  "9570": {
+    "symbol": "9570",
+    "name_en": "TAM Development",
+    "name_ar": "تام للتطوير",
+    "sector": "Real Estate"
+  },
+  "9571": {
+    "symbol": "9571",
+    "name_en": "Munawala",
+    "name_ar": "مناولة",
+    "sector": "Transportation"
+  },
+  "9574": {
+    "symbol": "9574",
+    "name_en": "Pro Medex",
+    "name_ar": "برو ميدكس",
+    "sector": "Healthcare"
+  },
+  "9577": {
+    "symbol": "9577",
+    "name_en": "Dar Al Markabah",
+    "name_ar": "دار المركبة",
+    "sector": "Transportation"
+  },
+  "9580": {
+    "symbol": "9580",
+    "name_en": "Al Rashid Industrial",
+    "name_ar": "الراشد الصناعية",
+    "sector": "Materials"
+  },
+  "9583": {
+    "symbol": "9583",
+    "name_en": "United Mining",
+    "name_ar": "التعدين المتحدة",
+    "sector": "Materials"
+  },
+  "9586": {
+    "symbol": "9586",
+    "name_en": "Osool and Bakheet Investment Company",
+    "name_ar": "أصول وبخيت",
+    "sector": "Diversified Financials"
+  },
+  "9591": {
+    "symbol": "9591",
+    "name_en": "View",
+    "name_ar": "فيو",
+    "sector": "Consumer Services"
+  },
+  "9592": {
+    "symbol": "9592",
+    "name_en": "Al Mujtama Medical",
+    "name_ar": "المجتمع الطبية",
+    "sector": "Healthcare"
+  },
+  "9593": {
+    "symbol": "9593",
+    "name_en": "Pan Gulf",
+    "name_ar": "بان جلف",
+    "sector": "Capital Goods"
+  },
+  "9594": {
+    "symbol": "9594",
+    "name_en": "Al Modawat",
+    "name_ar": "المداوت",
+    "sector": "Healthcare"
+  },
+  "9595": {
+    "symbol": "9595",
+    "name_en": "WSM",
+    "name_ar": "حلول الشرق الأوسط",
+    "sector": "Technology"
+  },
+  "9599": {
+    "symbol": "9599",
+    "name_en": "Taqat",
+    "name_ar": "طاقات",
+    "sector": "Commercial & Professional Services"
+  },
+  "9601": {
+    "symbol": "9601",
+    "name_en": "Al Rasheed",
+    "name_ar": "الرشيد",
+    "sector": "Capital Goods"
+  },
+  "9612": {
+    "symbol": "9612",
+    "name_en": "Sama Water",
+    "name_ar": "سما المياه",
+    "sector": "Utilities"
+  },
+  "9618": {
+    "symbol": "9618",
+    "name_en": "Al Fakhera",
+    "name_ar": "الفاخرة",
+    "sector": "Consumer Discretionary"
+  },
+  "9619": {
+    "symbol": "9619",
+    "name_en": "Multi Business",
+    "name_ar": "متعدد الأعمال",
+    "sector": "Diversified Financials"
+  },
+  "9620": {
+    "symbol": "9620",
+    "name_en": "Balsm Medical",
+    "name_ar": "بلسم الطبية",
+    "sector": "Healthcare"
+  },
+  "9622": {
+    "symbol": "9622",
+    "name_en": "SMC",
+    "name_ar": "إس إم سي",
+    "sector": "Healthcare"
+  },
+  "9625": {
+    "symbol": "9625",
+    "name_en": "Itmam",
+    "name_ar": "إتمام",
+    "sector": "Capital Goods"
+  },
+  "9626": {
+    "symbol": "9626",
+    "name_en": "Smile Care",
+    "name_ar": "سمايل كير",
+    "sector": "Healthcare"
+  },
+  "9628": {
+    "symbol": "9628",
+    "name_en": "Lamasat",
+    "name_ar": "لمسات",
+    "sector": "Consumer Services"
+  },
+  "9636": {
+    "symbol": "9636",
+    "name_en": "Al Kuzama",
+    "name_ar": "الكزامى",
+    "sector": "Consumer Services"
+  },
+  "9637": {
+    "symbol": "9637",
+    "name_en": "Axelerated Solutions",
+    "name_ar": "أكسيليريتد سولوشنز",
+    "sector": "Technology"
+  },
+  "9639": {
+    "symbol": "9639",
+    "name_en": "Anmat",
+    "name_ar": "أنمات",
+    "sector": "Materials"
+  },
+  "9640": {
+    "symbol": "9640",
+    "name_en": "Asas Makeen",
+    "name_ar": "أساس مكين",
+    "sector": "Technology"
+  },
+  "9642": {
+    "symbol": "9642",
+    "name_en": "Time",
+    "name_ar": "الوقت",
+    "sector": "Consumer Services"
+  },
+  "9644": {
+    "symbol": "9644",
+    "name_en": "National Agriculture and Food",
+    "name_ar": "الزراعة والأغذية الوطنية",
+    "sector": "Consumer Staples"
+  },
+  "9408": {
+    "symbol": "9408",
+    "name_en": "AlBilad Saudi Growth",
+    "name_ar": "البلاد للنمو السعودي",
+    "sector": "Diversified Financials"
+  },
+  "2380": {
+    "symbol": "2380",
+    "name_en": "PETRO RABIGH",
+    "name_ar": "",
+    "sector": "Energy"
+  },
+  "1320": {
+    "symbol": "1320",
+    "name_en": "SSP",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "1321": {
+    "symbol": "1321",
+    "name_en": "EAST PIPES",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2090": {
+    "symbol": "2090",
+    "name_en": "NGC",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2150": {
+    "symbol": "2150",
+    "name_en": "ZOUJAJ",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2300": {
+    "symbol": "2300",
+    "name_en": "SPM",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2310": {
+    "symbol": "2310",
+    "name_en": "SIPCHEM",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2350": {
+    "symbol": "2350",
+    "name_en": "SAUDI KAYAN",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2360": {
+    "symbol": "2360",
+    "name_en": "SVCP",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "3002": {
+    "symbol": "3002",
+    "name_en": "NAJRAN CEMENT",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "3010": {
+    "symbol": "3010",
+    "name_en": "ACC",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "3092": {
+    "symbol": "3092",
+    "name_en": "RIYADH CEMENT",
+    "name_ar": "",
+    "sector": "Materials"
+  },
+  "2040": {
+    "symbol": "2040",
+    "name_en": "SAUDI CERAMICS",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "2110": {
+    "symbol": "2110",
+    "name_en": "SAUDI CABLE",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4140": {
+    "symbol": "4140",
+    "name_en": "SIECO",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4142": {
+    "symbol": "4142",
+    "name_en": "RIYADH CABLES",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4143": {
+    "symbol": "4143",
+    "name_en": "TALCO",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4144": {
+    "symbol": "4144",
+    "name_en": "RAOOM",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4145": {
+    "symbol": "4145",
+    "name_en": "OBEIKAN GLASS",
+    "name_ar": "",
+    "sector": "Capital Goods"
+  },
+  "4260": {
+    "symbol": "4260",
+    "name_en": "BUDGET SAUDI",
+    "name_ar": "",
+    "sector": "Transportation"
+  },
+  "4262": {
+    "symbol": "4262",
+    "name_en": "LUMI",
+    "name_ar": "",
+    "sector": "Transportation"
+  },
+  "4263": {
+    "symbol": "4263",
+    "name_en": "SAL",
+    "name_ar": "",
+    "sector": "Transportation"
+  },
+  "2130": {
+    "symbol": "2130",
+    "name_en": "SIDC",
+    "name_ar": "",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "2340": {
+    "symbol": "2340",
+    "name_en": "ARTEX",
+    "name_ar": "",
+    "sector": "Consumer Durables & Apparel"
+  },
+  "6017": {
+    "symbol": "6017",
+    "name_en": "JAHEZ",
+    "name_ar": "",
+    "sector": "Consumer Services"
+  },
+  "4192": {
+    "symbol": "4192",
+    "name_en": "ALSAIF GALLERY",
+    "name_ar": "",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4193": {
+    "symbol": "4193",
+    "name_en": "NICE ONE",
+    "name_ar": "",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "4240": {
+    "symbol": "4240",
+    "name_en": "CENOMI RETAIL",
+    "name_ar": "",
+    "sector": "Consumer Discretionary Distribution & Retail"
+  },
+  "2286": {
+    "symbol": "2286",
+    "name_en": "FOURTH MILLING",
+    "name_ar": "",
+    "sector": "Food & Beverages"
+  },
+  "2287": {
+    "symbol": "2287",
+    "name_en": "ENTAJ",
+    "name_ar": "",
+    "sector": "Food & Beverages"
+  },
+  "6020": {
+    "symbol": "6020",
+    "name_en": "GACO",
+    "name_ar": "",
+    "sector": "Food & Beverages"
+  },
+  "6060": {
+    "symbol": "6060",
+    "name_en": "SHARQIYAH DEV",
+    "name_ar": "",
+    "sector": "Food & Beverages"
+  },
+  "2140": {
+    "symbol": "2140",
+    "name_en": "AYYAN",
+    "name_ar": "",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "2230": {
+    "symbol": "2230",
+    "name_en": "CHEMICAL",
+    "name_ar": "",
+    "sector": "Health Care Equipment & Svc"
+  },
+  "4130": {
+    "symbol": "4130",
+    "name_en": "SAUDI DARB",
+    "name_ar": "",
+    "sector": "Financial Services"
+  },
+  "8200": {
+    "symbol": "8200",
+    "name_en": "SAUDI RE",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "8210": {
+    "symbol": "8210",
+    "name_en": "BUPA ARABIA",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "8270": {
+    "symbol": "8270",
+    "name_en": "BURUJ",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "8280": {
+    "symbol": "8280",
+    "name_en": "LIVA",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "8311": {
+    "symbol": "8311",
+    "name_en": "ENAYA",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "8313": {
+    "symbol": "8313",
+    "name_en": "RASAN",
+    "name_ar": "",
+    "sector": "Insurance"
+  },
+  "7202": {
+    "symbol": "7202",
+    "name_en": "SOLUTIONS",
+    "name_ar": "",
+    "sector": "Software & Services"
+  },
+  "7203": {
+    "symbol": "7203",
+    "name_en": "ELM",
+    "name_ar": "",
+    "sector": "Software & Services"
+  },
+  "2080": {
+    "symbol": "2080",
+    "name_en": "GASCO",
+    "name_ar": "",
+    "sector": "Utilities"
+  },
+  "2081": {
+    "symbol": "2081",
+    "name_en": "AWPT",
+    "name_ar": "",
+    "sector": "Utilities"
+  }
+}
