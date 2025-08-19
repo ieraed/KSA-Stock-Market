@@ -88,5 +88,14 @@
     "broker": "Alinma Investment",
     "notes": "",
     "last_updated": "2025-08-17T17:17:11.716696"
+  },
+  {
+    "symbol": "2050",
+    "quantity": 1061,
+    "purchase_price": 62.74,
+    "purchase_date": "2025-08-19",
+    "broker": "Alinma Investment",
+    "notes": "",
+    "last_updated": "2025-08-19T13:17:33.397340"
   }
 ]

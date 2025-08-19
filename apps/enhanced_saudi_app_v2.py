@@ -1698,6 +1698,55 @@ def main():
                     else:
                         st.success("✅ All data validated successfully!")
                         
+                        # Calculate and display import summary
+                        st.markdown("### 📊 Import Summary")
+                        
+                        # Calculate totals
+                        total_stocks = len(import_df)
+                        total_quantity = 0
+                        total_cost = 0
+                        
+                        for _, row in import_df.iterrows():
+                            try:
+                                quantity = float(str(row['quantity']).replace(',', ''))
+                                price_str = str(row['purchase_price']).replace(',', '').strip()
+                                price = float(price_str)
+                                total_quantity += quantity
+                                total_cost += (quantity * price)
+                            except (ValueError, TypeError):
+                                pass  # Skip invalid rows (already caught in validation)
+                        
+                        # Display summary in columns
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            st.metric(
+                                label="📈 Total Records",
+                                value=f"{total_stocks:,}",
+                                help="Number of stock entries to be imported"
+                            )
+                        
+                        with col2:
+                            st.metric(
+                                label="🔢 Total Shares",
+                                value=f"{total_quantity:,.0f}",
+                                help="Total number of shares across all stocks"
+                            )
+                        
+                        with col3:
+                            st.metric(
+                                label="💰 Total Investment",
+                                value=f"{total_cost:,.2f} SAR",
+                                help="Total cost of all stocks (quantity × purchase price)"
+                            )
+                        
+                        # Show unique symbols summary
+                        unique_symbols = import_df['symbol'].nunique()
+                        if unique_symbols != total_stocks:
+                            st.info(f"ℹ️ **Note**: {total_stocks} records contain {unique_symbols} unique stock symbols. Duplicate symbols will be consolidated.")
+                        
+                        st.markdown("---")
+                        
                         col1, col2 = st.columns([1, 1])
                         with col1:
                             if st.button("📥 Import Portfolio", type="primary"):
