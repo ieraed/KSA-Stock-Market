@@ -1305,7 +1305,8 @@ def main():
         # Filter stocks to only show those with proper names
         valid_stocks = {
             symbol: info for symbol, info in stocks_db.items() 
-            if info.get('name_en') and info.get('name_en') != 'Unknown'
+            if (info.get('name_en') and info.get('name_en') != 'Unknown') or 
+               (info.get('name') and info.get('name') != 'Unknown')
         }
         
         if not valid_stocks:
@@ -1318,7 +1319,8 @@ def main():
             # Create search options for the selectbox
             search_options = []
             for symbol, info in valid_stocks.items():
-                company_name = info.get('name_en', 'Unknown')
+                # Use 'name' if 'name_en' is not available
+                company_name = info.get('name_en', info.get('name', 'Unknown'))
                 search_options.append({
                     'symbol': symbol,
                     'display': f"{symbol} - {company_name}",
@@ -1379,8 +1381,10 @@ def main():
             if search_symbol and search_symbol in valid_stocks:
                 stock_info = valid_stocks[search_symbol]
                 st.markdown("### 🏢 Quick Info")
+                # Use 'name' if 'name_en' is not available
+                company_name = stock_info.get('name_en', stock_info.get('name', 'Unknown'))
                 st.markdown(f"""
-                **Company:** {stock_info.get('name_en', 'Unknown')}  
+                **Company:** {company_name}  
                 **Arabic Name:** {stock_info.get('name_ar', 'غير متوفر')}  
                 **Sector:** {stock_info.get('sector', 'N/A')}  
                 **Symbol:** {search_symbol}
@@ -1456,8 +1460,11 @@ def main():
                 st.markdown("**🏢 Company Information**")
                 col1, col2 = st.columns(2)
                 
+                # Use 'name' if 'name_en' is not available
+                company_name = stock_info.get('name_en', stock_info.get('name', 'Unknown'))
+                
                 with col1:
-                    st.write(f"**English Name:** {stock_info.get('name_en', 'N/A')}")
+                    st.write(f"**English Name:** {company_name}")
                     st.write(f"**Arabic Name:** {stock_info.get('name_ar', 'غير متوفر')}")
                     st.write(f"**Symbol:** {search_symbol}")
                 
@@ -1484,7 +1491,8 @@ def main():
                     st.markdown("**Other Companies in Sector:**")
                     other_companies = [s for s in sector_companies if s != search_symbol][:5]
                     for company in other_companies:
-                        company_name = stocks_db[company].get('name_en', company)
+                        # Use 'name' if 'name_en' is not available
+                        company_name = stocks_db[company].get('name_en', stocks_db[company].get('name', company))
                         st.write(f"• {company} - {company_name}")
                     
                     if len(other_companies) > 5:
