@@ -5,7 +5,7 @@ Import the official TASI sector data and update our JSON database
 """
 
 import json
-import pandas as pd
+import pandas as spd
 import os
 from datetime import datetime
 
