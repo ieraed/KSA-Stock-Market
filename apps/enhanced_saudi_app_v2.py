@@ -82,6 +82,43 @@ except ImportError:
         
         return signals
 
+# Broker name standardization function
+def normalize_broker_name(broker_name):
+    """Standardize broker names to group similar variations"""
+    if not broker_name or broker_name.strip() == '':
+        return 'Not Set'
+    
+    # Convert to lowercase for matching
+    broker_lower = broker_name.lower().strip()
+    
+    # BSF Capital / Fransi Capital standardization
+    if any(term in broker_lower for term in ['bsf', 'fransi']):
+        return 'BSF Capital'
+    
+    # Al Inma Capital standardization
+    if any(term in broker_lower for term in ['inma', 'al inma']):
+        return 'Al Inma Capital'
+    
+    # Add more broker standardizations as needed
+    # Al Rajhi Capital variations
+    if 'rajhi' in broker_lower:
+        return 'Al Rajhi Capital'
+    
+    # NCB Capital / AlAhli Capital variations
+    if any(term in broker_lower for term in ['ncb', 'alahli', 'al ahli']):
+        return 'NCB Capital'
+    
+    # Samba Capital variations
+    if 'samba' in broker_lower:
+        return 'Samba Capital'
+    
+    # Al Jazira Capital variations
+    if 'jazira' in broker_lower:
+        return 'Al Jazira Capital'
+    
+    # Return original name with proper title case if no match found
+    return broker_name.title()
+
 # Configure page
 st.set_page_config(
     page_title="✨ TADAWUL NEXUS",
@@ -755,11 +792,14 @@ def main():
             
             with col2:
                 if view_option == "🏢 By Broker":
-                    # Get unique brokers from portfolio
-                    brokers = list(set([stock.get('broker', 'Not Set') for stock in portfolio]))
+                    # Get unique brokers from portfolio with normalization
+                    raw_brokers = [stock.get('broker', 'Not Set') for stock in portfolio]
+                    normalized_brokers = [normalize_broker_name(broker) for broker in raw_brokers]
+                    brokers = list(set(normalized_brokers))
                     brokers = [broker for broker in brokers if broker]  # Remove empty brokers
-                    if 'Not Set' in [stock.get('broker', 'Not Set') for stock in portfolio]:
-                        brokers.append('Not Set')
+                    if 'Not Set' in normalized_brokers:
+                        if 'Not Set' not in brokers:
+                            brokers.append('Not Set')
                     
                     selected_broker = st.selectbox(
                         "Select Broker:",
@@ -773,7 +813,8 @@ def main():
             filtered_portfolio = portfolio.copy()
             
             if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
-                filtered_portfolio = [stock for stock in portfolio if stock.get('broker', 'Not Set') == selected_broker]
+                filtered_portfolio = [stock for stock in portfolio 
+                                    if normalize_broker_name(stock.get('broker', 'Not Set')) == selected_broker]
             
             for idx, stock in enumerate(filtered_portfolio, 1):  # Start numbering from 1
                 stock_data = get_stock_data(stock['symbol'])
@@ -799,7 +840,7 @@ def main():
                     'Current Value': f"{current_value:,.2f} SAR",  # Add thousands separator
                     'P&L': f"{gain_loss:+,.2f} SAR",  # Show +/- and 2 decimals
                     'P&L %': f"{gain_loss_pct:+.2f}%",  # Show +/- and 2 decimals
-                    'Broker': stock.get('broker', 'Not Set'),  # Add broker column
+                    'Broker': normalize_broker_name(stock.get('broker', 'Not Set')),  # Add normalized broker column
                     'Purchase Date': stock.get('purchase_date', 'Unknown')  # Add purchase date
                 })
             
@@ -808,8 +849,9 @@ def main():
                 
                 # Display broker-specific summary if filtering by broker
                 if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
-                    # Calculate broker-specific metrics
-                    broker_portfolio = [stock for stock in portfolio if stock.get('broker', 'Not Set') == selected_broker]
+                    # Calculate broker-specific metrics using normalized names
+                    broker_portfolio = [stock for stock in portfolio 
+                                      if normalize_broker_name(stock.get('broker', 'Not Set')) == selected_broker]
                     broker_stats = calculate_portfolio_value(broker_portfolio)
                     
                     st.markdown(f"#### 🏢 {selected_broker} Holdings Summary")
@@ -970,20 +1012,21 @@ def main():
             broker_name = st.selectbox(
                 "Broker:",
                 options=[
+                    "BSF Capital",  # Standardized (includes Fransi Capital)
+                    "Al Inma Capital",  # Standardized (includes Alinma Investment)
                     "Al Rajhi Capital",
+                    "NCB Capital",
+                    "Samba Capital",
+                    "Al Jazira Capital",
                     "SNB Capital", 
                     "Riyad Capital",
                     "SABB Securities",
-                    "NCB Capital",
-                    "Aljazira Capital",
-                    "Alinma Investment",
                     "Albilad Investment",
-                    "Fransi Capital",
                     "Jadwa Investment",
                     "Other"
                 ],
                 index=0,
-                help="Select your broker"
+                help="Select your broker (similar names are automatically grouped)"
             )
         
         # If "Other" is selected, allow custom broker name
@@ -1020,7 +1063,7 @@ def main():
                         'quantity': total_qty,
                         'purchase_price': avg_price,
                         'purchase_date': purchase_date.isoformat(),
-                        'broker': broker_name,
+                        'broker': normalize_broker_name(broker_name),
                         'notes': transaction_notes,
                         'last_updated': datetime.now().isoformat()
                     }
@@ -1033,7 +1076,7 @@ def main():
                         'quantity': quantity,
                         'purchase_price': purchase_price,
                         'purchase_date': purchase_date.isoformat(),
-                        'broker': broker_name,
+                        'broker': normalize_broker_name(broker_name),
                         'notes': transaction_notes,
                         'last_updated': datetime.now().isoformat()
                     }
