@@ -1302,59 +1302,78 @@ def main():
     elif selected_page == "🔍 Stock Research":
         st.markdown("## 🔍 Stock Research")
         
-        # Add search functionality
-        st.markdown("### 🔍 Find Your Stock")
-        
         # Filter stocks to only show those with proper names
         valid_stocks = {
             symbol: info for symbol, info in stocks_db.items() 
             if info.get('name_en') and info.get('name_en') != 'Unknown'
         }
         
-        # Search options
-        search_method = st.radio(
-            "Search by:",
-            ["Stock Symbol", "Company Name"],
-            horizontal=True
-        )
-        
-        if search_method == "Stock Symbol":
-            search_symbol = st.selectbox(
-                "Select Stock Symbol:",
-                options=list(valid_stocks.keys()),
-                format_func=lambda x: f"{x} - {valid_stocks[x].get('name_en', 'Unknown')}"
-            )
+        if not valid_stocks:
+            st.error("No valid stocks found in database")
+            search_symbol = None
         else:
-            # Search by company name
-            search_text = st.text_input("Type company name:", placeholder="e.g., Saudi Aramco, Al Rajhi Bank...")
+            # Smart search box - handles both symbol and company name
+            st.markdown("### 🔍 Search for Any Stock")
             
-            if search_text:
-                # Filter companies by name
-                matching_companies = {
-                    symbol: info for symbol, info in valid_stocks.items()
-                    if search_text.lower() in info.get('name_en', '').lower() or 
-                       search_text.lower() in info.get('name_ar', '').lower()
-                }
+            # Create search options for the selectbox
+            search_options = []
+            for symbol, info in valid_stocks.items():
+                company_name = info.get('name_en', 'Unknown')
+                search_options.append({
+                    'symbol': symbol,
+                    'display': f"{symbol} - {company_name}",
+                    'name': company_name,
+                    'search_text': f"{symbol} {company_name}".lower()
+                })
+            
+            # Smart search with filtering
+            search_query = st.text_input(
+                "Type stock symbol or company name:",
+                placeholder="e.g., 2222, Aramco, Al Rajhi, Saudi Basic..."
+            )
+            
+            # Filter options based on search query
+            if search_query:
+                query_lower = search_query.lower()
+                filtered_options = [
+                    opt for opt in search_options
+                    if query_lower in opt['search_text']
+                ]
                 
-                if matching_companies:
-                    search_symbol = st.selectbox(
-                        "Matching Companies:",
-                        options=list(matching_companies.keys()),
-                        format_func=lambda x: f"{x} - {matching_companies[x].get('name_en', 'Unknown')}"
-                    )
+                if filtered_options:
+                    # Show matching results
+                    if len(filtered_options) == 1:
+                        # Auto-select if only one match
+                        search_symbol = filtered_options[0]['symbol']
+                        st.success(f"✅ Found: **{filtered_options[0]['display']}**")
+                    else:
+                        # Show dropdown with filtered results
+                        st.write(f"🔍 Found {len(filtered_options)} matching stocks:")
+                        selected_option = st.selectbox(
+                            "Select from matches:",
+                            options=filtered_options,
+                            format_func=lambda x: x['display'],
+                            key="filtered_search"
+                        )
+                        search_symbol = selected_option['symbol'] if selected_option else None
                 else:
-                    st.warning("No companies found matching your search.")
+                    st.warning("❌ No stocks found matching your search. Try different keywords.")
                     search_symbol = None
             else:
-                search_symbol = None
+                # Show all options when no search query
+                selected_option = st.selectbox(
+                    "Or select from all stocks:",
+                    options=search_options,
+                    format_func=lambda x: x['display'],
+                    key="all_stocks"
+                )
+                search_symbol = selected_option['symbol'] if selected_option else None
         
         # Stock analysis section
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            if not valid_stocks:
-                st.error("No valid stocks found in database")
-                search_symbol = None
+            st.markdown("### 🔍 Search Results")
         
         with col2:
             if search_symbol and search_symbol in valid_stocks:
@@ -1371,6 +1390,16 @@ def main():
                 sector = stock_info.get('sector', 'N/A')
                 if sector != 'N/A':
                     st.markdown(f"<span style='background-color: #1f77b4; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;'>{sector}</span>", unsafe_allow_html=True)
+            else:
+                st.info("👆 Use the search box above to find any Saudi stock by symbol or company name")
+                st.markdown("""
+                **Search Examples:**
+                - Type **2222** to find Saudi Aramco
+                - Type **Aramco** to find Saudi Aramco  
+                - Type **Al Rajhi** to find Al Rajhi Bank
+                - Type **1120** to find Al Rajhi Bank
+                - Type **SABIC** to find Saudi Basic Industries
+                """)
         
         if search_symbol and search_symbol in valid_stocks:
             stock_info = valid_stocks[search_symbol]
