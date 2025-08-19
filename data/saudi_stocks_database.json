@@ -1552,5 +1552,11 @@
     "sector": "Real Estate Mgmt & Dev't",
     "symbol": "4325",
     "sequence": 259
+  },
+  "9408": {
+    "name": "AlBilad Saudi Growth",
+    "sector": "Diversified Financials",
+    "symbol": "9408",
+    "sequence": 260
   }
 }

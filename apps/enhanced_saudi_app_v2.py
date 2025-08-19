@@ -1523,7 +1523,7 @@ def main():
                 
                 export_data.append({
                     'Symbol': stock['symbol'],
-                    'Company': stock_info.get('name_en', 'Unknown'),
+                    'Company': stock_info.get('name', 'Unknown'),
                     'Quantity': stock['quantity'],
                     'Purchase Price': stock['purchase_price'],
                     'Current Price': stock_data.get('current_price', 0),
