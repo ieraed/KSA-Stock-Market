@@ -717,7 +717,7 @@ def main():
                 holdings_data.append({
                     '#': idx,  # Add row number as first column
                     'Symbol': stock['symbol'],
-                    'Company': stock_info.get('name_en', 'Unknown'),
+                    'Company': stock_info.get('name', 'Unknown'),
                     'Quantity': f"{quantity:,.0f}",  # Format with thousands separator
                     'Purchase Price': f"{purchase_price:.2f} SAR",
                     'Total Cost': f"{cost_basis:,.2f} SAR",  # Add Total Cost column
@@ -763,7 +763,7 @@ def main():
                 # Fallback to manual creation
                 stock_options = []
                 for symbol, data in stocks_db.items():
-                    name_en = data.get('name_en', 'Unknown Company')
+                    name_en = data.get('name', 'Unknown Company')
                     name_ar = data.get('name_ar', '')
                     sector = data.get('sector', '')
                     
@@ -797,7 +797,7 @@ def main():
                 # Display stock info with validation
                 st.markdown(f"""
                 <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px;">
-                    <h4 style="margin: 0; color: #1565c0;">{stock_info.get('name_en', 'Unknown')}</h4>
+                    <h4 style="margin: 0; color: #1565c0;">{stock_info.get('name', 'Unknown')}</h4>
                     <p style="margin: 0.3rem 0 0 0; font-size: 0.9rem; color: #424242;">
                         <strong>Symbol:</strong> {selected_symbol}<br>
                         <strong>Sector:</strong> {stock_info.get('sector', 'N/A')}<br>
@@ -882,7 +882,7 @@ def main():
                         'last_updated': datetime.now().isoformat()
                     }
                     
-                    st.success(f"✅ Updated {stock_info.get('name_en')} holding! New quantity: {total_qty}")
+                    st.success(f"✅ Updated {stock_info.get('name')} holding! New quantity: {total_qty}")
                 else:
                     # Add new stock
                     new_stock = {
@@ -896,7 +896,7 @@ def main():
                     }
                     portfolio.append(new_stock)
                     
-                    st.success(f"✅ Added {stock_info.get('name_en')} to your portfolio!")
+                    st.success(f"✅ Added {stock_info.get('name')} to your portfolio!")
                 
                 # Save portfolio
                 if save_portfolio(portfolio):
@@ -922,7 +922,7 @@ def main():
                 for i, stock in enumerate(portfolio):
                     stock_info = stocks_db.get(stock['symbol'], {})
                     
-                    with st.expander(f"{stock['symbol']} - {stock_info.get('name_en', 'Unknown')} ({stock['quantity']:,} shares)"):
+                    with st.expander(f"{stock['symbol']} - {stock_info.get('name', 'Unknown')} ({stock['quantity']:,} shares)"):
                         col1, col2 = st.columns([3, 1])
                         
                         with col1:
@@ -941,7 +941,7 @@ def main():
                             
                             # Show current stock info for validation
                             if stock_info:
-                                st.write(f"**Company:** {stock_info.get('name_en', 'Unknown')}")
+                                st.write(f"**Company:** {stock_info.get('name', 'Unknown')}")
                                 st.write(f"**Sector:** {stock_info.get('sector', 'Unknown')}")
                                 if stock_info.get('current_price'):
                                     current_value = stock['quantity'] * float(stock_info.get('current_price', 0))
@@ -964,7 +964,7 @@ def main():
                     stock_options_edit = []
                     for i, stock in enumerate(portfolio):
                         stock_info = stocks_db.get(stock['symbol'], {})
-                        option_text = f"{stock['symbol']} - {stock_info.get('name_en', 'Unknown')} ({stock['quantity']:,} shares)"
+                        option_text = f"{stock['symbol']} - {stock_info.get('name', 'Unknown')} ({stock['quantity']:,} shares)"
                         stock_options_edit.append((option_text, i))
                     
                     selected_edit_option = st.selectbox(
@@ -984,7 +984,7 @@ def main():
                         edit_stock = portfolio[selected_stock_idx]
                         stock_info = stocks_db.get(edit_stock['symbol'], {})
                         
-                        st.markdown(f"**Editing:** {edit_stock['symbol']} - {stock_info.get('name_en', 'Unknown')}")
+                        st.markdown(f"**Editing:** {edit_stock['symbol']} - {stock_info.get('name', 'Unknown')}")
                         
                         # Edit form
                         with st.form(f"edit_form_{selected_stock_idx}"):
