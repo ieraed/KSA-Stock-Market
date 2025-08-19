@@ -1701,49 +1701,107 @@ def main():
                         # Calculate and display import summary
                         st.markdown("### 📊 Import Summary")
                         
-                        # Calculate totals
-                        total_stocks = len(import_df)
-                        total_quantity = 0
-                        total_cost = 0
+                        # Load existing portfolio to calculate current totals
+                        portfolio_file = Path("user_portfolio.json")
+                        existing_portfolio = []
+                        if portfolio_file.exists():
+                            try:
+                                with open(portfolio_file, 'r') as f:
+                                    existing_portfolio = json.load(f)
+                            except:
+                                existing_portfolio = []
+                        
+                        # Calculate current portfolio totals
+                        current_stocks = len(existing_portfolio)
+                        current_quantity = sum(stock.get('quantity', 0) for stock in existing_portfolio)
+                        current_cost = sum(stock.get('quantity', 0) * stock.get('purchase_price', 0) for stock in existing_portfolio)
+                        
+                        # Calculate import file totals
+                        import_stocks = len(import_df)
+                        import_quantity = 0
+                        import_cost = 0
                         
                         for _, row in import_df.iterrows():
                             try:
                                 quantity = float(str(row['quantity']).replace(',', ''))
                                 price_str = str(row['purchase_price']).replace(',', '').strip()
                                 price = float(price_str)
-                                total_quantity += quantity
-                                total_cost += (quantity * price)
+                                import_quantity += quantity
+                                import_cost += (quantity * price)
                             except (ValueError, TypeError):
                                 pass  # Skip invalid rows (already caught in validation)
                         
-                        # Display summary in columns
+                        # Calculate final totals (this is an estimate - actual may differ due to symbol consolidation)
+                        final_stocks = current_stocks + import_stocks  # Approximate
+                        final_quantity = current_quantity + import_quantity
+                        final_cost = current_cost + import_cost
+                        
+                        # Display summary in three sections
+                        st.markdown("#### 📋 Portfolio Comparison")
+                        
                         col1, col2, col3 = st.columns(3)
                         
                         with col1:
+                            st.markdown("**🏠 Current Portfolio**")
                             st.metric(
-                                label="📈 Total Records",
-                                value=f"{total_stocks:,}",
-                                help="Number of stock entries to be imported"
+                                label="Stocks",
+                                value=f"{current_stocks:,}",
+                                help="Current number of stock holdings"
+                            )
+                            st.metric(
+                                label="Shares", 
+                                value=f"{current_quantity:,.0f}",
+                                help="Current total number of individual stock shares/units owned"
+                            )
+                            st.metric(
+                                label="Current Portfolio Cost",
+                                value=f"{current_cost:,.2f} SAR",
+                                help="Current total investment value of existing portfolio"
                             )
                         
                         with col2:
+                            st.markdown("**📁 Import File**")
                             st.metric(
-                                label="🔢 Total Shares",
-                                value=f"{total_quantity:,.0f}",
-                                help="Total number of shares across all stocks"
+                                label="Records",
+                                value=f"{import_stocks:,}",
+                                help="Number of records to be imported"
+                            )
+                            st.metric(
+                                label="Shares",
+                                value=f"{import_quantity:,.0f}",
+                                help="Total number of individual stock shares/units in import file"
+                            )
+                            st.metric(
+                                label="Total Cost of Uploaded Portfolio",
+                                value=f"{import_cost:,.2f} SAR",
+                                help="Total investment cost of stocks being uploaded"
                             )
                         
                         with col3:
+                            st.markdown("**🎯 After Import**")
                             st.metric(
-                                label="💰 Total Investment",
-                                value=f"{total_cost:,.2f} SAR",
-                                help="Total cost of all stocks (quantity × purchase price)"
+                                label="Stocks",
+                                value=f"~{final_stocks:,}",
+                                delta=f"+{import_stocks}",
+                                help="Approximate final stock count (may be less due to symbol consolidation)"
+                            )
+                            st.metric(
+                                label="Shares",
+                                value=f"{final_quantity:,.0f}",
+                                delta=f"+{import_quantity:,.0f}",
+                                help="Final total number of individual stock shares/units after import"
+                            )
+                            st.metric(
+                                label="Total Investment Cost Post Uploading", 
+                                value=f"{final_cost:,.2f} SAR",
+                                delta=f"+{import_cost:,.2f}",
+                                help="Final total investment cost after uploading new portfolio data"
                             )
                         
                         # Show unique symbols summary
                         unique_symbols = import_df['symbol'].nunique()
-                        if unique_symbols != total_stocks:
-                            st.info(f"ℹ️ **Note**: {total_stocks} records contain {unique_symbols} unique stock symbols. Duplicate symbols will be consolidated.")
+                        if unique_symbols != import_stocks:
+                            st.info(f"ℹ️ **Note**: {import_stocks} records contain {unique_symbols} unique stock symbols. Duplicate symbols will be consolidated.")
                         
                         st.markdown("---")
                         
