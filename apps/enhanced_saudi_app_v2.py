@@ -739,11 +739,43 @@ def main():
             
             st.markdown("---")
             
-            # Portfolio holdings table
+            # Portfolio view options
             st.markdown("### 📋 Your Holdings")
             
+            # Add view toggle options
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                view_option = st.radio(
+                    "Portfolio View:",
+                    ["📊 All Holdings", "🏢 By Broker"],
+                    horizontal=True,
+                    help="Choose how to display your portfolio holdings"
+                )
+            
+            with col2:
+                if view_option == "🏢 By Broker":
+                    # Get unique brokers from portfolio
+                    brokers = list(set([stock.get('broker', 'Not Set') for stock in portfolio]))
+                    brokers = [broker for broker in brokers if broker]  # Remove empty brokers
+                    if 'Not Set' in [stock.get('broker', 'Not Set') for stock in portfolio]:
+                        brokers.append('Not Set')
+                    
+                    selected_broker = st.selectbox(
+                        "Select Broker:",
+                        options=["All Brokers"] + sorted(brokers),
+                        help="Filter holdings by specific broker"
+                    )
+            
             holdings_data = []
-            for idx, stock in enumerate(portfolio, 1):  # Start numbering from 1
+            
+            # Filter portfolio based on view option
+            filtered_portfolio = portfolio.copy()
+            
+            if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
+                filtered_portfolio = [stock for stock in portfolio if stock.get('broker', 'Not Set') == selected_broker]
+            
+            for idx, stock in enumerate(filtered_portfolio, 1):  # Start numbering from 1
                 stock_data = get_stock_data(stock['symbol'])
                 current_price = stock_data.get('current_price', 0)
                 quantity = stock.get('quantity', 0)
@@ -773,7 +805,76 @@ def main():
             
             if holdings_data:
                 holdings_df = pd.DataFrame(holdings_data)
-                st.dataframe(holdings_df, hide_index=True, use_container_width=True)
+                
+                # Display broker-specific summary if filtering by broker
+                if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
+                    # Calculate broker-specific metrics
+                    broker_portfolio = [stock for stock in portfolio if stock.get('broker', 'Not Set') == selected_broker]
+                    broker_stats = calculate_portfolio_value(broker_portfolio)
+                    
+                    st.markdown(f"#### 🏢 {selected_broker} Holdings Summary")
+                    
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Holdings", len(broker_portfolio))
+                    with col2:
+                        st.metric("Current Value", f"{broker_stats['total_value']:,.2f} SAR")
+                    with col3:
+                        st.metric("Total Cost", f"{broker_stats['total_cost']:,.2f} SAR")
+                    with col4:
+                        broker_gain_loss = broker_stats['total_gain_loss']
+                        broker_gain_loss_pct = broker_stats['total_gain_loss_percent']
+                        st.metric("P&L", f"{broker_gain_loss:,.2f} SAR", f"{broker_gain_loss_pct:.1f}%")
+                    
+                    st.markdown("---")
+                
+                # Display holdings table
+                if view_option == "🏢 By Broker":
+                    # Group by broker for better organization
+                    if 'selected_broker' in locals() and selected_broker == "All Brokers":
+                        # Show all brokers with groupings
+                        st.markdown("#### Holdings by Broker")
+                        
+                        # Group holdings by broker
+                        broker_groups = {}
+                        for _, row in holdings_df.iterrows():
+                            broker = row['Broker']
+                            if broker not in broker_groups:
+                                broker_groups[broker] = []
+                            broker_groups[broker].append(row)
+                        
+                        # Display each broker group
+                        for broker, broker_holdings in broker_groups.items():
+                            st.markdown(f"##### 🏢 {broker}")
+                            broker_df = pd.DataFrame(broker_holdings)
+                            
+                            # Calculate broker totals
+                            total_holdings = len(broker_holdings)
+                            total_cost = sum([float(h['Total Cost'].replace(' SAR', '').replace(',', '')) for h in broker_holdings])
+                            total_value = sum([float(h['Current Value'].replace(' SAR', '').replace(',', '')) for h in broker_holdings])
+                            total_pnl = total_value - total_cost
+                            total_pnl_pct = (total_pnl / total_cost * 100) if total_cost > 0 else 0
+                            
+                            # Show broker summary
+                            col1, col2, col3, col4 = st.columns(4)
+                            with col1:
+                                st.caption(f"Holdings: {total_holdings}")
+                            with col2:
+                                st.caption(f"Value: {total_value:,.2f} SAR")
+                            with col3:
+                                st.caption(f"Cost: {total_cost:,.2f} SAR")
+                            with col4:
+                                pnl_color = "🟢" if total_pnl >= 0 else "🔴"
+                                st.caption(f"P&L: {pnl_color} {total_pnl:+,.2f} SAR ({total_pnl_pct:+.1f}%)")
+                            
+                            st.dataframe(broker_df, hide_index=True, use_container_width=True)
+                            st.markdown("---")
+                    else:
+                        # Show single broker holdings
+                        st.dataframe(holdings_df, hide_index=True, use_container_width=True)
+                else:
+                    # Show all holdings in standard view
+                    st.dataframe(holdings_df, hide_index=True, use_container_width=True)
             
             # Portfolio performance chart
             st.markdown("### 📊 Portfolio Performance")
