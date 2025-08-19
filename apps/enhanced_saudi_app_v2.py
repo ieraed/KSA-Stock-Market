@@ -1205,32 +1205,37 @@ def main():
                             with col4:
                                 current_broker = edit_stock.get('broker', 'Al Rajhi Capital')
                                 broker_options = [
+                                    "BSF Capital",  # Standardized (includes Fransi Capital)
+                                    "Al Inma Capital",  # Standardized (includes Alinma Investment)
                                     "Al Rajhi Capital",
+                                    "NCB Capital",
+                                    "Samba Capital",
+                                    "Al Jazira Capital",
                                     "SNB Capital", 
                                     "Riyad Capital",
                                     "SABB Securities",
-                                    "NCB Capital",
-                                    "Aljazira Capital",
-                                    "Alinma Investment",
                                     "Albilad Investment",
-                                    "Fransi Capital",
                                     "Jadwa Investment",
                                     "Other"
                                 ]
                                 
+                                # Normalize current broker for comparison
+                                normalized_current_broker = normalize_broker_name(current_broker)
+                                
                                 # Find current broker index
                                 current_broker_idx = 0
-                                if current_broker in broker_options:
-                                    current_broker_idx = broker_options.index(current_broker)
+                                if normalized_current_broker in broker_options:
+                                    current_broker_idx = broker_options.index(normalized_current_broker)
                                 else:
-                                    broker_options.append(current_broker)
+                                    broker_options.append(normalized_current_broker)
                                     current_broker_idx = len(broker_options) - 1
                                 
                                 new_broker = st.selectbox(
                                     "Broker:",
                                     options=broker_options,
                                     index=current_broker_idx,
-                                    key=f"edit_broker_{selected_stock_idx}"
+                                    key=f"edit_broker_{selected_stock_idx}",
+                                    help="Select new broker (similar names are automatically grouped)"
                                 )
                             
                             # If "Other" is selected for broker
@@ -1253,13 +1258,13 @@ def main():
                             submitted = st.form_submit_button("💾 Update Stock", type="primary")
                             
                             if submitted:
-                                # Update the stock
+                                # Update the stock with normalized broker name
                                 portfolio[selected_stock_idx] = {
                                     'symbol': edit_stock['symbol'],
                                     'quantity': new_quantity,
                                     'purchase_price': new_price,
                                     'purchase_date': new_date.isoformat(),
-                                    'broker': new_broker,
+                                    'broker': normalize_broker_name(new_broker),
                                     'notes': new_notes,
                                     'last_updated': datetime.now().isoformat()
                                 }
@@ -1288,7 +1293,7 @@ def main():
                             st.write(f"Quantity: {new_quantity:,}")
                             st.write(f"Price: {new_price:.2f} SAR") 
                             st.write(f"Date: {new_date}")
-                            st.write(f"Broker: {new_broker}")
+                            st.write(f"Broker: {normalize_broker_name(new_broker)}")
                             st.write(f"Total Cost: {(new_quantity * new_price):,.2f} SAR")
         else:
             st.info("No stocks in portfolio yet. Add some stocks above!")
