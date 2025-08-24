@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Professional background matching your image -->
+  <defs>
+    <radialGradient id="logoGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#0066CC;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#2c5f41;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a472a;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main circular logo -->
+  <circle cx="40" cy="40" r="35" fill="url(#logoGrad)" stroke="#FFD700" stroke-width="2"/>
+  
+  <!-- Inner design elements -->
+  <circle cx="40" cy="40" r="25" fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
+  <circle cx="40" cy="40" r="15" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Stylized interconnected curves -->
+  <path d="M 25,30 Q 40,25 55,30 Q 40,35 25,30" fill="url(#goldGrad)" opacity="0.8"/>
+  <path d="M 25,50 Q 40,45 55,50 Q 40,55 25,50" fill="url(#goldGrad)" opacity="0.8"/>
+  
+  <!-- Central nexus point -->
+  <circle cx="40" cy="40" r="8" fill="#FFFFFF"/>
+  <circle cx="40" cy="40" r="5" fill="#0066CC"/>
+  <circle cx="40" cy="40" r="2" fill="#FFD700"/>
+  
+  <!-- Professional text -->
+  <text x="85" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF">
+    TADAWUL NEXUS
+  </text>
+  
+  <!-- Arabic text -->
+  <text x="85" y="52" font-family="Arial, sans-serif" font-size="16" fill="#B0BEC5" direction="rtl">
+    تداول نيكسوس
+  </text>
+  
+  <!-- Tagline -->
+  <text x="85" y="68" font-family="Arial, sans-serif" font-size="10" fill="#FFD700">
+    Where Saudi Markets Meet Intelligence
+  </text>
+</svg>

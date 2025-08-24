@@ -1,12 +1,12 @@
 [
   {
     "symbol": "1010",
-    "quantity": 3811,
-    "purchase_price": 27.18,
-    "purchase_date": "2024-12-31",
-    "broker": "Al Rajhi Capital",
+    "quantity": 3911,
+    "purchase_price": 27.763482485297878,
+    "purchase_date": "2025-08-23",
+    "broker": "BSF Capital",
     "notes": "",
-    "last_updated": "2025-08-17T16:48:31.678411"
+    "last_updated": "2025-08-23T16:49:48.364550"
   },
   {
     "symbol": "1020",
@@ -52,15 +52,6 @@
     "broker": "Fransi Capital",
     "notes": "",
     "last_updated": "2025-08-17T16:42:41.122717"
-  },
-  {
-    "symbol": "1303",
-    "quantity": 9750,
-    "purchase_price": 8.499230769230769,
-    "purchase_date": "2025-01-31",
-    "broker": "Fransi Capital",
-    "notes": "",
-    "last_updated": "2025-08-17T16:44:06.969849"
   },
   {
     "symbol": "1304",
@@ -124,15 +115,6 @@
     "broker": "BSF Capital",
     "notes": "",
     "last_updated": "2025-08-19T15:02:40.486485"
-  },
-  {
-    "symbol": "2222",
-    "quantity": 2781.0,
-    "purchase_price": 26.66,
-    "purchase_date": "2024-12-31",
-    "broker": "BSF Capital",
-    "notes": "",
-    "last_updated": "2025-08-19T15:02:40.486488"
   },
   {
     "symbol": "2230",
@@ -205,15 +187,6 @@
     "broker": "BSF Capital",
     "notes": "",
     "last_updated": "2025-08-19T15:02:40.486511"
-  },
-  {
-    "symbol": "4130",
-    "quantity": 8470.0,
-    "purchase_price": 3.5,
-    "purchase_date": "2024-12-31",
-    "broker": "BSF Capital",
-    "notes": "",
-    "last_updated": "2025-08-19T15:02:40.486514"
   },
   {
     "symbol": "4161",
@@ -322,5 +295,68 @@
     "broker": "Al Inma Capital",
     "notes": "",
     "last_updated": "2025-08-19T15:02:40.486554"
+  },
+  {
+    "symbol": "1303",
+    "quantity": 7500,
+    "purchase_price": 9.03,
+    "purchase_date": "2024-12-31",
+    "broker": "BSF Capital",
+    "notes": "",
+    "last_updated": "2025-08-20T12:30:00.000000"
+  },
+  {
+    "symbol": "1303",
+    "quantity": 2250,
+    "purchase_price": 6.73,
+    "purchase_date": "2024-12-31",
+    "broker": "Al Inma Capital",
+    "notes": "",
+    "last_updated": "2025-08-20T12:30:00.000000"
+  },
+  {
+    "symbol": "4007",
+    "quantity": 1000,
+    "purchase_price": 38.89,
+    "purchase_date": "2024-12-31",
+    "broker": "Al Inma Capital",
+    "notes": "",
+    "last_updated": "2025-08-20T16:22:06.755305"
+  },
+  {
+    "symbol": "4130",
+    "quantity": 2000,
+    "purchase_price": 4.71,
+    "purchase_date": "2024-12-31",
+    "broker": "Al Inma Capital",
+    "notes": "",
+    "last_updated": "2025-08-20T16:23:44.694271"
+  },
+  {
+    "symbol": "4130",
+    "quantity": 6470,
+    "purchase_price": 4.71,
+    "purchase_date": "2025-01-01",
+    "broker": "BSF Capital",
+    "notes": "",
+    "last_updated": "2025-08-20T16:56:25.490295"
+  },
+  {
+    "symbol": "2222",
+    "quantity": 2550,
+    "purchase_price": 26.61,
+    "purchase_date": "2024-12-31",
+    "broker": "Al Inma Capital",
+    "notes": "",
+    "last_updated": "2025-08-22T12:46:03.632888"
+  },
+  {
+    "symbol": "2222",
+    "quantity": 231,
+    "purchase_price": 27.25,
+    "purchase_date": "2024-12-31",
+    "broker": "BSF Capital",
+    "notes": "",
+    "last_updated": "2025-08-22T12:46:03.632888"
   }
 ]

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular logo background -->
+  <circle cx="30" cy="30" r="28" fill="#1a472a" opacity="0.9"/>
+  <circle cx="30" cy="30" r="25" fill="#2c5f41"/>
+  
+  <!-- Inner circular design with blue and gold -->
+  <circle cx="30" cy="30" r="20" fill="#0066CC" opacity="0.8"/>
+  <circle cx="30" cy="30" r="15" fill="none" stroke="#FFD700" stroke-width="2"/>
+  
+  <!-- Stylized "S" curve design -->
+  <path d="M 20,22 Q 30,18 40,22 Q 30,26 20,22" fill="#FFD700"/>
+  <path d="M 20,38 Q 30,34 40,38 Q 30,42 20,38" fill="#FFD700"/>
+  
+  <!-- Central connecting element -->
+  <circle cx="30" cy="30" r="5" fill="#FFFFFF"/>
+  <circle cx="30" cy="30" r="3" fill="#0066CC"/>
+  
+  <!-- Text with enhanced styling -->
+  <text x="65" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">
+    TADAWUL
+  </text>
+  <text x="65" y="42" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="#FFFFFF">
+    NEXUS
+  </text>
+  
+  <!-- Tagline -->
+  <text x="65" y="52" font-family="Arial, sans-serif" font-size="8" fill="#B0BEC5">
+    Where Saudi Markets Meet Intelligence
+  </text>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for logo mark -->
+  <circle cx="30" cy="30" r="25" fill="#FFFFFF" opacity="0.2"/>
+  
+  <!-- Saudi market symbol - stylized crescents and star -->
+  <g transform="translate(30, 30)">
+    <!-- Crescent moon -->
+    <path d="M -8,-8 A 8,8 0 1,1 -8,8 A 6,6 0 1,0 -8,-8" fill="#FFFFFF"/>
+    <!-- Star -->
+    <polygon points="8,-3 9,-1 11,-1 9.5,0.5 10,2.5 8,1.5 6,2.5 6.5,0.5 5,-1 7,-1" fill="#FFFFFF"/>
+    <!-- Market lines -->
+    <line x1="-15" y1="10" x2="15" y2="10" stroke="#FFFFFF" stroke-width="2" opacity="0.8"/>
+    <line x1="-12" y1="15" x2="12" y2="15" stroke="#FFFFFF" stroke-width="1.5" opacity="0.6"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="65" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">
+    TADAWUL
+  </text>
+  <text x="65" y="42" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="#FFFFFF">
+    NEXUS
+  </text>
+  
+  <!-- Tagline -->
+  <text x="65" y="52" font-family="Arial, sans-serif" font-size="8" fill="#CCCCCC">
+    Where Saudi Markets Meet Intelligence
+  </text>
+</svg>

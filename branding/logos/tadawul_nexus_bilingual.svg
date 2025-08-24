@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for logo mark -->
+  <circle cx="40" cy="40" r="30" fill="#0054A3" opacity="0.1"/>
+  
+  <!-- Saudi market symbol - stylized crescents and star -->
+  <g transform="translate(40, 40)">
+    <!-- Crescent moon -->
+    <path d="M -10,-10 A 10,10 0 1,1 -10,10 A 8,8 0 1,0 -10,-10" fill="#0054A3"/>
+    <!-- Star -->
+    <polygon points="10,-4 11,-1 14,-1 11.5,1 12,4 10,2.5 8,4 8.5,1 6,-1 9,-1" fill="#0054A3"/>
+    <!-- Market lines -->
+    <line x1="-18" y1="12" x2="18" y2="12" stroke="#0054A3" stroke-width="2.5" opacity="0.7"/>
+    <line x1="-15" y1="18" x2="15" y2="18" stroke="#0054A3" stroke-width="2" opacity="0.5"/>
+  </g>
+  
+  <!-- English Text -->
+  <text x="85" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#0054A3">
+    TADAWUL NEXUS
+  </text>
+  
+  <!-- Arabic Text -->
+  <text x="85" y="50" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="#0054A3" direction="rtl">
+    تداول نكسس
+  </text>
+  
+  <!-- Bilingual Tagline -->
+  <text x="85" y="65" font-family="Arial, sans-serif" font-size="9" fill="#666666">
+    Where Saudi Markets Meet Intelligence | حيث تلتقي الأسواق السعودية بالذكاء
+  </text>
+</svg>
