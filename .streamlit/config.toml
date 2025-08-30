@@ -1,18 +1,13 @@
-[theme]
-# Saudi-themed professional color palette
-primaryColor = "#00C851"              # Saudi green primary
-backgroundColor = "#f8f9fa"           # Light professional background  
-secondaryBackgroundColor = "#e8f5e8"  # Light green sidebar
-textColor = "#2c3e50"                 # Professional dark text
-font = "sans serif"
-
 [server]
-# Performance optimizations
-maxUploadSize = 200
-maxMessageSize = 200
-enableCORS = true
+port = 8501
+enableCORS = false
 enableXsrfProtection = false
 
 [browser]
-# Better user experience
 gatherUsageStats = false
+
+[theme]
+primaryColor = "#00A651"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
