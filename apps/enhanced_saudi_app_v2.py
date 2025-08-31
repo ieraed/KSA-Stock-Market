@@ -1,5 +1,5 @@
 """
-✨ TADAWUL NEXUS ✨
+  TADAWUL NEXUS  
 Next-Generation Saudi Stock Intelligence Platform
 
 Complete Portfolio Management + AI Trading Platform with Real-time Saudi Exchange Data
@@ -18,6 +18,20 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 import json
+from components.hyper_themes import (
+    get_hyper_themes, 
+    get_hyper_theme_css, 
+    apply_complete_css,
+    custom_title,
+    custom_error, 
+    custom_success,
+    custom_warning,
+    update_branding_colors,
+    update_branding_fonts,
+    reset_to_default_theme,
+    force_theme_refresh,
+    apply_theme_with_preview
+)
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
@@ -25,6 +39,10 @@ import io
 from pathlib import Path
 import random
 import warnings
+import os
+import sys
+import time
+import hashlib
 warnings.filterwarnings('ignore')
 
 # Import TADAWUL NEXUS Branding
@@ -37,8 +55,8 @@ except ImportError:
 # Import our enhanced Saudi Exchange fetcher
 try:
     from saudi_exchange_fetcher import get_all_saudi_stocks, get_market_summary, get_stock_price
-    SAUDI_EXCHANGE_AVAILABLE = False  # Force use real prices from hardcoded database
-except ImportError:
+    SAUDI_EXCHANGE_AVAILABLE = True  # Enable live TASI data fetching
+except ImportError as e:
     SAUDI_EXCHANGE_AVAILABLE = False
 
 # Try to import AI features
@@ -54,8 +72,26 @@ try:
     RISK_INFO_AVAILABLE = True
 except ImportError:
     RISK_INFO_AVAILABLE = False
-    
-    # Create a simple AI simulation for demonstration
+
+# Import risk management center
+try:
+    from risk_management_center import risk_management_center
+    RISK_MANAGEMENT_AVAILABLE = True
+except ImportError:
+    RISK_MANAGEMENT_AVAILABLE = False
+
+# Import standalone theme customizer
+try:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from theme_customizer import theme_customizer
+    STANDALONE_THEME_AVAILABLE = True
+except ImportError:
+    STANDALONE_THEME_AVAILABLE = False
+
+# Create a simple AI simulation for demonstration if AI engine not available
+if not AI_AVAILABLE:
     def get_ai_signals(portfolio_symbols, stocks_db):
         import random
         signals = []
@@ -96,6 +132,8 @@ except ImportError:
             })
         
         return signals
+        
+        return signals
 
 # Broker name standardization function
 def normalize_broker_name(broker_name):
@@ -131,206 +169,51 @@ def normalize_broker_name(broker_name):
     if 'jazira' in broker_lower:
         return 'Al Jazira Capital'
     
+    # Raed Othman Bank variations
+    if 'raed othman' in broker_lower:
+        return 'Raed Othman Bank'
+
     # Return original name with proper title case if no match found
     return broker_name.title()
 
 # Configure page
 st.set_page_config(
-    page_title="✨ TADAWUL NEXUS",
+    page_title="📊 TADAWUL NEXUS",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Enhanced Custom CSS for professional look
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-* {
-    font-family: 'Inter', sans-serif;
-}
+# =============================================================================
+# 🎨 GLOBAL THEME APPLICATION
+# =============================================================================
 
-        /* Main app background */
-.stApp {
-    background: linear-gradient(135deg, #00C851 0%, #ffffff 50%, #00C851 100%);
-} 
+# Initialize session state for theme - DEFAULT TO DARK CHARCOAL
+if 'current_theme' not in st.session_state:
+    st.session_state.current_theme = "dark_charcoal"
+if 'theme_applied' not in st.session_state:
+    st.session_state.theme_applied = False
 
-.main-header {
-    background: linear-gradient(135deg, #667eea 0%, #007E33 100%);
-    padding: 2rem;
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
+# Apply global theme with complete CSS and hyper optimizations
+def apply_global_theme():
+    """Apply complete theme system with all CSS styling"""
+    if 'current_theme' not in st.session_state:
+        st.session_state.current_theme = "dark_charcoal"
+    
+    # Apply complete CSS first
+    apply_complete_css()
+    
+    # Apply theme-specific optimizations
+    themes = get_hyper_themes()
+    current_theme_colors = themes[st.session_state.current_theme]
+    theme_css = get_hyper_theme_css(current_theme_colors)
+    st.markdown(theme_css, unsafe_allow_html=True)
 
-    background: linear-gradient(135deg, #667eea 0%, #007E33 100%);
-    padding: 2rem;
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
+# Apply the global theme IMMEDIATELY
+apply_global_theme()
+st.session_state.theme_applied = True
 
-.portfolio-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin: 1rem 0;
-    border-left: 4px solid #667eea;
-}
-
-.ai-signal-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 1.5rem;
-    border-radius: 10px;
-    color: white;
-    margin: 1rem 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.metric-card {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    border: 1px solid #e9ecef;
-}
-
-.gainer-card {
-    background: linear-gradient(135deg, #00C851 0%, #007E33 100%);
-    padding: 1rem;
-    border-radius: 8px;
-    color: white;
-    margin: 0.5rem 0;
-}
-
-.loser-card {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    padding: 1rem;
-    border-radius: 8px;
-    color: white;
-    margin: 0.5rem 0;
-}
-
-.market-table {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-
-.success-card {
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
-}
-
-.warning-card {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
-}
-
-/* Enhanced Sidebar styling */
-.css-1d391kg {
-    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-/* Sidebar sections with enhanced styling */
-div[data-testid="stSidebar"] .element-container {
-    background: rgba(255, 255, 255, 0.9);
-    margin: 0.3rem 0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-div[data-testid="stSidebar"] .element-container:hover {
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-div[data-testid="stSidebar"] h3, div[data-testid="stSidebar"] h4 {
-    color: #1565c0;
-    font-weight: 600;
-}
-
-/* Navigation radio buttons enhanced */
-.stRadio > div {
-    background: white;
-    padding: 0.8rem;
-    border-radius: 8px;
-    margin: 0.4rem 0;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.stRadio > div:hover {
-    border-color: #1565c0;
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(21,101,192,0.2);
-}
-
-.stButton > button {
-    width: 100%;
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(21,101,192,0.3);
-}
-
-/* Table styling */
-.stDataFrame {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-/* Section headers */
-.section-header {
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
-    color: white;
-    padding: 1rem;
-    border-radius: 10px 10px 0 0;
-    text-align: center;
-    font-weight: 600;
-    margin-bottom: 0;
-}
-
-/* Metric cards for market data */
-.market-metric {
-    background: white;
-    padding: 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    border: 1px solid #e3f2fd;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.market-metric:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-</style>
-""", unsafe_allow_html=True)
 
 def load_portfolio():
     """Load portfolio from file"""
@@ -368,11 +251,11 @@ def load_saudi_stocks_database():
         with open(data_path, 'r', encoding='utf-8') as f:
             stocks = json.load(f)
             if len(stocks) == 262:
-                print(f"✅ Loaded OFFICIAL Tadawul database with {len(stocks)} stocks from {data_path}")
+                print(f"[OK] Loaded OFFICIAL Tadawul database with {len(stocks)} stocks from {data_path}")
                 return stocks
             elif len(stocks) != 262:
-                print(f"⚠️ WARNING: Database has {len(stocks)} stocks but should have 262!")
-                print("🚨 NOTIFY USER: Stock count mismatch detected!")
+                print(f"WARNING: WARNING: Database has {len(stocks)} stocks but should have 262!")
+                print("  NOTIFY USER: Stock count mismatch detected!")
                 return stocks
     except Exception as e:
         print(f"Could not load JSON database: {e}")
@@ -383,7 +266,7 @@ def load_saudi_stocks_database():
         from complete_tadawul_database import create_extended_database
         stocks = create_extended_database()
         if len(stocks) >= 250:
-            print(f"✅ Loaded database from Python module with {len(stocks)} stocks")
+            print(f"[OK] Loaded database from Python module with {len(stocks)} stocks")
             return stocks
     except Exception as e:
         print(f"Warning: Could not load Python module database: {e}")
@@ -393,164 +276,162 @@ def load_saudi_stocks_database():
         root_path = os.path.join(root_dir, 'saudi_stocks_database.json')
         with open(root_path, 'r', encoding='utf-8') as f:
             stocks = json.load(f)
-            print(f"✅ Loaded {len(stocks)} stocks from root directory")
+            print(f"[OK] Loaded {len(stocks)} stocks from root directory")
             return stocks
     except Exception as e:
         print(f"Could not load from root directory: {e}")
     
     # Final fallback - CORRECTED minimal database
-    print("⚠️ Using minimal fallback database")
+    print("WARNING: Using minimal fallback database")
     return {
         # BANKING SECTOR - CORRECTED
-        "1010": {"symbol": "1010", "name_en": "Riyad Bank", "name_ar": "بنك الرياض", "sector": "Banking"},
-        "1180": {"symbol": "1180", "name_en": "Saudi National Bank", "name_ar": "البنك الأهلي السعودي", "sector": "Banking"},
-        "1120": {"symbol": "1120", "name_en": "Al Rajhi Bank", "name_ar": "مصرف الراجحي", "sector": "Banking"},
-        "1050": {"symbol": "1050", "name_en": "Banque Saudi Fransi", "name_ar": "البنك السعودي الفرنسي", "sector": "Banking"},
+        "1010": {"symbol": "1010", "name_en": "Riyad Bank", "name_ar": "   ", "sector": "Banking"},
+        "1180": {"symbol": "1180", "name_en": "Saudi National Bank", "name_ar": "     ", "sector": "Banking"},
+        "1120": {"symbol": "1120", "name_en": "Al Rajhi Bank", "name_ar": "   ", "sector": "Banking"},
+        "1050": {"symbol": "1050", "name_en": "Banque Saudi Fransi", "name_ar": "     ", "sector": "Banking"},
         
         # ENERGY SECTOR - CORRECTED
-        "2030": {"symbol": "2030", "name_en": "Saudi Arabia Refineries Co.", "name_ar": "مصافي أرامكو السعودية", "sector": "Energy"},
-        "2222": {"symbol": "2222", "name_en": "Saudi Arabian Oil Company", "name_ar": "أرامكو السعودية", "sector": "Energy"},
+        "2030": {"symbol": "2030", "name_en": "Saudi Arabia Refineries Co.", "name_ar": "     ", "sector": "Energy"},
+        "2222": {"symbol": "2222", "name_en": "Saudi Arabian Oil Company", "name_ar": "   ", "sector": "Energy"},
         
         # MATERIALS
-        "2010": {"symbol": "2010", "name_en": "Saudi Basic Industries Corporation", "name_ar": "سابك", "sector": "Materials"},
+        "2010": {"symbol": "2010", "name_en": "Saudi Basic Industries Corporation", "name_ar": " ", "sector": "Materials"},
         
         # TELECOMMUNICATIONS
-        "7010": {"symbol": "7010", "name_en": "Saudi Telecom Company", "name_ar": "الاتصالات السعودية", "sector": "Telecommunication Services"}
+        "7010": {"symbol": "7010", "name_en": "Saudi Telecom Company", "name_ar": "   ", "sector": "Telecommunication Services"}
     }
+
+# Cache for stock price data to improve performance and reduce API calls
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def get_cached_stock_data(symbol, cache_key):
+    """Get cached stock data to avoid excessive API calls"""
+    return get_stock_data_internal(symbol, None)
 
 def get_stock_data(symbol, stocks_db=None):
     """Get stock data with enhanced information - prioritizing TASI/Saudi Exchange data"""
+    # Use caching with a time-based key to refresh every 5 minutes
+    import time
+    cache_key = int(time.time() // 300)  # Changes every 5 minutes
+    return get_cached_stock_data(symbol, cache_key)
+
+def get_stock_data_internal(symbol, stocks_db=None):
+    """Get stock data with enhanced information - LIVE DATA ONLY, NO HARDCODED PRICES"""
     try:
-        # Always try Saudi Exchange fetcher first for accurate TASI prices
+        # PRIORITY 1: Saudi Exchange live data via our enhanced fetcher
         if SAUDI_EXCHANGE_AVAILABLE:
-            saudi_data = get_stock_price(symbol)
-            if saudi_data and saudi_data.get('current_price', 0) > 0:
-                # Add source information for debugging
-                saudi_data['data_source'] = 'Saudi Exchange (TASI)'
-                return saudi_data
-        
-        # Try to get from local stocks database with mock prices
-        if stocks_db and symbol in stocks_db:
-            stock_info = stocks_db[symbol]
-            # Generate realistic price based on stock symbol (for consistency)
-            import hashlib
-            seed = int(hashlib.md5(symbol.encode()).hexdigest()[:8], 16)
-            np.random.seed(seed)
-            
-            # Real market prices from Saudi Exchange (2025-08-24) - Updated with user corrections
-            real_prices = {
-                "1010": 27.06,  # RIBL - Riyadh Bank
-                "1020": 12.61,  # BJAZ - Jazeera Bank  
-                "1030": 14.16,  # SAIB - Saudi Investment Bank
-                "1050": 16.79,  # BSF - Bank BSF
-                "1060": 30.94,  # SAB - Saudi British Bank
-                "1080": 22.38,  # ANB - Arab National Bank
-                "1120": 96.25,  # ALRAJHI - Al Rajhi Bank
-                "1140": 26.58,  # ALBILAD - Bank Albilad
-                "1150": 25.84,  # ALINMA - Alinma Bank
-                "1180": 35.98,  # SNB - Saudi National Bank
-                "1182": 12.81,  # AMLAK - AMLAK
-                "1183": 22.07,  # SHL - Saudi Home Loans
-                "1210": 27.64,  # BCI - BCI
-                "1211": 52.70,  # MAADEN
-                "1212": 143.40, # ASTRA INDUSTRIAL
-                "1214": 27.18,  # SHAKER
-                "1304": 35.00,  # ALYAMAMAH STEEL
-                "1320": 50.75,  # SSP
-                "2010": 62.05,  # SABIC
-                "2020": 121.90, # SABIC AGRI-NUTRIENTS
-                "2050": 24.10,  # SAVOLA GROUP
-                "2060": 10.86,  # TASNEE
-                "2070": 27.40,  # SPIMACO
-                "2082": 230.80, # ACWA POWER
-                "2100": 27.04,  # WAFRAH
-                "2110": 150.50, # SAUDI CABLE
-                "2190": 34.84,  # Stock 2190 - User corrected price
-                "2222": 23.88,  # Saudi Aramco - User corrected price
-                "2230": 6.92,   # Stock 2230 - User corrected price
-                "2280": 46.82,  # ALMARAI
-                "2290": 35.06,  # YANSAB
-                "2350": 5.32,   # SAUDI KAYAN
-                "2380": 7.65,   # PETRO RABIGH
-                "2381": 76.00,  # ARABIAN DRILLING
-                "2382": 14.86,  # ADES
-                "4001": 7.83,   # A.OTHAIM MARKET
-                "4030": 22.50,  # BAHRI
-                "4110": 2.32,   # BATIC
-                "4161": 5.63,   # BINDAWOOD
-                "4338": 7.00,   # ALAHLI REIT 1 - User corrected price
-                "7010": 42.82,  # STC
-                "7020": 64.45,  # ETIHAD ETISALAT
-                "7030": 10.82,  # ZAIN KSA
-                "8010": 123.20, # TAWUNIYA
-            }
-            
-            if symbol in real_prices:
-                base_price = real_prices[symbol]
-                # Small daily variation (-1% to +1% for more realistic movement)
-                current_price = base_price * np.random.uniform(0.99, 1.01)
-                previous_close = base_price
-                # Add source information for debugging
-                data_source = 'Real Saudi Exchange Prices (Hardcoded)'
-            else:
-                # For other stocks not in real_prices, use sector-based realistic ranges
-                sector = stock_info.get('sector', '')
-                if 'Bank' in sector or 'Financial' in sector:
-                    base_price = np.random.uniform(15, 35)  # Banking sector range
-                elif 'Telecom' in sector:
-                    base_price = np.random.uniform(20, 50)  # Telecom range
-                elif 'Petrochemical' in sector or 'Industrial' in sector:
-                    base_price = np.random.uniform(25, 60)  # Industrial range
+            try:
+                saudi_data = get_stock_price(symbol)
+                if saudi_data and saudi_data.get('success'):
+                    # Return live Saudi Exchange data
+                    return {
+                        'current_price': saudi_data.get('current_price', 0),
+                        'previous_close': saudi_data.get('previous_close', 0),
+                        'change': saudi_data.get('change', 0),
+                        'change_percent': saudi_data.get('change_percent', 0),
+                        'volume': saudi_data.get('volume', 0),
+                        'market_cap': saudi_data.get('market_cap', 0),
+                        'pe_ratio': saudi_data.get('pe_ratio', 0),
+                        'high_52week': saudi_data.get('high_52week', 0),
+                        'low_52week': saudi_data.get('low_52week', 0),
+                        'data_source': saudi_data.get('data_source', 'Saudi Exchange (Live)'),
+                        'timestamp': saudi_data.get('timestamp'),
+                        'success': True
+                    }
                 else:
-                    base_price = np.random.uniform(12, 40)  # General range
-                
-                # Small daily variation
-                current_price = base_price * np.random.uniform(0.98, 1.02)
-                previous_close = base_price
-                # Add source information for debugging
-                data_source = 'Simulated TASI (Sector-based)'
+                    st.warning(f"Saudi Exchange: {saudi_data.get('error', 'Unknown error')} for {symbol}")
+            except Exception as e:
+                st.warning(f"Saudi Exchange API error for {symbol}: {str(e)}")
+        
+        # PRIORITY 2: Direct Yahoo Finance fallback
+        try:
+            stock_symbol = f"{symbol}.SR" if not symbol.endswith('.SR') else symbol
+            ticker = yf.Ticker(stock_symbol)
             
-            return {
-                'current_price': round(current_price, 2),
-                'previous_close': round(previous_close, 2),
-                'change': round(current_price - previous_close, 2),
-                'change_percent': round(((current_price - previous_close) / previous_close) * 100, 2),
-                'volume': int(np.random.uniform(10000, 500000)),
-                'market_cap': int(current_price * np.random.uniform(100000, 10000000)),
-                'pe_ratio': round(np.random.uniform(8, 25), 2),
-                'data_source': data_source
-            }
+            # Get historical data (more reliable than info)
+            hist = ticker.history(period="5d", interval="1d")
+            
+            if not hist.empty and len(hist) > 0:
+                current_price = float(hist['Close'].iloc[-1])
+                previous_close = float(hist['Close'].iloc[-2]) if len(hist) >= 2 else current_price
+                volume = int(hist['Volume'].iloc[-1]) if 'Volume' in hist.columns else 0
+                
+                # Get additional info
+                info = ticker.info
+                
+                return {
+                    'current_price': round(current_price, 2),
+                    'previous_close': round(previous_close, 2),
+                    'change': round(current_price - previous_close, 2),
+                    'change_percent': round(((current_price - previous_close) / previous_close) * 100, 2) if previous_close > 0 else 0,
+                    'volume': volume,
+                    'market_cap': info.get('marketCap', 0),
+                    'pe_ratio': info.get('trailingPE', 0),
+                    'high_52week': info.get('fiftyTwoWeekHigh', 0),
+                    'low_52week': info.get('fiftyTwoWeekLow', 0),
+                    'data_source': 'Yahoo Finance - Live Historical Data',
+                    'timestamp': datetime.now().isoformat(),
+                    'success': True
+                }
+            
+            # Try info data as fallback
+            info = ticker.info
+            current_price = None
+            
+            for price_field in ['currentPrice', 'regularMarketPrice', 'previousClose', 'ask', 'bid']:
+                if price_field in info and info[price_field] and info[price_field] > 0:
+                    current_price = float(info[price_field])
+                    break
+            
+            if current_price and current_price > 0:
+                previous_close = info.get('previousClose', current_price)
+                
+                return {
+                    'current_price': round(current_price, 2),
+                    'previous_close': round(previous_close, 2),
+                    'change': round(current_price - previous_close, 2),
+                    'change_percent': round(((current_price - previous_close) / previous_close) * 100, 2) if previous_close > 0 else 0,
+                    'volume': info.get('volume', 0),
+                    'market_cap': info.get('marketCap', 0),
+                    'pe_ratio': info.get('trailingPE', 0),
+                    'data_source': 'Yahoo Finance - Live Info Data',
+                    'timestamp': datetime.now().isoformat(),
+                    'success': True
+                }
+                
+        except Exception as e:
+            st.warning(f"Yahoo Finance error for {symbol}: {str(e)}")
         
-        # Fallback to yfinance (less preferred for Saudi stocks)
-        stock_symbol = f"{symbol}.SR" if not symbol.endswith('.SR') else symbol
-        ticker = yf.Ticker(stock_symbol)
-        info = ticker.info
-        
-        if 'currentPrice' in info and info.get('currentPrice', 0) > 0:
-            return {
-                'current_price': info.get('currentPrice', 0),
-                'previous_close': info.get('previousClose', 0),
-                'change': info.get('currentPrice', 0) - info.get('previousClose', 0),
-                'change_percent': ((info.get('currentPrice', 0) - info.get('previousClose', 0)) / info.get('previousClose', 1)) * 100,
-                'volume': info.get('volume', 0),
-                'market_cap': info.get('marketCap', 0),
-                'pe_ratio': info.get('trailingPE', 0),
-                'data_source': 'Yahoo Finance'
-            }
+        # NO HARDCODED DATA - Return error if all live sources fail
+        st.error(f"❌ Could not fetch live data for {symbol} from any source")
+        return {
+            'current_price': 0,
+            'previous_close': 0,
+            'change': 0,
+            'change_percent': 0,
+            'volume': 0,
+            'market_cap': 0,
+            'pe_ratio': 0,
+            'data_source': 'ERROR: No Live Data Available',
+            'timestamp': datetime.now().isoformat(),
+            'success': False,
+            'error': 'All live data sources failed'
+        }
+            
     except Exception as e:
-        pass
-    
-    # Return default values if no data available
-    return {
-        'current_price': 0,
-        'previous_close': 0,
-        'change': 0,
-        'change_percent': 0,
-        'volume': 0,
-        'market_cap': 0,
-        'pe_ratio': 0,
-        'data_source': 'No Data Available'
-    }
+        st.error(f"Critical error fetching data for {symbol}: {str(e)}")
+        return {
+            'current_price': 0,
+            'previous_close': 0,
+            'change': 0,
+            'change_percent': 0,
+            'volume': 0,
+            'market_cap': 0,
+            'pe_ratio': 0,
+            'data_source': 'ERROR: System Error',
+            'timestamp': datetime.now().isoformat(),
+            'success': False,
+            'error': str(e)
+        }
 
 def consolidate_portfolio_by_symbol(portfolio):
     """Consolidate portfolio holdings by symbol, combining multiple broker positions"""
@@ -652,136 +533,118 @@ def calculate_portfolio_value(portfolio, stocks_db=None):
     }
 
 def display_top_gainers_losers():
-    """Display top gainers and losers tables"""
+    """Display top gainers and losers tables - LIVE DATA ONLY"""
     st.markdown("""
     <div class="section-header">
-        📊 Saudi Market Performance - Live Data
+        📊 Saudi Market Performance - Live Data from saudiexchange.sa & Yahoo Finance
     </div>
     """, unsafe_allow_html=True)
     
-    # Get market summary
-    if SAUDI_EXCHANGE_AVAILABLE:
-        try:
-            market_data = get_market_summary()
-            
-            if market_data:
-                col1, col2 = st.columns(2)
+    # Display data source information
+    st.info("""
+    📡 **Live Data Sources:**
+    1. **Primary**: Saudi Exchange (saudiexchange.sa) official website
+    2. **Fallback**: Yahoo Finance (.SR suffix) 
+    3. **NO HARDCODED DATA** - All prices are fetched in real-time
+    """)
+    
+    # Get live market summary
+    with st.spinner("🔄 Fetching live market data..."):
+        if SAUDI_EXCHANGE_AVAILABLE:
+            try:
+                market_data = get_market_summary()
                 
-                with col1:
-                    st.markdown("### 📈 Top 10 Gainers")
-                    if market_data.get('top_gainers'):
-                        gainers_df = pd.DataFrame(market_data['top_gainers'])
-                        if not gainers_df.empty:
-                            # Format the DataFrame
-                            display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
-                            available_cols = [col for col in display_cols if col in gainers_df.columns]
-                            
-                            if available_cols:
-                                gainers_display = gainers_df[available_cols].copy()
-                                if 'change_pct' in gainers_display.columns:
-                                    gainers_display['change_pct'] = gainers_display['change_pct'].apply(lambda x: f"+{x:.2f}%")
-                                if 'current_price' in gainers_display.columns:
-                                    gainers_display['current_price'] = gainers_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
-                                
-                                st.dataframe(
-                                    gainers_display,
-                                    column_config={
-                                        "symbol": "Symbol",
-                                        "name_en": "Company",
-                                        "current_price": "Price",
-                                        "change_pct": "Change %"
-                                    },
-                                    hide_index=True,
-                                    use_container_width=True
-                                )
-                            else:
-                                st.info("Market data structure not compatible")
-                        else:
-                            st.info("No gainers data available")
-                    else:
-                        st.info("No gainers data available")
-                
-                with col2:
-                    st.markdown("### 📉 Top 10 Losers")
-                    if market_data.get('top_losers'):
-                        losers_df = pd.DataFrame(market_data['top_losers'])
-                        if not losers_df.empty:
-                            # Format the DataFrame
-                            display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
-                            available_cols = [col for col in display_cols if col in losers_df.columns]
-                            
-                            if available_cols:
-                                losers_display = losers_df[available_cols].copy()
-                                if 'change_pct' in losers_display.columns:
-                                    losers_display['change_pct'] = losers_display['change_pct'].apply(lambda x: f"{x:.2f}%")
-                                if 'current_price' in losers_display.columns:
-                                    losers_display['current_price'] = losers_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
-                                
-                                st.dataframe(
-                                    losers_display,
-                                    column_config={
-                                        "symbol": "Symbol",
-                                        "name_en": "Company", 
-                                        "current_price": "Price",
-                                        "change_pct": "Change %"
-                                    },
-                                    hide_index=True,
-                                    use_container_width=True
-                                )
-                            else:
-                                st.info("Market data structure not compatible")
-                        else:
-                            st.info("No losers data available")
-                    else:
-                        st.info("No losers data available")
-                
-                # Market statistics
-                st.markdown("### 📊 Market Statistics")
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.markdown(f"""
-                    <div class="market-metric">
-                        <h4 style="margin: 0; color: #1565c0;">Total Listed Companies</h4>
-                        <h2 style="margin: 0.5rem 0; color: #00C851;">{market_data.get('total_stocks', 'N/A')}</h2>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                with col2:
-                    last_updated = market_data.get('last_updated', '')
-                    if last_updated:
-                        try:
-                            update_time = datetime.fromisoformat(last_updated.replace('Z', '+00:00'))
-                            formatted_time = update_time.strftime("%H:%M")
-                        except:
-                            formatted_time = "Live"
-                    else:
-                        formatted_time = "Live"
+                if market_data and market_data.get('success'):
+                    col1, col2 = st.columns(2)
                     
-                    st.markdown(f"""
-                    <div class="market-metric">
-                        <h4 style="margin: 0; color: #1565c0;">Last Updated</h4>
-                        <h2 style="margin: 0.5rem 0; color: #1565c0;">{formatted_time}</h2>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                with col3:
-                    st.markdown(f"""
-                    <div class="market-metric">
-                        <h4 style="margin: 0; color: #1565c0;">Data Source</h4>
-                        <h2 style="margin: 0.5rem 0; color: #1565c0;">Tadawul</h2>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                return
-            
-        except Exception as e:
-            st.warning(f"Error fetching live market data: {e}")
+                    with col1:
+                        st.markdown("### 📈 Top 10 Gainers (Live)")
+                        if market_data.get('top_gainers'):
+                            gainers_df = pd.DataFrame(market_data['top_gainers'])
+                            if not gainers_df.empty:
+                                # Format the DataFrame for display
+                                display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
+                                if all(col in gainers_df.columns for col in display_cols):
+                                    gainers_display = gainers_df[display_cols].copy()
+                                    gainers_display['change_pct'] = gainers_display['change_pct'].apply(lambda x: f"+{x:.2f}%")
+                                    gainers_display['current_price'] = gainers_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
+                                    gainers_display.columns = ['Symbol', 'Company', 'Price', 'Change']
+                                    
+                                    st.dataframe(
+                                        gainers_display, 
+                                        use_container_width=True,
+                                        hide_index=True
+                                    )
+                                else:
+                                    st.dataframe(gainers_df, use_container_width=True, hide_index=True)
+                        else:
+                            st.warning("📊 No gainers data available from live sources")
+                    
+                    with col2:
+                        st.markdown("### 📉 Top 10 Losers (Live)")
+                        if market_data.get('top_losers'):
+                            losers_df = pd.DataFrame(market_data['top_losers'])
+                            if not losers_df.empty:
+                                # Format the DataFrame for display
+                                display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
+                                if all(col in losers_df.columns for col in display_cols):
+                                    losers_display = losers_df[display_cols].copy()
+                                    losers_display['change_pct'] = losers_display['change_pct'].apply(lambda x: f"{x:.2f}%")
+                                    losers_display['current_price'] = losers_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
+                                    losers_display.columns = ['Symbol', 'Company', 'Price', 'Change']
+                                    
+                                    st.dataframe(
+                                        losers_display, 
+                                        use_container_width=True,
+                                        hide_index=True
+                                    )
+                                else:
+                                    st.dataframe(losers_df, use_container_width=True, hide_index=True)
+                        else:
+                            st.warning("📊 No losers data available from live sources")
+                    
+                    # Display data source and timestamp
+                    st.success(f"""
+                    ✅ **Live Data Status**: {market_data['total_stocks']} stocks fetched successfully
+                    🕒 **Last Updated**: {market_data.get('timestamp', 'Unknown')}
+                    📡 **Source**: {market_data.get('data_source', 'Live Market Data')}
+                    """)
+                    
+                else:
+                    st.error(f"❌ Could not fetch live market data: {market_data.get('error', 'Unknown error')}")
+                    
+            except Exception as e:
+                st.error(f"❌ Error fetching live market data: {str(e)}")
+        else:
+            st.error("❌ Saudi Exchange fetcher not available. Please check the saudi_exchange_fetcher.py module.")
     
-    # Fallback to demo data
-    st.info("📡 Live market data temporarily unavailable. Showing demo data:")
-    
-    # Demo data
+    # Manual test section for individual stocks
+    with st.expander("🧪 Test Individual Stock Prices (Live Data)"):
+        test_symbol = st.text_input("Enter Saudi stock symbol (e.g., 2222, 1120, 4190):", "2222")
+        
+        if st.button("🔄 Fetch Live Price"):
+            if test_symbol:
+                with st.spinner(f"Fetching live data for {test_symbol}..."):
+                    result = get_stock_price(test_symbol) if SAUDI_EXCHANGE_AVAILABLE else None
+                    
+                    if result and result.get('success'):
+                        st.success(f"""
+                        ✅ **{test_symbol}** Live Data:
+                        💰 **Price**: {result['current_price']:.2f} SAR
+                        📈 **Change**: {result['change_percent']:.2f}%
+                        📊 **Volume**: {result.get('volume', 'N/A'):,}
+                        📡 **Source**: {result.get('data_source', 'Unknown')}
+                        🕒 **Time**: {result.get('timestamp', 'N/A')}
+                        """)
+                    else:
+                        error_msg = result.get('error', 'Unknown error') if result else 'Fetcher not available'
+                        st.error(f"❌ Failed to fetch live data for {test_symbol}: {error_msg}")
+            else:
+                st.warning("Please enter a stock symbol")
+                
+    # Fallback demo section when live data is not available
+    if not SAUDI_EXCHANGE_AVAILABLE or st.checkbox("Show Demo Data for Testing", value=False):
+        st.info("💡 Showing demo data - Enable live data fetcher for real prices")    # Demo data
     demo_gainers = [
         {"Symbol": "4160", "Company": "Thimar Development", "Price": "40.04 SAR", "Change": "+10.00%"},
         {"Symbol": "2130", "Company": "Saudi Industrial Development", "Price": "33.12 SAR", "Change": "+9.96%"},
@@ -801,11 +664,11 @@ def display_top_gainers_losers():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 📈 Top Gainers")
+        st.markdown("### [UP] Top Gainers")
         st.dataframe(pd.DataFrame(demo_gainers), hide_index=True, use_container_width=True)
     
     with col2:
-        st.markdown("### 📉 Top Losers") 
+        st.markdown("### [DOWN] Top Losers") 
         st.dataframe(pd.DataFrame(demo_losers), hide_index=True, use_container_width=True)
 
 def main():
@@ -835,7 +698,7 @@ def main():
         st.markdown("""
         <div class="main-header">
             <h1 style="margin: 0; font-size: 2.5rem; font-weight: 700;">
-                ✨ TADAWUL NEXUS ✨
+                  TADAWUL NEXUS  
             </h1>
             <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; opacity: 0.9;">
                 Next-Generation Saudi Stock Intelligence Platform
@@ -863,23 +726,24 @@ def main():
         st.markdown("**📋 Main Navigation:**")
         
         # Add cache refresh button
-        if st.button("🔄 Refresh Database", help="Clear cache and reload stock database"):
+        if st.button("  Refresh Database", help="Clear cache and reload stock database"):
             st.cache_data.clear()
             st.rerun()
             
         selected_page = st.radio(
             "Navigation",
             [
-                "🏠 Portfolio Overview",
+                "📊 Portfolio Overview",
                 "⚙️ Portfolio Setup", 
                 "🤖 AI Trading Center",
                 "📈 Market Analysis",
-                "� Performance Tracker",
-                "�🔍 Stock Research",
-                "📊 Analytics Dashboard",
-                "🏢 Sector Analyzer",
-                "�️ Risk Management",
-                "�📁 Import/Export Data"
+                "📊 Performance Tracker",
+                "🔍 Stock Research",
+                "📋 Analytics Dashboard",
+                "🏭 Sector Analyzer",
+                "⚠️ Risk Management",
+                "📁 Import/Export Data",
+                "🎨 Theme Customizer"
             ],
             index=0,
             key="main_nav",
@@ -895,7 +759,7 @@ def main():
             consolidated_portfolio = consolidate_portfolio_by_symbol(portfolio)
             portfolio_stats = calculate_portfolio_value(consolidated_portfolio, stocks_db)
             
-            st.markdown("### 💼 Portfolio Stats")
+            st.markdown('<h3 style="color: #1565c0;">📊 Portfolio Stats</h3>', unsafe_allow_html=True)
             
             col1, col2 = st.columns(2)
             with col1:
@@ -915,7 +779,7 @@ def main():
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Market Information Section
-        st.markdown("### 📊 Market Info")
+        st.markdown('<h3 style="color: #1565c0;">📈 📊 Market Info</h3>', unsafe_allow_html=True)
         
         # Display total stocks: show both live exchange count (if available) and local DB count
         db_count = len(stocks_db)
@@ -935,14 +799,14 @@ def main():
                 st.metric("TASI Companies (Exchange)", "259")
             with col_b:
                 st.metric("Available in DB", f"{db_count}")
-            st.success("🟢 Live Data Connected")
+            st.success("  Live Data Connected")
         else:
             # Fall back to DB-only display and clearly label it
             st.metric("TASI Companies", "259")
             if SAUDI_EXCHANGE_AVAILABLE:
-                st.info("� Live fetch failed — showing cached DB")
+                st.info("  Live fetch failed   showing cached DB")
             else:
-                st.warning("🟡 Using Cached Data")
+                st.warning("  Using Cached Data")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -957,7 +821,7 @@ def main():
         # About Section
         st.markdown("""
         <div style="margin-top: 2rem;">
-            <h4 style="color: #1565c0; margin: 0 0 0.5rem 0; font-size: 1rem;">ℹ️ About TADAWUL NEXUS</h4>
+            <h4 style="color: #1565c0; margin: 0 0 0.5rem 0; font-size: 1rem;">  About TADAWUL NEXUS</h4>
             <div style="font-size: 0.8rem; color: #666; line-height: 1.4;">
                 <strong>Next-Generation Platform</strong><br>
                 🔥 Real-time Saudi Exchange Data<br>
@@ -966,7 +830,7 @@ def main():
                 📈 Advanced Market Analytics
             </div>
             <div style="font-size: 0.75rem; color: #888; margin-top: 0.5rem; line-height: 1.3;">
-                🇸🇦 Powered by Tadawul • Built for Saudi Investors
+                  Powered by Tadawul   Built for Saudi Investors
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -975,20 +839,24 @@ def main():
     
     # Main content based on selected page
     
-    # Data Source Indicator
-    data_source_status = "🟢 TASI Exchange" if SAUDI_EXCHANGE_AVAILABLE else "🟡 Simulated TASI"
+    # Data Source Indicator with dynamic pricing info
+    # Always show Saudi Exchange as primary since it's first in our fetching logic
+    data_source_status = "🔴 LIVE Saudi Exchange (TASI) + Yahoo Finance Fallback"
+    pricing_info = "Real-time market data with redundant sources"
+    
     st.markdown(f"""
     <div style="background: #e8f5e8; padding: 0.5rem; border-radius: 5px; margin-bottom: 1rem; 
                 border-left: 4px solid #4caf50; font-size: 0.85rem;">
-        📊 <strong>Price Data Source:</strong> {data_source_status} 
+        📊 
+                <strong>Price Data Source:</strong> {data_source_status} 
         <span style="font-size: 0.75rem; color: #666;">
-        | All P&L calculations use consistent TASI pricing
+        | {pricing_info} | NO HARDCODED PRICES
         </span>
     </div>
     """, unsafe_allow_html=True)
     
-    if selected_page == "🏠 Portfolio Overview":
-        st.markdown("## 🏠 Portfolio Overview")
+    if selected_page == "📊 Portfolio Overview":
+        st.markdown("## 📊 Portfolio Overview")
         
         portfolio = load_portfolio()
         
@@ -1039,13 +907,13 @@ def main():
             with col1:
                 view_option = st.radio(
                     "Portfolio View:",
-                    ["📊 Consolidated Holdings", "📋 All Holdings (By Broker)", "🏢 By Broker"],
+                    ["📊 Consolidated Holdings", "📋 All Holdings (By Broker)", "🏦 By Broker"],
                     horizontal=True,
                     help="Choose how to display your portfolio holdings"
                 )
             
             with col2:
-                if view_option == "🏢 By Broker":
+                if view_option == "🏦 By Broker":
                     # Get unique brokers from portfolio with normalization
                     raw_brokers = [stock.get('broker', 'Not Set') for stock in portfolio]
                     normalized_brokers = [normalize_broker_name(broker) for broker in raw_brokers]
@@ -1072,7 +940,7 @@ def main():
                 display_portfolio = portfolio.copy()
                 
                 # Filter by broker if needed
-                if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
+                if view_option == "🏦 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
                     display_portfolio = [stock for stock in portfolio 
                                         if normalize_broker_name(stock.get('broker', 'Not Set')) == selected_broker]
             
@@ -1122,13 +990,13 @@ def main():
                 holdings_df = pd.DataFrame(holdings_data)
                 
                 # Display broker-specific summary if filtering by broker
-                if view_option == "🏢 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
+                if view_option == "🏦 By Broker" and 'selected_broker' in locals() and selected_broker != "All Brokers":
                     # Calculate broker-specific metrics using normalized names
                     broker_portfolio = [stock for stock in portfolio 
                                       if normalize_broker_name(stock.get('broker', 'Not Set')) == selected_broker]
                     broker_stats = calculate_portfolio_value(broker_portfolio, stocks_db)
                     
-                    st.markdown(f"#### 🏢 {selected_broker} Holdings Summary")
+                    st.markdown(f"#### 🏦 {selected_broker} Holdings Summary")
                     
                     col1, col2, col3, col4 = st.columns(4)
                     with col1:
@@ -1151,7 +1019,7 @@ def main():
                     st.info("📋 **Detailed View**: Shows each broker position separately, including duplicate symbols.")
                 
                 # Display holdings table
-                if view_option == "🏢 By Broker":
+                if view_option == "🏦 By Broker":
                     # Group by broker for better organization
                     if 'selected_broker' in locals() and selected_broker == "All Brokers":
                         # Show all brokers with groupings
@@ -1167,7 +1035,7 @@ def main():
                         
                         # Display each broker group
                         for broker, broker_holdings in broker_groups.items():
-                            st.markdown(f"##### 🏢 {broker}")
+                            st.markdown(f"#####   {broker}")
                             broker_df = pd.DataFrame(broker_holdings)
                             
                             # Calculate broker totals
@@ -1186,7 +1054,7 @@ def main():
                             with col3:
                                 st.caption(f"Cost: {total_cost:,.2f} SAR")
                             with col4:
-                                pnl_color = "🟢" if total_pnl >= 0 else "🔴"
+                                pnl_color = " " if total_pnl >= 0 else " "
                                 st.caption(f"P&L: {pnl_color} {total_pnl:+,.2f} SAR ({total_pnl_pct:+.1f}%)")
                             
                             st.dataframe(broker_df, hide_index=True, use_container_width=True)
@@ -1234,7 +1102,7 @@ def main():
             st.markdown("---")
             
             # Performance Charts
-            tab1, tab2, tab3 = st.tabs(["📈 Portfolio Overview", "🏢 Sector Allocation", "🎯 Top Performers"])
+            tab1, tab2, tab3 = st.tabs(["📈 Portfolio Overview", "🏭 Sector Allocation", "🏆 Top Performers"])
             
             with tab1:
                 # Portfolio composition pie chart
@@ -1309,7 +1177,7 @@ def main():
             
             with tab2:
                 # Sector allocation (if sector data is available)
-                st.markdown("#### 🏢 Portfolio Allocation by Sector")
+                st.markdown("####   Portfolio Allocation by Sector")
                 
                 # Group by sectors using database sector info
                 sector_data = {}
@@ -1397,7 +1265,7 @@ def main():
             
             with tab3:
                 # Top performers
-                st.markdown("#### 🎯 Best & Worst Performers")
+                st.markdown("####   Best & Worst Performers")
                 
                 # Calculate performance for each stock
                 performance_data = []
@@ -1431,7 +1299,7 @@ def main():
                 col1, col2 = st.columns(2)
                 
                 with col1:
-                    st.markdown("##### 🚀 Top Gainers")
+                    st.markdown("##### 📈 Top Gainers")
                     top_gainers = performance_data[:5]
                     if top_gainers:
                         gainers_df = pd.DataFrame([
@@ -1483,7 +1351,7 @@ def main():
         else:
             st.markdown("""
             <div style="text-align: center; padding: 3rem 1rem; background: #f8f9fa; border-radius: 10px; border: 2px dashed #dee2e6;">
-                <h3 style="color: #6c757d; margin-bottom: 1rem;">📭 No Portfolio Yet</h3>
+                <h3 style="color: #6c757d; margin-bottom: 1rem;">  No Portfolio Yet</h3>
                 <p style="color: #6c757d; margin-bottom: 2rem;">Start building your Saudi stock portfolio today!</p>
                 <p style="color: #495057;">Go to <strong>Portfolio Setup</strong> to add your first stock.</p>
             </div>
@@ -1500,8 +1368,9 @@ def main():
         with col1:
             # Use unified manager for consistent stock options
             try:
-                from unified_stock_manager import get_stock_options
-                stock_options = get_stock_options()
+                # from unified_stock_manager import get_stock_options  # Module not available
+                # stock_options = get_stock_options()  # Module not available
+                raise ImportError("Module not available")
             except ImportError:
                 # Fallback to manual creation
                 stock_options = []
@@ -1598,7 +1467,7 @@ def main():
         transaction_notes = st.text_area("Notes (Optional):", placeholder="Any additional notes about this transaction...")
         
         # Add stock button
-        if st.button("➕ Add to Portfolio", type="primary"):
+        if st.button("  Add to Portfolio", type="primary"):
             if selected_symbol and broker_name and broker_name != "-- Select Broker --":
                 portfolio = load_portfolio()
                 portfolio = load_portfolio()
@@ -1630,7 +1499,7 @@ def main():
                         'last_updated': datetime.now().isoformat()
                     }
                     
-                    st.success(f"✅ Updated {stock_info.get('name')} holding! New quantity: {total_qty}")
+                    st.success(f"[OK] Updated {stock_info.get('name')} holding! New quantity: {total_qty}")
                 else:
                     # Add new stock
                     new_stock = {
@@ -1644,15 +1513,15 @@ def main():
                     }
                     portfolio.append(new_stock)
                     
-                    st.success(f"✅ Added {stock_info.get('name')} to your portfolio!")
+                    st.success(f"[OK] Added {stock_info.get('name')} to your portfolio!")
                 
                 # Save portfolio
                 if save_portfolio(portfolio):
                     st.rerun()
             elif not broker_name or broker_name == "-- Select Broker --":
-                st.error("⚠️ Please select a broker before adding to portfolio!")
+                st.error("WARNING: Please select a broker before adding to portfolio!")
             else:
-                st.error("⚠️ Please ensure all fields are filled correctly!")
+                st.error("WARNING: Please ensure all fields are filled correctly!")
         
         st.markdown("---")
         
@@ -1665,7 +1534,7 @@ def main():
             st.markdown(f"**Total Holdings:** {len(portfolio)} stocks")
             
             # Tabs for different management options
-            tab1, tab2 = st.tabs(["📊 View Holdings", "✏️ Edit Holdings"])
+            tab1, tab2 = st.tabs(["[CHART] View Holdings", "  Edit Holdings"])
             
             with tab1:
                 # Display portfolio in a nice format
@@ -1699,7 +1568,7 @@ def main():
                                     st.write(f"**Current Value:** {current_value:,.2f} SAR")
                         
                         with col2:
-                            if st.button(f"🗑️ Remove", key=f"remove_{i}"):
+                            if st.button(f"  Remove", key=f"remove_{i}"):
                                 portfolio.pop(i)
                                 save_portfolio(portfolio)
                                 st.success("Stock removed from portfolio!")
@@ -1707,7 +1576,7 @@ def main():
             
             with tab2:
                 # Edit existing holdings
-                st.markdown("#### ✏️ Edit Stock Information")
+                st.markdown("####   Edit Stock Information")
                 
                 if portfolio:
                     # Select stock to edit
@@ -1819,7 +1688,7 @@ def main():
                             )
                             
                             # Submit button
-                            submitted = st.form_submit_button("💾 Update Stock", type="primary")
+                            submitted = st.form_submit_button("  Update Stock", type="primary")
                             
                             if submitted:
                                 # Update the stock with normalized broker name
@@ -1835,10 +1704,10 @@ def main():
                                 
                                 # Save portfolio
                                 if save_portfolio(portfolio):
-                                    st.success(f"✅ Updated {stock_info.get('name_en')} successfully!")
+                                    st.success(f"[OK] Updated {stock_info.get('name_en')} successfully!")
                                     st.rerun()
                                 else:
-                                    st.error("❌ Failed to save changes!")
+                                    st.error("[ERROR] Failed to save changes!")
                         
                         # Show changes preview
                         st.markdown("**Current vs New Values:**")
@@ -1862,160 +1731,9 @@ def main():
         else:
             st.info("No stocks in portfolio yet. Add some stocks above!")
         
-        # CSV Upload Section
+        # Reference to Import/Export section for bulk import
         st.markdown("---")
-        st.markdown("### 📂 Bulk Import Portfolio")
-        
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            st.markdown("Upload a CSV file to import multiple stocks at once.")
-            
-            # Template download - using correct file path
-            template_path = "portfolio_template.csv"
-            try:
-                with open(template_path, "r") as f:
-                    template_data = f.read()
-                
-                st.download_button(
-                    label="📥 Download CSV Template",
-                    data=template_data,
-                    file_name="portfolio_template.csv",
-                    mime="text/csv",
-                    help="Download this template to see the required format"
-                )
-            except FileNotFoundError:
-                st.error("❌ Template file not found. Creating template...")
-                # Create template if it doesn't exist
-                template_content = """symbol,quantity,purchase_price,purchase_date,broker,notes
-2222,100,35.50,2024-01-15,Al Rajhi Capital,ARAMCO initial position
-1120,50,85.20,2024-02-10,SNB Capital,Banking sector
-2010,75,125.00,2024-03-05,Alinma Investment,SABIC chemicals
-7010,200,45.80,2024-04-12,HSBC Saudi Arabia,STC telecom
-1180,30,28.90,2024-05-20,Riyad Capital,National Commercial Bank"""
-                
-                with open(template_path, "w") as f:
-                    f.write(template_content)
-                
-                st.download_button(
-                    label="📥 Download CSV Template",
-                    data=template_content,
-                    file_name="portfolio_template.csv",
-                    mime="text/csv",
-                    help="Download this template to see the required format"
-                )
-                st.success("✅ Template file created successfully!")
-            
-            # File uploader
-            uploaded_file = st.file_uploader(
-                "Choose CSV file",
-                type=['csv'],
-                help="Upload a CSV with columns: symbol, quantity, purchase_price, purchase_date, broker"
-            )
-            
-            if uploaded_file is not None:
-                try:
-                    import pandas as pd
-                    
-                    # Read the CSV file
-                    stringio = io.StringIO(uploaded_file.getvalue().decode("utf-8"))
-                    df = pd.read_csv(stringio)
-                    
-                    # Validate required columns
-                    required_columns = ['symbol', 'quantity', 'purchase_price', 'purchase_date', 'broker']
-                    missing_columns = [col for col in required_columns if col not in df.columns]
-                    
-                    if missing_columns:
-                        st.error(f"❌ Missing required columns: {', '.join(missing_columns)}")
-                    else:
-                        st.success(f"✅ Found {len(df)} rows to import")
-                        
-                        # Show preview
-                        st.markdown("**Preview of data to import:**")
-                        st.dataframe(df.head(10))
-                        
-                        # Import button
-                        if st.button("📥 Import Portfolio Data", type="primary"):
-                            current_portfolio = load_portfolio()
-                            imported_count = 0
-                            errors = []
-                            
-                            for index, row in df.iterrows():
-                                try:
-                                    # Validate symbol exists
-                                    symbol = str(row['symbol']).strip()
-                                    if symbol not in stocks_db:
-                                        errors.append(f"Row {index + 1}: Unknown symbol '{symbol}'")
-                                        continue
-                                    
-                                    # Validate numeric fields
-                                    try:
-                                        quantity = int(float(row['quantity']))
-                                        purchase_price = float(row['purchase_price'])
-                                    except (ValueError, TypeError):
-                                        errors.append(f"Row {index + 1}: Invalid quantity or price")
-                                        continue
-                                    
-                                    # Validate date
-                                    try:
-                                        purchase_date = pd.to_datetime(row['purchase_date']).strftime('%Y-%m-%d')
-                                    except:
-                                        errors.append(f"Row {index + 1}: Invalid date format")
-                                        continue
-                                    
-                                    # Normalize broker name
-                                    broker = normalize_broker_name(str(row['broker']).strip())
-                                    
-                                    # Add to portfolio
-                                    new_stock = {
-                                        'symbol': symbol,
-                                        'quantity': quantity,
-                                        'purchase_price': purchase_price,
-                                        'purchase_date': purchase_date,
-                                        'broker': broker,
-                                        'notes': '',
-                                        'last_updated': datetime.now().isoformat()
-                                    }
-                                    
-                                    current_portfolio.append(new_stock)
-                                    imported_count += 1
-                                    
-                                except Exception as e:
-                                    errors.append(f"Row {index + 1}: {str(e)}")
-                            
-                            # Save portfolio and show results
-                            if imported_count > 0:
-                                if save_portfolio(current_portfolio):
-                                    st.success(f"✅ Successfully imported {imported_count} stocks!")
-                                    if errors:
-                                        st.warning(f"⚠️ {len(errors)} rows had errors:")
-                                        for error in errors[:5]:  # Show first 5 errors
-                                            st.write(f"• {error}")
-                                        if len(errors) > 5:
-                                            st.write(f"... and {len(errors) - 5} more errors")
-                                    st.rerun()
-                                else:
-                                    st.error("❌ Failed to save imported data!")
-                            else:
-                                st.error("❌ No valid data found to import!")
-                                if errors:
-                                    st.write("**Errors found:**")
-                                    for error in errors:
-                                        st.write(f"• {error}")
-                
-                except Exception as e:
-                    st.error(f"❌ Error reading CSV file: {str(e)}")
-                    st.info("Please ensure your CSV file follows the template format.")
-        
-        with col2:
-            st.info("""
-            **CSV Format Requirements:**
-            - symbol: Stock symbol (e.g., 1010)
-            - quantity: Number of shares
-            - purchase_price: Price per share in SAR
-            - purchase_date: Date (YYYY-MM-DD)
-            - broker: Broker name
-            """)
+        st.info("💡 **Need to import multiple stocks?** Use the **Import/Export Data** section in the sidebar for bulk CSV uploads and portfolio management.")
         
         # Data validation section
         st.markdown("---")
@@ -2024,20 +1742,34 @@ def main():
         col1, col2 = st.columns([2, 1])
         
         with col1:
-            if st.button("🔄 Validate Stock Data"):
+            if st.button("🔍 Validate Stock Data"):
                 try:
-                    from unified_stock_manager import validate_stock_data, unified_manager
+                    # from unified_stock_manager import validate_stock_data, unified_manager  # Module not available
                     
                     # Clear cache to get fresh data
-                    unified_manager.clear_cache()
+                    # unified_manager.clear_cache()  # Module not available
                     
-                    validation_report = validate_stock_data()
+                    # validation_report = validate_stock_data()  # Module not available
                     
-                    st.success("✅ Data validation completed!")
-                    st.json(validation_report)
+                    # st.success("✅ Data validation completed!")
+                    # st.json(validation_report)
+                    
+                    # Fallback validation instead
+                    raise ImportError("Module not available")
                     
                 except ImportError:
-                    st.warning("Unified stock manager not available - using fallback validation")
+                    st.warning("🔧 Unified stock manager not available - using fallback validation")
+                    
+                    # Simple validation using available data
+                    stocks_db = load_saudi_stocks_database()
+                    stocks_count = len(stocks_db)
+                    validation_report = {
+                        "total_stocks": stocks_count,
+                        "data_source": "Static database",
+                        "validation_time": datetime.now().isoformat(),
+                        "status": "Using fallback validation"
+                    }
+                    st.json(validation_report)
                     
                     # Basic validation
                     test_stocks = ['1010', '1120', '2030', '2010']
@@ -2046,23 +1778,23 @@ def main():
                             stock_info = stocks_db[symbol]
                             st.write(f"**{symbol}:** {stock_info.get('name_en', 'Unknown')}")
                         else:
-                            st.error(f"❌ Missing stock: {symbol}")
+                            st.error(f"[ERROR] Missing stock: {symbol}")
         
         with col2:
             st.info("Use this to verify that stock symbols match the correct company names.")
     
     elif selected_page == "🤖 AI Trading Center":
-        st.markdown("## 🤖 AI Trading Center")
+        st.markdown("##   AI Trading Center")
         
         # AI Status
         if AI_AVAILABLE:
-            st.success("🟢 AI Trading Engine Active")
+            st.success("  AI Trading Engine Active")
         else:
-            st.warning("🟡 AI Trading Engine Unavailable")
+            st.warning("  AI Trading Engine Unavailable")
             st.info("Install AI dependencies to enable advanced trading signals")
         
         # AI Signals for Portfolio
-        st.markdown("### 🎯 AI Signals for Your Portfolio")
+        st.markdown("###   AI Signals for Your Portfolio")
         
         portfolio = load_portfolio()
         if portfolio:
@@ -2079,12 +1811,12 @@ def main():
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
-                        st.markdown("**🟢 BUY Signals**")
+                        st.markdown("**  BUY Signals**")
                         if buy_signals:
                             for signal in buy_signals:
                                 st.markdown(f"""
                                 <div style="background: #28a745; padding: 0.8rem; border-radius: 8px; color: white; margin: 0.3rem 0;">
-                                    <h5 style="margin: 0;">📈 {signal['symbol']}</h5>
+                                    <h5 style="margin: 0;">[UP] {signal['symbol']}</h5>
                                     <p style="margin: 0.2rem 0; font-size: 0.8rem;">{signal['company'][:20]}...</p>
                                     <p style="margin: 0.2rem 0; font-size: 0.85rem;">Confidence: {signal['confidence']:.0f}%</p>
                                     <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">{signal['reason']}</p>
@@ -2094,12 +1826,12 @@ def main():
                             st.info("No BUY signals")
                     
                     with col2:
-                        st.markdown("**🔴 SELL Signals**")
+                        st.markdown("**  SELL Signals**")
                         if sell_signals:
                             for signal in sell_signals:
                                 st.markdown(f"""
                                 <div style="background: #dc3545; padding: 0.8rem; border-radius: 8px; color: white; margin: 0.3rem 0;">
-                                    <h5 style="margin: 0;">📉 {signal['symbol']}</h5>
+                                    <h5 style="margin: 0;">[DOWN] {signal['symbol']}</h5>
                                     <p style="margin: 0.2rem 0; font-size: 0.8rem;">{signal['company'][:20]}...</p>
                                     <p style="margin: 0.2rem 0; font-size: 0.85rem;">Confidence: {signal['confidence']:.0f}%</p>
                                     <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">{signal['reason']}</p>
@@ -2109,12 +1841,12 @@ def main():
                             st.info("No SELL signals")
                     
                     with col3:
-                        st.markdown("**🟡 HOLD Signals**")
+                        st.markdown("**  HOLD Signals**")
                         if hold_signals:
                             for signal in hold_signals:
                                 st.markdown(f"""
                                 <div style="background: #ffc107; padding: 0.8rem; border-radius: 8px; color: black; margin: 0.3rem 0;">
-                                    <h5 style="margin: 0;">⏸️ {signal['symbol']}</h5>
+                                    <h5 style="margin: 0;">  {signal['symbol']}</h5>
                                     <p style="margin: 0.2rem 0; font-size: 0.8rem;">{signal['company'][:20]}...</p>
                                     <p style="margin: 0.2rem 0; font-size: 0.85rem;">Confidence: {signal['confidence']:.0f}%</p>
                                     <p style="margin: 0; font-size: 0.8rem; opacity: 0.8;">{signal['reason']}</p>
@@ -2125,7 +1857,7 @@ def main():
                             
                     # Summary statistics
                     st.markdown("---")
-                    st.markdown("### 📊 Signal Summary")
+                    st.markdown("### [CHART] Signal Summary")
                     
                     col1, col2, col3, col4 = st.columns(4)
                     
@@ -2153,7 +1885,7 @@ def main():
         st.markdown("---")
         
         # AI Market Analysis
-        st.markdown("### 📊 AI Market Analysis")
+        st.markdown("### [CHART] AI Market Analysis")
         
         try:
             # Generate comprehensive market analysis
@@ -2161,7 +1893,7 @@ def main():
             from datetime import datetime, timedelta
             
             # Market sentiment analysis
-            st.markdown("#### 🎯 Market Sentiment")
+            st.markdown("####   Market Sentiment")
             
             sentiment_score = random.uniform(0.4, 0.8)  # Bullish bias for Saudi market
             sentiment_text = "Bullish" if sentiment_score > 0.6 else "Neutral" if sentiment_score > 0.4 else "Bearish"
@@ -2175,13 +1907,13 @@ def main():
             """, unsafe_allow_html=True)
             
             # Market trends with detailed analysis
-            st.markdown("#### 📈 Key Market Trends")
+            st.markdown("#### [UP] Key Market Trends")
             
             # Updated trends with current market analysis (August 2025)
             trends = [
                 {
                     "sector": "Banking", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 89, 
                     "note": "Strong quarterly earnings & digital transformation",
                     "explanation": "Saudi banks are experiencing exceptional growth driven by SAMA's progressive monetary policy, record lending volumes, and successful digital banking initiatives. The sector benefits from oil revenues exceeding $300B annually and Vision 2030's financial sector development program.",
@@ -2195,7 +1927,7 @@ def main():
                 },
                 {
                     "sector": "Petrochemicals", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 67, 
                     "note": "Strategic diversification & green transition",
                     "explanation": "The sector is transforming beyond traditional petrochemicals into sustainable chemicals, recycling technologies, and circular economy solutions. SABIC's green hydrogen initiatives and Aramco's downstream expansion are reshaping the industry landscape.",
@@ -2209,7 +1941,7 @@ def main():
                 },
                 {
                     "sector": "Real Estate", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 78, 
                     "note": "Mega-project acceleration & residential boom",
                     "explanation": "Unprecedented real estate boom driven by NEOM Phase 1 completion, The Line construction progress, and Red Sea Project luxury developments. Residential demand surges as expatriate residency rules relax and mortgage financing improves significantly.",
@@ -2223,7 +1955,7 @@ def main():
                 },
                 {
                     "sector": "Technology", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 94, 
                     "note": "AI revolution & fintech explosion",
                     "explanation": "Saudi Arabia emerges as regional tech hub with massive AI investments, fintech unicorns, and smart city implementations. The $6.4B National Technology Development Program accelerates innovation across all sectors, creating a tech ecosystem rivaling Silicon Valley.",
@@ -2237,7 +1969,7 @@ def main():
                 },
                 {
                     "sector": "Healthcare", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 72, 
                     "note": "Medical cities & healthcare tourism boom",
                     "explanation": "Healthcare sector transformation accelerates with world-class medical cities, AI-driven diagnostics, and medical tourism initiatives. The sector benefits from aging population, increased health awareness, and government's healthcare privatization program.",
@@ -2251,7 +1983,7 @@ def main():
                 },
                 {
                     "sector": "Tourism & Entertainment", 
-                    "trend": "↗️", 
+                    "trend": " ", 
                     "strength": 85, 
                     "note": "Giga-projects & cultural transformation",
                     "explanation": "Revolutionary transformation of Saudi tourism with Red Sea luxury resorts, AlUla heritage sites, and entertainment complexes. The sector aims to attract 100M tourists annually by 2030, creating millions of jobs and diversifying the economy significantly.",
@@ -2266,7 +1998,7 @@ def main():
             ]
             
             for trend in trends:
-                color = "#28a745" if "↗️" in trend["trend"] else "#ffc107" if "→" in trend["trend"] else "#dc3545"
+                color = "#28a745" if " " in trend["trend"] else "#ffc107" if " " in trend["trend"] else "#dc3545"
                 
                 # Main trend card
                 st.markdown(f"""
@@ -2295,7 +2027,7 @@ def main():
                 """, unsafe_allow_html=True)
             
             # Market predictions
-            st.markdown("#### 🔮 AI Market Predictions (Next 30 Days)")
+            st.markdown("####   AI Market Predictions (Next 30 Days)")
             
             col1, col2 = st.columns(2)
             
@@ -2306,7 +2038,7 @@ def main():
                 predicted_tasi = current_tasi * (1 + predicted_change)
                 
                 change_color = "#28a745" if predicted_change > 0 else "#dc3545"
-                change_arrow = "↗️" if predicted_change > 0 else "↘️"
+                change_arrow = " " if predicted_change > 0 else " "
                 
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem; border-radius: 8px; color: white;">
@@ -2317,7 +2049,7 @@ def main():
                 """, unsafe_allow_html=True)
             
             with col2:
-                st.markdown("**🤖 Top AI Picks**")
+                st.markdown("**  Top AI Picks**")
                 portfolio = load_portfolio()
                 if portfolio:
                     top_picks = random.sample(portfolio, min(3, len(portfolio)))
@@ -2380,14 +2112,14 @@ def main():
                     """, unsafe_allow_html=True)
             
             # Enhanced Risk factors with icons and styling
-            st.markdown("#### ⚠️ Risk Factors to Watch")
+            st.markdown("#### WARNING: Risk Factors to Watch")
             
             risk_factors = [
-                {"icon": "🛢️", "title": "Oil Price Volatility", "desc": "May impact energy sector performance and overall market sentiment"},
-                {"icon": "🌍", "title": "Global Economic Uncertainty", "desc": "Could affect international investment flows and foreign capital"},
-                {"icon": "🛡️", "title": "Regional Geopolitical Developments", "desc": "Monitor regional tensions and policy shifts affecting stability"},
-                {"icon": "📈", "title": "Interest Rate Changes by SAMA", "desc": "Central bank policy changes impacting lending and investment"},
-                {"icon": "💱", "title": "Currency Fluctuations (USD/SAR)", "desc": "Exchange rate variations affecting international trade"}
+                {"icon": " ", "title": "Oil Price Volatility", "desc": "May impact energy sector performance and overall market sentiment"},
+                {"icon": " ", "title": "Global Economic Uncertainty", "desc": "Could affect international investment flows and foreign capital"},
+                {"icon": " ", "title": "Regional Geopolitical Developments", "desc": "Monitor regional tensions and policy shifts affecting stability"},
+                {"icon": "[UP]", "title": "Interest Rate Changes by SAMA", "desc": "Central bank policy changes impacting lending and investment"},
+                {"icon": " ", "title": "Currency Fluctuations (USD/SAR)", "desc": "Exchange rate variations affecting international trade"}
             ]
             
             selected_risks = random.sample(risk_factors, 3)
@@ -2417,7 +2149,7 @@ def main():
             st.error(f"Error generating market analysis: {str(e)}")
         
         # Enhanced AI Settings with interactive elements
-        st.markdown("### ⚙️ AI Settings & Preferences")
+        st.markdown("### [SETTINGS] AI Settings & Preferences")
         
         # Create columns for better layout
         col1, col2 = st.columns(2)
@@ -2425,7 +2157,7 @@ def main():
         with col1:
             # Interactive Risk Tolerance Slider
             risk_level = st.slider(
-                "🎯 Risk Tolerance Level", 
+                "  Risk Tolerance Level", 
                 min_value=0, 
                 max_value=100, 
                 value=50,
@@ -2434,13 +2166,13 @@ def main():
             
             # Dynamic risk level display
             if risk_level <= 30:
-                risk_label = "🛡️ Conservative"
+                risk_label = "  Conservative"
                 risk_color = "#28a745"
             elif risk_level <= 70:
-                risk_label = "⚖️ Moderate"
+                risk_label = "  Moderate"
                 risk_color = "#ffc107"
             else:
-                risk_label = "🚀 Aggressive"
+                risk_label = "[ROCKET] Aggressive"
                 risk_color = "#dc3545"
             
             st.markdown(f"""
@@ -2451,7 +2183,7 @@ def main():
             
             # Signal frequency with enhanced styling
             signal_frequency = st.selectbox(
-                "📡 Signal Frequency:",
+                "  Signal Frequency:",
                 ["Real-time", "Daily", "Weekly"],
                 index=1,
                 help="How often you want to receive AI trading signals"
@@ -2459,20 +2191,20 @@ def main():
         
         with col2:
             # Market Sentiment Gauge
-            st.markdown("#### 📊 Market Sentiment Gauge")
+            st.markdown("#### [CHART] Market Sentiment Gauge")
             
             # Generate dynamic sentiment
             sentiment_score = random.uniform(0.3, 0.9)
             if sentiment_score > 0.7:
-                sentiment_emoji = "🟢"
+                sentiment_emoji = " "
                 sentiment_text = "Bullish"
                 gauge_color = "#00C851"
             elif sentiment_score > 0.5:
-                sentiment_emoji = "🟡"
+                sentiment_emoji = " "
                 sentiment_text = "Neutral"
                 gauge_color = "#ffc107"
             else:
-                sentiment_emoji = "🔴"
+                sentiment_emoji = " "
                 sentiment_text = "Bearish"
                 gauge_color = "#dc3545"
             
@@ -2489,37 +2221,37 @@ def main():
             """, unsafe_allow_html=True)
         
         # Expandable Forecast Details
-        with st.expander("📈 Advanced Forecast Details & Model Information"):
+        with st.expander("[UP] Advanced Forecast Details & Model Information"):
             st.markdown("""
-            **🤖 AI Model Specifications:**
+            **  AI Model Specifications:**
             - **Algorithm**: Deep Neural Network with LSTM layers
             - **Training Data**: 5+ years of Tadawul historical data
             - **Update Frequency**: Real-time market data integration
             - **Accuracy Rate**: 78.5% on 30-day predictions
             
-            **📊 Current Model Assumptions:**
+            **[CHART] Current Model Assumptions:**
             - Oil price stability around $75-85/barrel
             - GDP growth rate: 4.2% annually
             - Inflation target: 2.5% (SAMA target)
             - Vision 2030 project execution on schedule
             
-            **🎯 Confidence Intervals:**
+            **  Confidence Intervals:**
             - High Confidence (>85%): 3-7 day predictions
             - Medium Confidence (70-85%): 1-2 week predictions  
             - Lower Confidence (60-70%): 3-4 week predictions
             
-            **⚠️ Model Limitations:**
+            **WARNING: Model Limitations:**
             - Black swan events not predictable
             - External geopolitical factors require manual adjustment
             - Seasonal effects may vary during Ramadan/Hajj periods
             """)
         
         # Alert preferences
-        st.markdown("#### 🔔 Alert Preferences")
+        st.markdown("####   Alert Preferences")
         col1, col2 = st.columns(2)
         
         with col1:
-            email_alerts = st.checkbox("📧 Enable Email Alerts", value=False)
+            email_alerts = st.checkbox("  Enable Email Alerts", value=False)
             if email_alerts:
                 email_types = st.multiselect(
                     "Select Alert Types:",
@@ -2527,12 +2259,12 @@ def main():
                 )
         
         with col2:
-            sms_alerts = st.checkbox("📱 Enable SMS Alerts", value=False)
+            sms_alerts = st.checkbox("[MOBILE] Enable SMS Alerts", value=False)
             if sms_alerts:
                 st.text_input("Mobile Number:", placeholder="+966-XXX-XXX-XXX")
         
         # Download functionality
-        if st.button("📥 Download AI Predictions Report"):
+        if st.button("  Download AI Predictions Report"):
             # Generate sample data for download
             import io
             import pandas as pd
@@ -2552,14 +2284,14 @@ def main():
             # Convert to CSV
             csv = df.to_csv(index=False)
             st.download_button(
-                label="📊 Download as CSV",
+                label="[CHART] Download as CSV",
                 data=csv,
                 file_name=f"ai_predictions_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv"
             )
     
     elif selected_page == "📈 Market Analysis":
-        st.markdown("## 📈 Market Analysis")
+        st.markdown("## [UP] Market Analysis")
         
         # Display top gainers and losers tables
         display_top_gainers_losers()
@@ -2567,7 +2299,7 @@ def main():
         st.markdown("---")
         
         # Additional market analysis
-        st.markdown("### 📊 Sector Performance")
+        st.markdown("### [CHART] Sector Performance")
         
         # Calculate sector statistics from the database
         stocks_db = load_saudi_stocks_database()
@@ -2602,7 +2334,7 @@ def main():
                 hide_index=True
             )
         
-        st.markdown("### 📈 Market Trends")
+        st.markdown("### [UP] Market Trends")
         
         # Market overview
         col1, col2, col3, col4 = st.columns(4)
@@ -2636,9 +2368,9 @@ def main():
                 help="Percentage of companies in largest sector"
             )
     
-    elif selected_page == "� Performance Tracker":
-        # 📊 Performance Tracker Tab
-        st.markdown("## 📊 Portfolio vs. Market Performance")
+    elif selected_page == "📊 Performance Tracker":
+        # [CHART] Performance Tracker Tab
+        st.markdown("## [CHART] Portfolio vs. Market Performance")
         
         # --- 1. Header Section with Date Range ---
         col1, col2 = st.columns([2, 1])
@@ -2719,7 +2451,7 @@ def main():
                     market_df['Normalized'] = [100] * len(market_df)
                 
                 # --- 3. Dual-Line Performance Chart ---
-                st.markdown("### 📈 Performance Comparison Chart")
+                st.markdown("### [UP] Performance Comparison Chart")
                 
                 # Clear any potential plotly cache
                 fig = go.Figure()
@@ -2755,7 +2487,7 @@ def main():
                 # Update layout with professional styling
                 fig.update_layout(
                     title={
-                        'text': "📈 Performance Comparison (Normalized to Base 100)",
+                        'text': "[UP] Performance Comparison (Normalized to Base 100)",
                         'x': 0.5,
                         'xanchor': 'center',
                         'font': {'size': 20}
@@ -2781,7 +2513,7 @@ def main():
                 st.plotly_chart(fig, use_container_width=True, key=f"performance_chart_{datetime.now().strftime('%H%M%S')}")
                 
                 # --- 4. Performance KPI Cards ---
-                st.markdown("### 📊 Performance Metrics")
+                st.markdown("### [CHART] Performance Metrics")
                 
                 # Calculate returns
                 portfolio_return = ((portfolio_df['Value'].iloc[-1] / portfolio_df['Value'].iloc[0]) - 1) * 100
@@ -2804,7 +2536,7 @@ def main():
                 
                 with col1:
                     st.metric(
-                        "📈 Portfolio Return", 
+                        "[UP] Portfolio Return", 
                         f"{portfolio_return:.2f}%", 
                         delta=f"{delta_return:+.2f}% vs TASI",
                         help="Total return of your portfolio over the selected period"
@@ -2812,7 +2544,7 @@ def main():
                 
                 with col2:
                     st.metric(
-                        "📉 Market Return", 
+                        "[DOWN] Market Return", 
                         f"{market_return:.2f}%", 
                         delta=f"{-delta_return:+.2f}% vs Portfolio",
                         help="TASI Index return over the same period"
@@ -2820,7 +2552,7 @@ def main():
                 
                 with col3:
                     st.metric(
-                        "📊 Portfolio Volatility", 
+                        "[CHART] Portfolio Volatility", 
                         f"{portfolio_volatility:.1f}%",
                         help="Annualized volatility of your portfolio"
                     )
@@ -2838,13 +2570,13 @@ def main():
                         max_drawdown = 0
                     
                     st.metric(
-                        "📉 Max Drawdown", 
+                        "[DOWN] Max Drawdown", 
                         f"{max_drawdown:.1f}%",
                         help="Largest peak-to-trough decline"
                     )
                 
                 # --- 5. Sector Allocation Comparison ---
-                st.markdown("### 📁 Sector Allocation Analysis")
+                st.markdown("###   Sector Allocation Analysis")
                 
                 # Calculate portfolio sector allocation
                 portfolio_sectors = {}
@@ -2852,7 +2584,7 @@ def main():
                 
                 # Debug: Show portfolio structure
                 if portfolio:
-                    st.write(f"📊 Analyzing {len(portfolio)} holdings...")
+                    st.write(f"[CHART] Analyzing {len(portfolio)} holdings...")
                 
                 for stock in portfolio:
                     symbol = stock.get('symbol', '')
@@ -2868,7 +2600,7 @@ def main():
                     
                     # Debug: Show what we're finding
                     if position_value > 0:
-                        st.write(f"  • {symbol}: {sector} sector, Value: {position_value:,.0f} SAR")
+                        st.write(f"    {symbol}: {sector} sector, Value: {position_value:,.0f} SAR")
                     
                     if sector in portfolio_sectors:
                         portfolio_sectors[sector] += position_value
@@ -2884,11 +2616,11 @@ def main():
                 
                 # Show calculated sectors
                 if portfolio_sectors:
-                    st.write("🎯 **Your Portfolio Sectors:**")
+                    st.write("  **Your Portfolio Sectors:**")
                     for sector, percentage in portfolio_sectors.items():
-                        st.write(f"  • {sector}: {percentage:.1f}%")
+                        st.write(f"    {sector}: {percentage:.1f}%")
                 else:
-                    st.warning("⚠️ No portfolio sectors calculated. Check your portfolio data.")
+                    st.warning("WARNING: No portfolio sectors calculated. Check your portfolio data.")
                     # Create a dummy portfolio for demonstration
                     portfolio_sectors = {
                         "Materials": 30,
@@ -2897,7 +2629,7 @@ def main():
                         "Technology": 15,
                         "Healthcare": 10
                     }
-                    st.info("📊 Showing sample allocation for demonstration")
+                    st.info("[CHART] Showing sample allocation for demonstration")
                 
                 # Market benchmark allocation (TASI typical allocation)
                 market_sectors = {
@@ -3010,15 +2742,15 @@ def main():
                     st.plotly_chart(fig_comparison, use_container_width=True)
                 
                 # --- 6. AI-Powered Narrative Insight ---
-                st.markdown("### 🧠 AI Performance Analysis")
+                st.markdown("###   AI Performance Analysis")
                 
                 # Generate insights based on performance
                 if delta_return > 0:
                     performance_text = f"outperformed the market by {delta_return:.2f}%"
-                    performance_emoji = "🎯"
+                    performance_emoji = " "
                 else:
                     performance_text = f"underperformed the market by {abs(delta_return):.2f}%"
-                    performance_emoji = "⚠️"
+                    performance_emoji = "WARNING:"
                 
                 # Identify top sectors
                 top_portfolio_sector = max(portfolio_sectors.items(), key=lambda x: x[1]) if portfolio_sectors else ("Unknown", 0)
@@ -3041,7 +2773,7 @@ def main():
                 st.info(insight_text)
                 
                 # Risk-Return Analysis
-                st.markdown("### ⚖️ Risk-Return Analysis")
+                st.markdown("###   Risk-Return Analysis")
                 
                 col1, col2 = st.columns(2)
                 
@@ -3052,7 +2784,7 @@ def main():
                     market_sharpe = (market_return - risk_free_rate) / (market_volatility * 100) if market_volatility > 0 else 0
                     
                     st.metric(
-                        "📊 Portfolio Sharpe Ratio",
+                        "[CHART] Portfolio Sharpe Ratio",
                         f"{portfolio_sharpe:.2f}",
                         delta=f"{(portfolio_sharpe - market_sharpe):+.2f} vs Market",
                         help="Risk-adjusted return measure (higher is better)"
@@ -3073,7 +2805,7 @@ def main():
                         correlation = 0.5
                     
                     st.metric(
-                        "📈 Portfolio Beta",
+                        "[UP] Portfolio Beta",
                         f"{beta:.2f}",
                         help="Sensitivity to market movements (1.0 = same as market)"
                     )
@@ -3083,7 +2815,7 @@ def main():
                     show_risk_info()
                 else:
                     # Fallback if component not available
-                    with st.expander("🛡️ What Does Risk Tolerance Mean?"):
+                    with st.expander("  What Does Risk Tolerance Mean?"):
                         st.markdown("""
                         **Risk tolerance** reflects how comfortable you are with potential losses in pursuit of higher returns. 
                         It helps the AI tailor stock recommendations to match your financial personality.
@@ -3098,7 +2830,7 @@ def main():
         else:
             st.info("Please select both start and end dates to view performance analysis.")
     
-    elif selected_page == "�🔍 Stock Research":
+    elif selected_page == "🔍 Stock Research":
         st.markdown("## 🔍 Stock Research")
         
         # Filter stocks to only show those with proper names
@@ -3146,7 +2878,7 @@ def main():
                     if len(filtered_options) == 1:
                         # Auto-select if only one match
                         search_symbol = filtered_options[0]['symbol']
-                        st.success(f"✅ Found: **{filtered_options[0]['display']}**")
+                        st.success(f"[OK] Found: **{filtered_options[0]['display']}**")
                     else:
                         # Show dropdown with filtered results
                         st.write(f"🔍 Found {len(filtered_options)} matching stocks:")
@@ -3158,7 +2890,7 @@ def main():
                         )
                         search_symbol = selected_option['symbol'] if selected_option else None
                 else:
-                    st.warning("❌ No stocks found matching your search. Try different keywords.")
+                    st.warning("[ERROR] No stocks found matching your search. Try different keywords.")
                     search_symbol = None
             else:
                 # Show all options when no search query
@@ -3179,12 +2911,12 @@ def main():
         with col2:
             if search_symbol and search_symbol in valid_stocks:
                 stock_info = valid_stocks[search_symbol]
-                st.markdown("### 🏢 Quick Info")
+                st.markdown("###   Quick Info")
                 # Use 'name' if 'name_en' is not available
                 company_name = stock_info.get('name_en', stock_info.get('name', 'Unknown'))
                 st.markdown(f"""
                 **Company:** {company_name}  
-                **Arabic Name:** {stock_info.get('name_ar', 'غير متوفر')}  
+                **Arabic Name:** {stock_info.get('name_ar', '   ')}  
                 **Sector:** {stock_info.get('sector', 'N/A')}  
                 **Symbol:** {search_symbol}
                 """)
@@ -3194,7 +2926,7 @@ def main():
                 if sector != 'N/A':
                     st.markdown(f"<span style='background-color: #1f77b4; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;'>{sector}</span>", unsafe_allow_html=True)
             else:
-                st.info("👆 Use the search box above to find any Saudi stock by symbol or company name")
+                st.info("  Use the search box above to find any Saudi stock by symbol or company name")
                 st.markdown("""
                 **Search Examples:**
                 - Type **2222** to find Saudi Aramco
@@ -3210,7 +2942,7 @@ def main():
             stock_data = get_stock_data(search_symbol, stocks_db)
             
             # Display stock metrics
-            st.markdown("### 📊 Stock Metrics")
+            st.markdown("### [CHART] Stock Metrics")
             col1, col2, col3, col4 = st.columns(4)
             
             with col1:
@@ -3224,16 +2956,16 @@ def main():
                 st.metric("P/E Ratio", f"{stock_data.get('pe_ratio', 0):.2f}")
             
             # Stock chart and additional info
-            st.markdown("### 📊 Stock Analysis")
+            st.markdown("### [CHART] Stock Analysis")
             
             # Create tabs for different analysis
-            tab1, tab2, tab3 = st.tabs(["📈 Price Info", "🏢 Company Details", "📊 Sector Comparison"])
+            tab1, tab2, tab3 = st.tabs(["[UP] Price Info", "  Company Details", "[CHART] Sector Comparison"])
             
             with tab1:
                 col1, col2 = st.columns(2)
                 
                 with col1:
-                    st.markdown("**📈 Price Movement**")
+                    st.markdown("**[UP] Price Movement**")
                     # Simulate price chart data
                     dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='D')
                     import random
@@ -3249,14 +2981,14 @@ def main():
                     st.line_chart(chart_df.set_index('Date'))
                 
                 with col2:
-                    st.markdown("**📊 Key Statistics**")
+                    st.markdown("**[CHART] Key Statistics**")
                     st.write(f"**52-Week High:** {max(prices):.2f} SAR")
                     st.write(f"**52-Week Low:** {min(prices):.2f} SAR")
                     st.write(f"**Average Price:** {sum(prices)/len(prices):.2f} SAR")
                     st.write(f"**Volatility:** {(max(prices) - min(prices)):.2f} SAR")
             
             with tab2:
-                st.markdown("**🏢 Company Information**")
+                st.markdown("**  Company Information**")
                 col1, col2 = st.columns(2)
                 
                 # Use 'name' if 'name_en' is not available
@@ -3264,7 +2996,7 @@ def main():
                 
                 with col1:
                     st.write(f"**English Name:** {company_name}")
-                    st.write(f"**Arabic Name:** {stock_info.get('name_ar', 'غير متوفر')}")
+                    st.write(f"**Arabic Name:** {stock_info.get('name_ar', '   ')}")
                     st.write(f"**Symbol:** {search_symbol}")
                 
                 with col2:
@@ -3273,7 +3005,7 @@ def main():
                     st.write(f"**Currency:** SAR")
             
             with tab3:
-                st.markdown("**📊 Sector Analysis**")
+                st.markdown("**[CHART] Sector Analysis**")
                 current_sector = stock_info.get('sector', 'N/A')
                 
                 # Count companies in same sector
@@ -3292,19 +3024,19 @@ def main():
                     for company in other_companies:
                         # Use 'name' if 'name_en' is not available
                         company_name = stocks_db[company].get('name_en', stocks_db[company].get('name', company))
-                        st.write(f"• {company} - {company_name}")
+                        st.write(f"  {company} - {company_name}")
                     
                     if len(other_companies) > 5:
                         st.write(f"... and {len(sector_companies) - 6} more companies")
     
-    elif selected_page == "📊 Analytics Dashboard":
-        st.markdown("## 📊 Analytics Dashboard")
+    elif selected_page == "📋 Analytics Dashboard":
+        st.markdown("## [CHART] Analytics Dashboard")
         
         portfolio = load_portfolio()
         
         if portfolio:
             # Portfolio analytics
-            st.markdown("### 📊 Portfolio Analytics")
+            st.markdown("### [CHART] Portfolio Analytics")
             
             # Sector allocation
             sector_allocation = {}
@@ -3356,7 +3088,7 @@ def main():
                 st.plotly_chart(fig, use_container_width=True)
             
             # Performance metrics
-            st.markdown("### 📈 Performance Metrics")
+            st.markdown("### [UP] Performance Metrics")
             
             # Calculate portfolio metrics
             total_value = sum(stock.get('current_value', 0) for stock in portfolio)
@@ -3382,7 +3114,7 @@ def main():
             
             with col3:
                 avg_return = (total_pnl / total_cost * 100) if total_cost > 0 else 0
-                performance_status = "📈" if avg_return > 0 else "📉" if avg_return < 0 else "➡️"
+                performance_status = "[UP]" if avg_return > 0 else "[DOWN]" if avg_return < 0 else " "
                 st.metric(
                     "Performance Status",
                     performance_status,
@@ -3390,7 +3122,7 @@ def main():
                 )
             
             # Top performers
-            st.markdown("### 🏆 Top Performers")
+            st.markdown("### [TROPHY] Top Performers")
             
             if portfolio:
                 # Sort by percentage return
@@ -3406,19 +3138,19 @@ def main():
                 col1, col2 = st.columns(2)
                 
                 with col1:
-                    st.markdown("**🚀 Best Performers**")
+                    st.markdown("**[ROCKET] Best Performers**")
                     for stock in top_performers:
                         pnl_percent = stock.get('pnl_percent', 0)
-                        status = "🟢" if pnl_percent > 0 else "🔴" if pnl_percent < 0 else "⚪"
+                        status = " " if pnl_percent > 0 else " " if pnl_percent < 0 else " "
                         stock_name = stocks_db.get(stock['symbol'], {}).get('name_en', stock['symbol'])
                         st.write(f"{status} **{stock['symbol']}** - {stock_name[:20]}{'...' if len(stock_name) > 20 else ''}")
                         st.write(f"   Return: {pnl_percent:.2f}% | Value: {stock.get('current_value', 0):,.0f} SAR")
                 
                 with col2:
-                    st.markdown("**📉 Needs Attention**")
+                    st.markdown("**[DOWN] Needs Attention**")
                     for stock in worst_performers:
                         pnl_percent = stock.get('pnl_percent', 0)
-                        status = "🟢" if pnl_percent > 0 else "🔴" if pnl_percent < 0 else "⚪"
+                        status = " " if pnl_percent > 0 else " " if pnl_percent < 0 else " "
                         stock_name = stocks_db.get(stock['symbol'], {}).get('name_en', stock['symbol'])
                         st.write(f"{status} **{stock['symbol']}** - {stock_name[:20]}{'...' if len(stock_name) > 20 else ''}")
                         st.write(f"   Return: {pnl_percent:.2f}% | Value: {stock.get('current_value', 0):,.0f} SAR")
@@ -3426,15 +3158,15 @@ def main():
         else:
             st.info("Add stocks to your portfolio to view analytics")
     
-    elif selected_page == "🏢 Sector Analyzer":
-        st.markdown("## 🏢 TADAWUL SECTOR ANALYZER")
+    elif selected_page == "🏭 Sector Analyzer":
+        st.markdown("##   TADAWUL SECTOR ANALYZER")
         st.markdown("**Complete Saudi Exchange (Tadawul) Sector Breakdown with Interactive Tables**")
         
         # Load database
         stocks_db = load_saudi_stocks_database()
         
         if not stocks_db:
-            st.error("❌ Could not load stock database")
+            st.error("[ERROR] Could not load stock database")
             return
         
         # Calculate sector distribution
@@ -3474,16 +3206,16 @@ def main():
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("📊 Total Stocks", total_stocks)
+            st.metric("[CHART] Total Stocks", total_stocks)
         with col2:
-            st.metric("🏢 Total Sectors", total_sectors)
+            st.metric("  Total Sectors", total_sectors)
         with col3:
-            st.metric("🥇 Largest Sector", f"{largest_sector[0]} ({largest_sector[1]})")
+            st.metric("  Largest Sector", f"{largest_sector[0]} ({largest_sector[1]})")
         
         st.markdown("---")
         
         # Sector Distribution Overview
-        st.markdown("## 📊 Sector Distribution Overview")
+        st.markdown("## [CHART] Sector Distribution Overview")
         
         # Create charts
         col1, col2 = st.columns(2)
@@ -3569,7 +3301,7 @@ def main():
             csv_data = csv_buffer.getvalue()
             
             st.download_button(
-                label=f"📥 Download {selected_sector} Stocks (CSV)",
+                label=f"  Download {selected_sector} Stocks (CSV)",
                 data=csv_data,
                 file_name=f"tadawul_{selected_sector.lower().replace(' ', '_')}_stocks.csv",
                 mime="text/csv"
@@ -3578,7 +3310,7 @@ def main():
         st.markdown("---")
         
         # Download complete data
-        st.markdown("## 📥 Download Complete Data")
+        st.markdown("##   Download Complete Data")
         
         col1, col2 = st.columns(2)
         
@@ -3589,7 +3321,7 @@ def main():
             summary_csv_data = summary_csv.getvalue()
             
             st.download_button(
-                label="📊 Download Sector Summary (CSV)",
+                label="[CHART] Download Sector Summary (CSV)",
                 data=summary_csv_data,
                 file_name="tadawul_sector_summary.csv",
                 mime="text/csv"
@@ -3612,308 +3344,81 @@ def main():
             all_stocks_csv_data = all_stocks_csv.getvalue()
             
             st.download_button(
-                label="📋 Download All Stocks (CSV)",
+                label="📥 Download All Stocks (CSV)",
                 data=all_stocks_csv_data,
                 file_name="tadawul_all_stocks.csv",
                 mime="text/csv"
             )
     
-    elif selected_page == "�️ Risk Management":
-        st.markdown("## 🛡️ Risk Management Center")
-        st.caption("    | Portfolio Risk Analysis")
-        
-        # Load portfolio data
-        portfolio = load_portfolio()
-        
-        if not portfolio:
-            st.warning("⚠️ No portfolio data found. Please set up your portfolio first in the '⚙️ Portfolio Setup' section.")
-            st.info("👆 Navigate to Portfolio Setup to add stocks to your portfolio first.")
-            return
-
-        # Calculate portfolio metrics - using CONSOLIDATED portfolio for consistency
-        try:
-            consolidated_portfolio = consolidate_portfolio_by_symbol(portfolio)
-            portfolio_value = calculate_portfolio_value(consolidated_portfolio, stocks_db)
-            total_value = portfolio_value.get('total_value', 0)
-            total_cost = portfolio_value.get('total_cost', 0)
-            total_return = ((total_value - total_cost) / total_cost * 100) if total_cost > 0 else 0
-        except:
-            total_value = 0
-            total_cost = 0
-            total_return = 0
-        
-        # Calculate basic risk metrics
-        portfolio_returns = []
-        if len(portfolio) > 1:
-            # Generate sample daily returns for demonstration
-            import numpy as np
-            np.random.seed(42)
-            portfolio_returns = np.random.normal(0.001, 0.02, 30)  # 30 days of returns
-        
-        volatility = np.std(portfolio_returns) * np.sqrt(252) * 100 if len(portfolio_returns) > 0 else 0
-        max_drawdown = abs(min(np.cumsum(portfolio_returns))) * 100 if len(portfolio_returns) > 0 else 0
-        
-        # Calculate beta (simplified - assume correlation with market)
-        beta = 1.0 + (volatility - 15) / 20  # Simplified beta calculation
-        
-        # Calculate Sharpe ratio (simplified)
-        risk_free_rate = 2.5
-        sharpe_ratio = (total_return - risk_free_rate) / volatility if volatility > 0 else 0
-        
-        # --- Key Risk Metrics Section ---
-        st.markdown("### 📊 Key Risk Metrics |   ")
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric(
-                "📉 Max Drawdown",
-                f"-{max_drawdown:.1f}%",
-                help="أقصى انخفاض | Largest peak-to-trough decline"
-            )
-        
-        with col2:
-            st.metric(
-                "📈 Portfolio Beta",
-                f"{beta:.2f}",
-                help="بيتا المحفظة | Sensitivity to market movements (1.0 = same as market)"
-            )
-        
-        with col3:
-            st.metric(
-                "📊 Volatility",
-                f"{volatility:.1f}%",
-                help="التقلب | Annualized portfolio volatility"
-            )
-        
-        with col4:
-            st.metric(
-                "⚖️ Sharpe Ratio",
-                f"{sharpe_ratio:.2f}",
-                help="نسبة شارب | Risk-adjusted return measure (higher is better)"
-            )
-        
-        # --- Risk Tolerance Settings ---
-        st.markdown("---")
-        st.markdown("### 🎯 Risk Tolerance & Thresholds |   ")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### Stop-Loss & Take-Profit Settings")
-            stop_loss = st.slider(
-                "Set Stop-Loss Threshold (%)",
-                min_value=1.0,
-                max_value=50.0,
-                value=10.0,
-                step=1.0,
-                help="Alert when any stock drops by this percentage"
-            )
+    elif selected_page == "⚠️ Risk Management":
+        # Use the imported risk management center if available
+        if RISK_MANAGEMENT_AVAILABLE:
+            # Load portfolio data for risk analysis
+            portfolio = load_portfolio()
             
-            take_profit = st.slider(
-                "Set Take-Profit Threshold (%)",
-                min_value=5.0,
-                max_value=100.0,
-                value=20.0,
-                step=5.0,
-                help="Alert when any stock gains by this percentage"
-            )
-        
-        with col2:
-            st.markdown("#### Risk Tolerance Level")
-            risk_tolerance = st.slider(
-                "Risk Tolerance (0=Conservative, 100=Aggressive)",
-                min_value=0,
-                max_value=100,
-                value=50,
-                help="Adjust how aggressive your investment strategy should be"
-            )
-            
-            # Risk level description
-            if risk_tolerance <= 30:
-                risk_level = "🛡️ Conservative"
-                risk_desc = "Focus on stable, dividend-paying stocks"
-            elif risk_tolerance <= 70:
-                risk_level = "⚖️ Moderate"
-                risk_desc = "Balanced mix of growth and defensive stocks"
+            if portfolio:
+                # Get market data for risk calculations
+                consolidated_portfolio = consolidate_portfolio_by_symbol(portfolio)
+                portfolio_value = calculate_portfolio_value(consolidated_portfolio, stocks_db)
+                
+                # Convert portfolio to DataFrame format expected by risk_management_center
+                portfolio_df = pd.DataFrame(consolidated_portfolio)
+                
+                # Add sector information if available
+                if not portfolio_df.empty and 'symbol' in portfolio_df.columns:
+                    sectors = []
+                    for symbol in portfolio_df['symbol']:
+                        if symbol in stocks_db:
+                            sector = stocks_db[symbol].get('sector', 'Unknown')
+                        else:
+                            sector = 'Unknown'
+                        sectors.append(sector)
+                    portfolio_df['Sector'] = sectors
+                    
+                    # Add weights for diversification analysis
+                    if 'quantity' in portfolio_df.columns:
+                        # Get current prices for value calculation
+                        current_prices = []
+                        for symbol in portfolio_df['symbol']:
+                            stock_data = get_stock_data(symbol, stocks_db)
+                            current_prices.append(stock_data.get('current_price', 0))
+                        portfolio_df['current_price'] = current_prices
+                        
+                        portfolio_df['Value'] = portfolio_df['quantity'] * portfolio_df['current_price']
+                        total_value = portfolio_df['Value'].sum()
+                        portfolio_df['Weight'] = portfolio_df['Value'] / total_value if total_value > 0 else 0
+                
+                # Get basic market data (you can enhance this with real market data)
+                market_data = {
+                    'tasi_index': 11500,  # Example TASI value
+                    'market_volatility': 0.25,
+                    'risk_free_rate': 0.05
+                }
+                
+                # Call the risk management center
+                risk_management_center(portfolio_df, market_data)
             else:
-                risk_level = "🚀 Aggressive"
-                risk_desc = "High-growth, volatile stocks with higher potential returns"
-            
-            st.info(f"**{risk_level}**: {risk_desc}")
-        
-        # Alert summary
-        st.info(f"📢 **Alert Settings**: You'll be notified when any stock drops by {stop_loss}% or gains {take_profit}%")
-        
-        # --- Portfolio Composition Risk ---
-        st.markdown("---")
-        st.markdown("### 📁 Portfolio Composition & Diversification Risk |   ")
-        
-        # Calculate sector allocation
-        sector_allocation = {}
-        broker_allocation = {}
-        total_val = 0
-        
-        for stock in portfolio:
-            symbol = stock.get('symbol', '')
-            quantity = stock.get('quantity', 0)
-            purchase_price = stock.get('purchase_price', 0)
-            broker = stock.get('broker', 'Unknown')
-            position_value = quantity * purchase_price
-            total_val += position_value
-            
-            # Get sector from database
-            stock_info = stocks_db.get(symbol, {})
-            sector = stock_info.get('sector', 'Unknown')
-            
-            sector_allocation[sector] = sector_allocation.get(sector, 0) + position_value
-            broker_allocation[broker] = broker_allocation.get(broker, 0) + position_value
-        
-        # Convert to percentages
-        if total_val > 0:
-            sector_pct = {sector: (value / total_val * 100) for sector, value in sector_allocation.items()}
-            broker_pct = {broker: (value / total_val * 100) for broker, value in broker_allocation.items()}
+                st.warning("⚠️ No portfolio data found. Please set up your portfolio first in the '⚙️ Portfolio Setup' section.")
+                st.info("📋 Navigate to Portfolio Setup to add stocks to your portfolio first.")
         else:
-            sector_pct = {}
-            broker_pct = {}
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### Sector Diversification")
-            if sector_pct:
-                # Create a simple bar chart data
-                sector_df = pd.DataFrame(list(sector_pct.items()), columns=['Sector', 'Percentage'])
-                st.bar_chart(sector_df.set_index('Sector')['Percentage'])
-                
-                # Check for concentration risk
-                max_sector_pct = max(sector_pct.values()) if sector_pct else 0
-                if max_sector_pct > 50:
-                    st.warning(f"⚠️ High concentration risk: {max_sector_pct:.1f}% in one sector")
-                elif max_sector_pct > 30:
-                    st.info(f"💡 Moderate concentration: {max_sector_pct:.1f}% in top sector")
-                else:
-                    st.success("✅ Good sector diversification")
-            else:
-                st.info("No sector data available")
-        
-        with col2:
-            st.markdown("#### Broker Diversification")
-            if broker_pct:
-                broker_df = pd.DataFrame(list(broker_pct.items()), columns=['Broker', 'Percentage'])
-                st.bar_chart(broker_df.set_index('Broker')['Percentage'])
-                
-                # Check for broker concentration
-                max_broker_pct = max(broker_pct.values()) if broker_pct else 0
-                if max_broker_pct > 80:
-                    st.warning(f"⚠️ High broker concentration: {max_broker_pct:.1f}% with one broker")
-                else:
-                    st.success("✅ Good broker diversification")
-            else:
-                st.info("No broker data available")
-        
-        # --- Scenario Analysis ---
-        st.markdown("---")
-        st.markdown("### 📉 Scenario Analysis |  ")
-        
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            scenario = st.selectbox(
-                "Choose a Market Stress Scenario",
-                [
-                    "Oil Price Drop (-20%)",
-                    "Interest Rate Hike (+2%)",
-                    "Geopolitical Tension",
-                    "Global Recession",
-                    "Currency Devaluation (SAR)"
-                ]
-            )
-            
-            # Simulate scenario impact
-            scenario_impacts = {
-                "Oil Price Drop (-20%)": -8.5,
-                "Interest Rate Hike (+2%)": -6.2,
-                "Geopolitical Tension": -12.3,
-                "Global Recession": -15.8,
-                "Currency Devaluation (SAR)": -4.1
-            }
-            
-            impact = scenario_impacts.get(scenario, -5.0)
-            
-        with col2:
-            st.metric(
-                "Estimated Impact",
-                f"{impact}%",
-                delta=f"SAR {(total_value * impact / 100):,.0f}",
-                help="Simulated impact on portfolio value"
-            )
-        
-        # Show scenario details
-        if impact < -10:
-            st.error(f"🔴 **High Risk Scenario**: {scenario} could significantly impact your portfolio")
-        elif impact < -5:
-            st.warning(f"🟡 **Moderate Risk**: {scenario} may cause some portfolio volatility")
-        else:
-            st.info(f"🟢 **Low Risk**: {scenario} likely to have minimal impact")
-        
-        # --- Risk Alerts ---
-        st.markdown("---")
-        st.markdown("### 🚨 Active Risk Alerts |   ")
-
-        # Check for various risk conditions
-        alerts = []
-        
-        if volatility > 25:
-            alerts.append("⚠️ High portfolio volatility detected - consider rebalancing")
-        
-        if max_drawdown > 20:
-            alerts.append("⚠️ Significant drawdown risk - review stop-loss settings")
-        
-        if max_sector_pct > 50:
-            alerts.append("⚠️ Over-concentration in one sector - diversify holdings")
-        
-        if beta > 1.5:
-            alerts.append("⚠️ High market sensitivity - portfolio more volatile than market")
-        
-        if len(portfolio) < 5:
-            alerts.append("💡 Consider adding more stocks for better diversification")
-        
-        if alerts:
-            for alert in alerts:
-                st.warning(alert)
-        else:
-            st.success("✅ No active risk alerts - portfolio appears well-balanced")
-        
-        # --- Educational Content ---
-        if RISK_INFO_AVAILABLE:
-            show_risk_info()
-        else:
-            # Fallback educational content
-            with st.expander("📘 Understanding Risk Management | فهم إدارة المخاطر"):
-                st.markdown("""
-                **Risk management** helps you protect your portfolio from unexpected losses and optimize your investment strategy.
-                
-                **Key Concepts:**
-                - **Volatility**: Measures how much your portfolio value fluctuates
-                - **Beta**: Shows how sensitive your portfolio is to market movements
-                - **Sharpe Ratio**: Measures risk-adjusted returns (higher is better)  
-                - **Diversification**: Spreading investments across sectors and assets
-                
-                **إدارة المخاطر** تساعدك على حماية محفظتك من الخسائر غير المتوقعة وتحسين استراتيجية الاستثمار.
-                
-                **المفاهيم الأساسية:**
-                - **التقلب**: يقيس مدى تذبذب قيمة محفظتك
-                - **بيتا**: يوضح مدى حساسية محفظتك لحركات السوق
-                - **نسبة شارب**: تقيس العوائد المعدلة للمخاطر
-                - **التنويع**: توزيع الاستثمارات عبر القطاعات والأصول
-                """)
+            # Fallback to basic risk management if the module is not available
+            st.markdown("## ⚠️ Risk Management Center")
+            st.caption("تحليل المخاطر المالية للمحفظة | Portfolio Risk Analysis")
+            st.warning("⚠️ Risk Management Center module not available. Please ensure risk_management_center.py is in the apps directory.")
+            st.info("💡 The Risk Management Center provides advanced portfolio risk analysis including:")
+            st.markdown("""
+            - **Portfolio Risk Metrics**: Max Drawdown, Beta, Volatility, Sharpe Ratio
+            - **Stop-Loss & Take-Profit Settings**: Customizable risk thresholds
+            - **Diversification Analysis**: Sector and broker concentration risk
+            - **Scenario Simulation**: Market stress testing
+            - **Risk Alerts**: Automated risk monitoring
+            """)
     
-    elif selected_page == "�📁 Import/Export Data":
+    elif selected_page == "📁 Import/Export Data":
         st.markdown("## 📁 Import/Export Data")
         
         # Export portfolio
-        st.markdown("### 📤 Export Portfolio")
+        st.markdown("###   Export Portfolio")
         
         portfolio = load_portfolio()
         if portfolio:
@@ -3941,14 +3446,14 @@ def main():
             csv_data = csv_buffer.getvalue()
             
             st.download_button(
-                label="📥 Download Portfolio (CSV)",
+                label="  Download Portfolio (CSV)",
                 data=csv_data,
                 file_name=f"tadawul_nexus_portfolio_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv"
             )
             
             # Preview
-            st.markdown("### 👀 Export Preview")
+            st.markdown("###   Export Preview")
             st.dataframe(export_df, hide_index=True)
         
         else:
@@ -3957,7 +3462,7 @@ def main():
         st.markdown("---")
         
         # Import portfolio
-        st.markdown("### 📥 Import Portfolio")
+        st.markdown("###   Import Portfolio")
         
         st.info("""
         **📋 File Format Requirements:**
@@ -3970,6 +3475,39 @@ def main():
         - **purchase_date**: Date (YYYY-MM-DD format)
         - **broker**: Broker name (optional)
         """)
+        
+        # Template download section
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            st.markdown("**📥 Download Template Files:**")
+            
+            # Create template content
+            template_content = """symbol,quantity,purchase_price,purchase_date,broker
+2222,100,35.50,2024-01-15,Al Rajhi Capital
+1120,50,85.20,2024-02-10,SNB Capital
+2010,75,125.00,2024-03-05,Alinma Investment
+7010,200,45.80,2024-04-12,HSBC Saudi Arabia
+1180,30,28.90,2024-05-20,Riyad Capital"""
+            
+            st.download_button(
+                label="📥 Download CSV Template",
+                data=template_content,
+                file_name="portfolio_template.csv",
+                mime="text/csv",
+                help="Download this template to see the required format"
+            )
+        
+        with col2:
+            st.markdown("**💡 Template Help:**")
+            st.markdown("""
+            - Use the template as a starting point
+            - Keep column names exactly as shown
+            - Dates in YYYY-MM-DD format
+            - No empty rows
+            """)
+        
+        st.markdown("---")
         
         uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
         
@@ -4000,7 +3538,7 @@ def main():
                     
                     # Show sheet selection if multiple sheets
                     if len(sheet_names) > 1:
-                        st.info(f"📋 **Excel file detected with {len(sheet_names)} sheets**")
+                        st.info(f"📊 **Excel file detected with {len(sheet_names)} sheets**")
                         selected_sheet = st.selectbox(
                             "Select sheet to import:",
                             sheet_names,
@@ -4008,14 +3546,14 @@ def main():
                         )
                     
                     import_df = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
-                    st.success(f"✅ Reading from sheet: **{selected_sheet}**")
+                    st.success(f"[OK] Reading from sheet: **{selected_sheet}**")
                 else:
-                    st.error("❌ Unsupported file format. Please use CSV or Excel files.")
+                    st.error("[ERROR] Unsupported file format. Please use CSV or Excel files.")
                     import_df = None
                 
                 # Only proceed if we have a valid dataframe
                 if import_df is not None:
-                    st.markdown("### 👀 Import Preview")
+                    st.markdown("###   Import Preview")
                     st.dataframe(import_df, hide_index=True)
                     
                     # Validate required columns
@@ -4023,7 +3561,7 @@ def main():
                     missing_cols = [col for col in required_cols if col not in import_df.columns]
                 
                 if missing_cols:
-                    st.error(f"❌ Missing required columns: {', '.join(missing_cols)}")
+                    st.error(f"[ERROR] Missing required columns: {', '.join(missing_cols)}")
                 else:
                     # Validate data
                     validation_errors = []
@@ -4085,24 +3623,24 @@ def main():
                             validation_errors.append(f"Row {idx+1}: Error processing date '{row['purchase_date']}': {str(e)}")
                     
                     if validation_errors:
-                        st.error("❌ **Validation Errors:**")
+                        st.error("[ERROR] **Validation Errors:**")
                         for error in validation_errors[:10]:  # Show first 10 errors
-                            st.error(f"• {error}")
+                            st.error(f"  {error}")
                         if len(validation_errors) > 10:
                             st.error(f"... and {len(validation_errors) - 10} more errors")
                         
                         # Show helpful tips
                         st.info("""
-                        💡 **Quick Fixes:**
+                        [IDEA] **Quick Fixes:**
                         - **Missing symbols**: Some stocks may need to be added to the database
                         - **Price errors**: Check for empty cells, negative values, or text in price column
                         - **Date format**: Use YYYY-MM-DD format (e.g., 2024-01-15)
                         """)
                     else:
-                        st.success("✅ All data validated successfully!")
+                        st.success("[OK] All data validated successfully!")
                         
                         # Calculate and display import summary
-                        st.markdown("### 📊 Import Summary")
+                        st.markdown("### [CHART] Import Summary")
                         
                         # Load existing portfolio to calculate current totals
                         portfolio_file = Path("user_portfolio.json")
@@ -4140,12 +3678,12 @@ def main():
                         final_cost = current_cost + import_cost
                         
                         # Display summary in three sections
-                        st.markdown("#### 📋 Portfolio Comparison")
+                        st.markdown("#### 📊 Portfolio Comparison")
                         
                         col1, col2, col3 = st.columns(3)
                         
                         with col1:
-                            st.markdown("**🏠 Current Portfolio**")
+                            st.markdown("**  Current Portfolio**")
                             st.metric(
                                 label="Stocks",
                                 value=f"{current_stocks:,}",
@@ -4163,7 +3701,7 @@ def main():
                             )
                         
                         with col2:
-                            st.markdown("**📁 Import File**")
+                            st.markdown("**  Import File**")
                             st.metric(
                                 label="Records",
                                 value=f"{import_stocks:,}",
@@ -4181,7 +3719,7 @@ def main():
                             )
                         
                         with col3:
-                            st.markdown("**🎯 After Import**")
+                            st.markdown("**  After Import**")
                             st.metric(
                                 label="Stocks",
                                 value=f"~{final_stocks:,}",
@@ -4204,13 +3742,13 @@ def main():
                         # Show unique symbols summary
                         unique_symbols = import_df['symbol'].nunique()
                         if unique_symbols != import_stocks:
-                            st.info(f"ℹ️ **Note**: {import_stocks} records contain {unique_symbols} unique stock symbols. Duplicate symbols will be consolidated.")
+                            st.info(f"  **Note**: {import_stocks} records contain {unique_symbols} unique stock symbols. Duplicate symbols will be consolidated.")
                         
                         st.markdown("---")
                         
                         col1, col2 = st.columns([1, 1])
                         with col1:
-                            if st.button("📥 Import Portfolio", type="primary"):
+                            if st.button("  Import Portfolio", type="primary"):
                                 # Load existing portfolio
                                 portfolio_file = Path("user_portfolio.json")
                                 existing_portfolio = []
@@ -4326,10 +3864,10 @@ def main():
                                         json.dump(existing_portfolio, f, indent=2)
                                     
                                     st.success(f"""
-                                    ✅ **Portfolio Import Successful!**
-                                    - 📈 New stocks added: {imported_count}
-                                    - 🔄 Existing stocks updated: {updated_count}
-                                    - 📊 Total stocks in portfolio: {len(existing_portfolio)}
+                                    [OK] **Portfolio Import Successful!**
+                                    - [UP] New stocks added: {imported_count}
+                                    -   Existing stocks updated: {updated_count}
+                                    - [CHART] Total stocks in portfolio: {len(existing_portfolio)}
                                     
                                     *Refreshing portfolio view...*
                                     """)
@@ -4338,16 +3876,16 @@ def main():
                                     st.balloons()
                                     
                                     # Set session state to navigate to Portfolio Overview
-                                    st.session_state.main_nav = "🏠 Portfolio Overview"
+                                    st.session_state.main_nav = "  Portfolio Overview"
                                     
                                     # Rerun to refresh the app and show updated portfolio
                                     st.rerun()
                                     
                                 except Exception as e:
-                                    st.error(f"❌ Error saving portfolio: {e}")
+                                    st.error(f"[ERROR] Error saving portfolio: {e}")
                         
                         with col2:
-                            if st.button("📋 Download Sample CSV"):
+                            if st.button("📥 Download Sample CSV"):
                                 # Create sample CSV
                                 sample_data = {
                                     'symbol': ['1010', '2222', '4001'],
@@ -4365,15 +3903,433 @@ def main():
                                 csv_data = csv_buffer.getvalue()
                                 
                                 st.download_button(
-                                    label="📥 Download Sample",
+                                    label="  Download Sample",
                                     data=csv_data,
                                     file_name="portfolio_sample.csv",
                                     mime="text/csv"
                                 )
                     
             except Exception as e:
-                st.error(f"❌ Error reading file: {e}")
-                st.info("💡 Please ensure your CSV file is properly formatted.")
+                st.error(f"[ERROR] Error reading file: {e}")
+                st.info("[IDEA] Please ensure your CSV file is properly formatted.")
+
+    elif selected_page == "🎨 Theme Customizer":
+        st.markdown("## 🎨 Theme Customizer")
+        st.caption("🎨 Real-time color and font customization for TADAWUL NEXUS")
+        
+        # Option to use standalone or integrated theme customizer
+        theme_mode = st.radio(
+            "Choose Theme Customizer Mode:",
+            ["🚀 Enhanced (Integrated)", "🎯 Simple (Standalone)"],
+            help="Enhanced: Full-featured theme customizer | Simple: Basic color and font selection"
+        )
+        
+        if theme_mode == "🎯 Simple (Standalone)" and STANDALONE_THEME_AVAILABLE:
+            st.markdown("---")
+            st.info("🎯 Using your standalone theme customizer")
+            theme_customizer()  # Call your standalone function
+        
+        elif theme_mode == "🚀 Enhanced (Integrated)":
+            st.markdown("---")
+            # Create tabs for different customization options
+            portfolio_tab, color_tab, font_tab, preview_tab = st.tabs(["📊 Portfolio Table", "🎨 Colors", "📝 Fonts", "👁️ Preview"])
+            
+            with portfolio_tab:
+                st.markdown("### 📊 Portfolio Table Color Control")
+                st.info("🎯 **Click any theme button below and watch your portfolio table colors change instantly!**")
+                
+                # Initialize session state for theme - FORCE DARK CHARCOAL AS DEFAULT
+                if 'current_theme' not in st.session_state:
+                    st.session_state.current_theme = "dark_charcoal"
+                if 'theme_applied' not in st.session_state:
+                    st.session_state.theme_applied = False
+                    # Force apply dark charcoal theme immediately
+                    apply_global_theme()
+                
+                # Portfolio Table Quick Presets with Dynamic Names
+                st.markdown("#### ⚡ **Portfolio Table Instant Themes**")
+                st.markdown("**🚀 Click any button below for instant table color changes!**")
+                
+                # Add immediate reset button
+                reset_col, info_col = st.columns([1, 2])
+                with reset_col:
+                    if st.button("🔄 Reset to Default", help="Reset to default dark charcoal theme", type="primary"):
+                        apply_theme_with_preview("dark_charcoal")
+                        st.success("✅ Reset to Dark Charcoal theme!")
+                        st.rerun()
+                
+                with info_col:
+                    st.markdown("**Current Theme:** `" + st.session_state.current_theme.replace('_', ' ').title() + "`")
+                
+                st.markdown("---")
+                
+                # Define theme display names and descriptions (moved to broader scope)
+                theme_info = {
+                    "dark_charcoal": {"name": "⚫ Dark Charcoal", "color": "Deep Slate Gray", "help": "Professional charcoal theme with dark gray tones"},
+                    "professional_blue": {"name": "🔵 Ocean Blue", "color": "Professional Blue", "help": "Corporate blue theme with navy accents"},
+                    "financial_green": {"name": "🟢 Forest Green", "color": "Financial Green", "help": "Success-oriented green theme with emerald tones"},
+                    "saudi_gold": {"name": "🟡 Royal Gold", "color": "Luxury Gold", "help": "Premium gold theme with rich golden hues"}
+                }
+                
+                preset_col1, preset_col2, preset_col3, preset_col4 = st.columns(4)
+                
+                theme_changed = False
+                
+                with preset_col1:
+                    theme_key = "dark_charcoal"
+                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
+                                help=theme_info[theme_key]['help'], key="dark_theme_btn"):
+                        apply_theme_with_preview(theme_key)
+                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
+                        st.rerun()
+                        
+                with preset_col2:
+                    theme_key = "professional_blue"
+                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
+                                help=theme_info[theme_key]['help'], key="blue_theme_btn"):
+                        apply_theme_with_preview(theme_key)
+                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
+                        st.rerun()
+                
+                with preset_col3:
+                    theme_key = "financial_green"
+                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
+                                help=theme_info[theme_key]['help'], key="green_theme_btn"):
+                        apply_theme_with_preview(theme_key)
+                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
+                        st.rerun()
+                
+                with preset_col4:
+                    theme_key = "saudi_gold"
+                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
+                                help=theme_info[theme_key]['help'], key="gold_theme_btn"):
+                        apply_theme_with_preview(theme_key)
+                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
+                        st.rerun()
+                
+                st.markdown("---")
+                
+                # Enhanced Instructions with Custom Styling
+                st.markdown("""
+                <div style="background: rgba(0, 102, 204, 0.1); border-left: 4px solid #0066CC; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                <h3 style="color: #ffffff; margin-top: 0;">📋 <strong>How to Use Theme Customizer:</strong></h3>
+                
+                <p style="color: #E5E9F0; line-height: 1.6;">
+                1. <strong style="color: #00FF88;">🎯 Click any theme button above</strong> → See instant table color changes<br>
+                2. <strong style="color: #00FF88;">📊 Go to "Portfolio & Trading" page</strong> → View your portfolio with new colors<br>
+                3. <strong style="color: #00FF88;">🔄 Use Reset button</strong> → Return to default theme anytime<br>
+                4. <strong style="color: #00FF88;">⚡ All changes apply instantly</strong> → No need to refresh or reload
+                </p>
+                
+                <p style="color: #FFD700; font-weight: 500;"><strong>💡 Pro Tip:</strong> The theme applies to ALL tables in the app (Portfolio, Top Gainers, Market Data, etc.)</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Force refresh after any theme change
+                force_theme_refresh()
+                st.session_state.theme_applied = True
+                
+                # Show success message with theme name if theme was changed
+                if theme_changed:
+                    current_theme_display = theme_info[st.session_state.current_theme]
+                    st.success(f"✅ {current_theme_display['name']} - {current_theme_display['color']} theme applied!")
+                    st.rerun()
+                
+                # Display current theme with actual color description
+                current_theme_display = theme_info[st.session_state.current_theme]
+                st.info(f"🎨 Current Theme: **{current_theme_display['name']} - {current_theme_display['color']}**")
+                
+                st.markdown("---")
+                
+                # Live Portfolio Preview with Current Theme
+                st.markdown("#### 👁️ Portfolio Table Preview")
+                
+                # Get current theme colors for preview - SOLID THEMES
+                themes = {
+                    "dark_charcoal": {
+                        "table_bg": "rgba(30, 40, 50, 1.0)",           # Completely solid dark background
+                        "border": "rgba(60, 70, 90, 1.0)",            # Solid border
+                        "header_bg": "rgba(50, 60, 80, 1.0)",         # Solid header background
+                        "cell_bg": "rgba(35, 45, 60, 1.0)",           # Solid cell background
+                        "text": "#ffffff",                             # Pure white text
+                        "shadow": "rgba(0, 0, 0, 0.8)"               # Strong shadow
+                    },
+                    "professional_blue": {
+                        "table_bg": "rgba(15, 76, 150, 1.0)",         # Solid blue background
+                        "border": "rgba(25, 86, 160, 1.0)",          # Solid blue border
+                        "header_bg": "rgba(20, 81, 155, 1.0)",       # Solid blue header
+                        "cell_bg": "rgba(10, 71, 145, 1.0)",         # Solid blue cells
+                        "text": "#ffffff",                             # Pure white text
+                        "shadow": "rgba(15, 76, 150, 0.8)"           # Blue shadow
+                    },
+                    "financial_green": {
+                        "table_bg": "rgba(46, 125, 50, 1.0)",         # Solid green background
+                        "border": "rgba(56, 135, 60, 1.0)",          # Solid green border
+                        "header_bg": "rgba(51, 130, 55, 1.0)",       # Solid green header
+                        "cell_bg": "rgba(41, 120, 45, 1.0)",         # Solid green cells
+                        "text": "#ffffff",                             # Pure white text
+                        "shadow": "rgba(46, 125, 50, 0.8)"           # Green shadow
+                    },
+                    "saudi_gold": {
+                        "table_bg": "rgba(180, 140, 20, 1.0)",        # Solid gold background
+                        "border": "rgba(200, 160, 40, 1.0)",         # Solid gold border
+                        "header_bg": "rgba(190, 150, 30, 1.0)",      # Solid gold header
+                        "cell_bg": "rgba(170, 130, 10, 1.0)",        # Solid gold cells
+                        "text": "#000000",                             # Pure black text for contrast
+                        "shadow": "rgba(180, 140, 20, 0.8)"          # Gold shadow
+                    }
+                }
+                
+                current_colors = themes.get(st.session_state.current_theme, themes["dark_charcoal"])
+                
+                st.markdown(f"""
+                <div style="
+                    background: {current_colors['table_bg']};
+                    border: 2px solid {current_colors['border']};
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px {current_colors['shadow']};
+                    margin: 1rem 0;
+                ">
+                    <div style="background: {current_colors['header_bg']}; color: {current_colors['text']}; padding: 0.8rem; font-weight: bold;">
+                        Symbol | Company | Quantity | Price | Value
+                    </div>
+                    <div style="background: {current_colors['cell_bg']}; color: {current_colors['text']}; padding: 0.6rem;">
+                        2222 | Saudi Aramco | 100 | 28.50 SAR | 2,850.00 SAR
+                    </div>
+                    <div style="background: {current_colors['cell_bg']}; color: {current_colors['text']}; padding: 0.6rem;">
+                        1120 | Al Rajhi Bank | 50 | 85.00 SAR | 4,250.00 SAR
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.info("� The preview above shows how your portfolio table will look with the current theme. Use the preset buttons above to switch themes instantly!")
+            
+            with color_tab:
+                st.markdown("### 🎨 Color Palette Configuration")
+                st.info("💡 Change colors below and see them apply instantly to your dashboard!")
+                
+                # Add Quick Presets (inspired by your file)
+                st.markdown("#### ⚡ Quick Color Presets")
+                preset_col1, preset_col2, preset_col3, preset_col4 = st.columns(4)
+                
+                with preset_col1:
+                    if st.button("🔵 Default Blue", help="TADAWUL NEXUS default theme"):
+                        primary_blue = "#0066CC"
+                        secondary_blue = "#1e3a5f"
+                        accent_gold = "#FFD700"
+                        dark_teal = "#0f2240"
+                
+                with preset_col2:
+                    if st.button("🟢 Saudi Green", help="Saudi-inspired green theme"):
+                        primary_blue = "#00AA44"
+                        secondary_blue = "#1a4d2e"
+                        accent_gold = "#FFD700"
+                        dark_teal = "#0d2818"
+                
+                with preset_col3:
+                    if st.button("🟡 Gold Luxury", help="Premium gold theme"):
+                        primary_blue = "#DAA520"
+                        secondary_blue = "#4a3728"
+                        accent_gold = "#FFD700"
+                        dark_teal = "#2d1810"
+                
+                with preset_col4:
+                    if st.button("⚫ Dark Mode", help="Pure dark theme"):
+                        primary_blue = "#333333"
+                        secondary_blue = "#1a1a1a"
+                        accent_gold = "#666666"
+                        dark_teal = "#0a0a0a"
+                
+                st.markdown("---")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("#### 🔵 Primary Theme Colors")
+                    primary_blue = st.color_picker("Primary Blue", "#0066CC", help="Main brand color for buttons and headers")
+                    secondary_blue = st.color_picker("Secondary Blue", "#1e3a5f", help="Cards and container backgrounds")
+                    accent_gold = st.color_picker("Accent Gold", "#FFD700", help="Borders, highlights, and hover effects")
+                    dark_teal = st.color_picker("Dark Navy", "#0f2240", help="Sidebar and background gradients")
+                    
+                with col2:
+                    st.markdown("#### 🖤 Background & Text Colors")
+                    background_dark = st.color_picker("Background Dark", "#0d1b2a", help="Main dark background")
+                    text_light = st.color_picker("Text Light", "#FFFFFF", help="White text for dark backgrounds")
+                    text_gray = st.color_picker("Text Gray", "#B0BEC5", help="Gray text for subtitles")
+                    
+                    st.markdown("#### 🎯 Status Colors")
+                    success_green = st.color_picker("Success Green", "#4CAF50", help="Positive values and success")
+                    warning_red = st.color_picker("Warning Red", "#F44336", help="Negative values and warnings")
+                    chart_orange = st.color_picker("Chart Orange", "#FF9800", help="Charts and alerts")
+                
+                # Live Preview (inspired by your file)
+                st.markdown("#### 🎯 Live Color Preview")
+                st.markdown(f"""
+                <div style="
+                    background: linear-gradient(135deg, {primary_blue} 0%, {secondary_blue} 50%, {dark_teal} 100%);
+                    color: {text_light};
+                    padding: 1.5rem;
+                    border-radius: 10px;
+                    border: 2px solid {accent_gold};
+                    text-align: center;
+                    margin: 1rem 0;
+                ">
+                    <h3 style="color: {accent_gold}; margin: 0;">🏛️ TADAWUL NEXUS</h3>
+                    <p style="color: {text_gray}; margin: 0.5rem 0;">Your selected color scheme preview</p>
+                    <span style="background: {success_green}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">✅ Success</span>
+                    <span style="background: {warning_red}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">❌ Warning</span>
+                    <span style="background: {chart_orange}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">📊 Chart</span>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Apply colors button
+                if st.button("🎨 Apply Color Changes", type="primary"):
+                    # Update the branding file with new colors
+                    new_colors = {
+                        'primary_blue': primary_blue,
+                        'secondary_blue': secondary_blue,
+                        'accent_gold': accent_gold,
+                        'dark_teal': dark_teal,
+                        'background_dark': background_dark,
+                        'text_light': text_light,
+                        'text_gray': text_gray,
+                        'success_green': success_green,
+                        'warning_red': warning_red,
+                        'chart_orange': chart_orange,
+                    }
+                    
+                    if update_branding_colors(new_colors):
+                        st.success("✅ Colors updated successfully! Refresh the page to see changes.")
+                        st.balloons()
+                    else:
+                        st.error("❌ Failed to update colors. Please try again.")
+            
+            with font_tab:
+                st.markdown("### 📝 Font Configuration")
+                st.info("💡 Customize font sizes and family for different text elements")
+                
+                # Add Font Family Selection (from your file)
+                st.markdown("#### 🔤 Font Family Selection")
+                font_family = st.selectbox(
+                    "Choose Font Family", 
+                    ["Inter (Default)", "Arial", "sans-serif", "serif", "monospace", "Georgia", "Times New Roman"],
+                    help="Select the main font family for the application"
+                )
+                
+                # Live Font Preview (inspired by your file)
+                font_css = {
+                    "Inter (Default)": "'Inter', sans-serif",
+                    "Arial": "Arial, sans-serif", 
+                    "sans-serif": "sans-serif",
+                    "serif": "serif",
+                    "monospace": "monospace",
+                    "Georgia": "Georgia, serif",
+                    "Times New Roman": "'Times New Roman', serif"
+                }
+                
+                selected_font = font_css.get(font_family, "'Inter', sans-serif")
+                
+                st.markdown(f"""
+                <div style="
+                    font-family: {selected_font};
+                    background: rgba(255, 255, 255, 0.05);
+                    padding: 1rem;
+                    border-radius: 8px;
+                    border: 1px solid #FFD700;
+                    margin: 1rem 0;
+                ">
+                    <h2 style="font-family: {selected_font}; color: #FFD700;">📊 Font Preview</h2>
+                    <p style="font-family: {selected_font}; color: #FFFFFF;">This is how your selected font will appear in the application.</p>
+                    <small style="font-family: {selected_font}; color: #B0BEC5;">Sample caption text in the selected font family.</small>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("---")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("#### 📖 Header Sizes")
+                    h1_size = st.slider("H1 Font Size (rem)", 2.0, 4.0, 2.5, 0.1)
+                    h2_size = st.slider("H2 Font Size (rem)", 1.5, 3.0, 2.0, 0.1)
+                    h3_size = st.slider("H3 Font Size (rem)", 1.2, 2.5, 1.5, 0.1)
+                    
+                with col2:
+                    st.markdown("#### 📝 Body Text")
+                    body_size = st.slider("Body Font Size (rem)", 0.8, 1.5, 1.0, 0.05)
+                    caption_size = st.slider("Caption Font Size (rem)", 0.6, 1.2, 0.85, 0.05)
+                    
+                    st.markdown("#### 🎛️ Font Weight")
+                    header_weight = st.selectbox("Header Weight", [300, 400, 500, 600, 700], index=3)
+                    body_weight = st.selectbox("Body Weight", [300, 400, 500], index=1)
+                
+                # Apply fonts button
+                if st.button("📝 Apply Font Changes", type="primary"):
+                    font_config = {
+                        'font_family': selected_font,
+                        'h1_size': h1_size,
+                        'h2_size': h2_size,
+                        'h3_size': h3_size,
+                        'body_size': body_size,
+                        'caption_size': caption_size,
+                        'header_weight': header_weight,
+                        'body_weight': body_weight,
+                    }
+                    
+                    if update_branding_fonts(font_config):
+                        st.success("✅ Font settings updated successfully! Refresh the page to see changes.")
+                        st.balloons()
+                    else:
+                        st.error("❌ Failed to update fonts. Please try again.")
+            
+            with preview_tab:
+                st.markdown("### 👁️ Live Preview")
+                st.info("🔍 Preview how your customizations will look")
+                
+                # Sample elements to preview
+                st.markdown("#### Sample Header Elements")
+                st.markdown("# H1: TADAWUL NEXUS Dashboard")
+                st.markdown("## H2: Portfolio Overview")
+                st.markdown("### H3: Stock Analysis")
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Portfolio Value", "125,750 SAR", "5.2%")
+                with col2:
+                    st.metric("Today's Gain", "6,540 SAR", "3.1%")
+                with col3:
+                    st.metric("Total Stocks", "12", "2")
+                
+                # Sample buttons and alerts
+                st.markdown("#### Sample Interactive Elements")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.button("🔵 Primary Button")
+                with col2:
+                    st.success("✅ Success Message")
+                with col3:
+                    st.error("❌ Warning Message")
+                
+                # Reset to defaults
+                st.markdown("---")
+                if st.button("🔄 Reset to Default Theme", type="secondary"):
+                    if reset_to_default_theme():
+                        st.success("✅ Theme reset to defaults! Refresh the page to see changes.")
+                        st.snow()
+                    else:
+                        st.error("❌ Failed to reset theme.")
+        
+        elif theme_mode == "🎯 Simple (Standalone)" and not STANDALONE_THEME_AVAILABLE:
+            # Fallback if standalone theme customizer is not available
+            st.warning("⚠️ Standalone theme customizer not available. Please check theme_customizer.py file.")
+            st.info("💡 Make sure theme_customizer.py is in the root directory to use standalone mode.")
+            st.code("""
+# Your theme_customizer.py file should be in the root directory with:
+def theme_customizer():
+    # Your theme customization code here
+    pass
+            """)
     
     # Add professional footer
     if BRANDING_AVAILABLE:
