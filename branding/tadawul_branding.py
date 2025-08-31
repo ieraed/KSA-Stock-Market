@@ -1,6 +1,12 @@
 """
 TADAWUL NEXUS Branding Module
 Professional branding implementation for Streamlit applications
+
+🎨 COLOR CUSTOMIZATION GUIDE 🎨
+===============================
+All colors are defined in the COLORS dictionary below.
+Each color has a specific purpose - change these values to customize the app appearance.
+Use any valid CSS color format: #hex, rgb(r,g,b), or color names.
 """
 
 import streamlit as st
@@ -10,23 +16,72 @@ import os
 class TadawulBranding:
     """Professional branding system for TADAWUL NEXUS applications"""
     
-    # Brand Colors - Updated to match professional image
+    # ========================================
+    # 🎨 MAIN COLOR PALETTE CONFIGURATION 🎨
+    # ========================================
+    # Change these colors to customize your app appearance
+    
     COLORS = {
-        'primary_blue': '#0066CC',
-        'secondary_blue': '#2c5f41', 
-        'accent_gold': '#FFD700',
-        'dark_teal': '#1a472a',
-        'background_dark': '#0d1b2a',
-        'background_light': '#e8f4f8',
-        'text_light': '#FFFFFF',
-        'text_gray': '#B0BEC5',
-        'success_green': '#4CAF50',
-        'warning_red': '#F44336',
-        'chart_orange': '#FF9800',
-        'light_gray': '#f8f9fa'
+        # 🔵 PRIMARY THEME COLORS
+        'primary_blue': '#282a2d',      # Main brand blue - used for buttons, headers
+        'secondary_blue': '#1e3a5f',    # Changed from green to dark blue - used for cards, containers
+        'accent_gold': '#FFD700',       # Gold accents - borders, highlights, hover effects
+        'dark_teal': '#0f2240',         # Changed from teal to dark navy blue - sidebar, background gradients
+        
+        # 🖤 BACKGROUND COLORS
+        'background_dark': '#0d1b2a',   # Main dark background
+        'background_light': '#e8f4f8',  # Light background (if needed)
+        'light_gray': '#f8f9fa',        # Very light gray
+        
+        # 📝 TEXT COLORS
+        'text_light': '#FFFFFF',        # White text for dark backgrounds
+        'text_gray': '#B0BEC5',         # Gray text for subtitles, descriptions
+        
+        # 🎯 STATUS INDICATOR COLORS
+        'success_green': '#4CAF50',     # Green for positive values, success messages
+        'warning_red': '#F44336',       # Red for negative values, warnings
+        'chart_orange': '#FF9800',      # Orange for charts, alerts
     }
     
-    # Taglines
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    FONTS = {
+        'h1_size': '2.5rem',
+        'h2_size': '2.0rem',
+        'h3_size': '1.5rem',
+        'body_size': '1.0rem',
+        'caption_size': '0.85rem',
+        'header_weight': 600,
+        'body_weight': 400,
+    }
+    
+    # =========================================
+    # 📝 TEXT CONTENT CONFIGURATION 📝
+    # =========================================
+    # Customize the app's text content and taglines
+    
     TAGLINES = {
         'primary': "Where Saudi Markets Meet Intelligence",
         'arabic': "حيث تلتقي الأسواق السعودية بالذكاء",
@@ -37,18 +92,41 @@ class TadawulBranding:
     
     @staticmethod
     def load_css():
-        """Load comprehensive CSS styling for TADAWUL NEXUS"""
+        """
+        🎨 MAIN CSS STYLING FUNCTION 🎨
+        ===============================
+        This function generates all the CSS styling for the app.
+        It uses the colors defined in the COLORS dictionary above.
+        
+        STYLING SECTIONS:
+        1. 🌐 Global App Styles
+        2. 📱 Sidebar Styling  
+        3. 📄 Header & Title Styling
+        4. 🏷️ Logo Container Styling
+        5. 🎯 Brand Header Styling
+        6. 🧭 Navigation Styling
+        7. 📊 Metric Cards Styling
+        8. 📈 Chart Container Styling
+        9. 🔘 Button Styling
+        10. ✅ Success/Warning Text
+        11. 📋 Table Styling
+        12. 🦶 Footer Styling
+        """
         return f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
         
-        /* Global Styles */
+        /* ========================================
+           🌐 1. GLOBAL APP STYLES
+           ======================================== */
         .stApp {{
             font-family: 'Noto Sans Arabic', 'Cairo', Arial, sans-serif;
         }}
         
-        # Sidebar Styling - Dark theme to match image
+        /* ========================================
+           📱 2. SIDEBAR STYLING
+           ======================================== */
         [data-testid=stSidebar] {{
             background: linear-gradient(180deg, {TadawulBranding.COLORS['dark_teal']} 0%, {TadawulBranding.COLORS['secondary_blue']} 100%);
             border-right: 3px solid {TadawulBranding.COLORS['accent_gold']};
@@ -58,16 +136,50 @@ class TadawulBranding:
             padding: 1rem;
         }}
         
-        /* Header Styling - Professional dark theme */
+        /* Sidebar metric values styling - WHITE COLOR */
+        [data-testid=stSidebar] [data-testid=metric-container] [data-testid=metric-value] {{
+            color: #000000;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }}
+        
+        /* Sidebar metric delta styling */
+        [data-testid=stSidebar] [data-testid=metric-container] [data-testid=metric-delta] {{
+            color: {TadawulBranding.COLORS['text_light']};
+            font-weight: 600;
+        }}
+        
+        /* ========================================
+           📄 3. HEADER & TITLE STYLING
+           ======================================== */
         h1, h2, h3 {{
             color: {TadawulBranding.COLORS['text_light']};
             font-family: 'Noto Sans Arabic', 'Cairo', sans-serif;
-            font-weight: 600;
+            font-weight: {TadawulBranding.FONTS['header_weight']};
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }}
         
         h1 {{
-            font-size: 2.5rem;
+            font-size: {TadawulBranding.FONTS['h1_size']};
+        }}
+        
+        h2 {{
+            font-size: {TadawulBranding.FONTS['h2_size']};
+        }}
+        
+        h3 {{
+            font-size: {TadawulBranding.FONTS['h3_size']};
+        }}
+        
+        .stApp {{
+            font-family: 'Noto Sans Arabic', 'Cairo', Arial, sans-serif;
+            font-size: {TadawulBranding.FONTS['body_size']};
+            font-weight: {TadawulBranding.FONTS['body_weight']};
+        }}
+        
+        .css-1cpxqw2 {{
+            font-size: {TadawulBranding.FONTS['caption_size']};
+        }}
             margin-bottom: 0.5rem;
         }}
         
@@ -81,7 +193,9 @@ class TadawulBranding:
             margin-bottom: 0.75rem;
         }}
         
-        /* Logo Container - Dark theme styling */
+        /* ========================================
+           🏷️ 4. LOGO CONTAINER STYLING
+           ======================================== */
         .logo-container {{
             display: flex;
             align-items: center;
@@ -100,11 +214,13 @@ class TadawulBranding:
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
         }}
         
-        /* Brand Header - Match the professional image style */
+        /* ========================================
+           🎯 5. BRAND HEADER STYLING
+           ======================================== */
         .brand-header {{
             text-align: center;
             padding: 3rem 2rem;
-            background: linear-gradient(135deg, {TadawulBranding.COLORS['background_dark']} 0%, {TadawulBranding.COLORS['dark_teal']} 50%, {TadawulBranding.COLORS['secondary_blue']} 100%);
+            background: linear-gradient(135deg, #0d1b2a 0%, #0f2240 50%, #1e3a5f 100%);
             color: {TadawulBranding.COLORS['text_light']};
             border-radius: 15px;
             margin-bottom: 2rem;
@@ -147,7 +263,9 @@ class TadawulBranding:
             color: {TadawulBranding.COLORS['text_gray']};
         }}
         
-        /* Navigation Styling - Dark theme */
+        /* ========================================
+           🧭 6. NAVIGATION STYLING
+           ======================================== */
         .stSelectbox > div > div {{
             background-color: {TadawulBranding.COLORS['secondary_blue']};
             border: 2px solid {TadawulBranding.COLORS['accent_gold']};
@@ -155,7 +273,9 @@ class TadawulBranding:
             color: {TadawulBranding.COLORS['text_light']};
         }}
         
-        /* Metric Cards - Enhanced dark theme */
+        /* ========================================
+           📊 7. METRIC CARDS STYLING
+           ======================================== */
         [data-testid=metric-container] {{
             background: linear-gradient(135deg, {TadawulBranding.COLORS['secondary_blue']} 0%, {TadawulBranding.COLORS['dark_teal']} 100%);
             border: 1px solid {TadawulBranding.COLORS['accent_gold']};
@@ -172,7 +292,9 @@ class TadawulBranding:
             border-color: {TadawulBranding.COLORS['text_light']};
         }}
         
-        /* Chart Containers - Professional styling */
+        /* ========================================
+           📈 8. CHART CONTAINER STYLING
+           ======================================== */
         .plotly-graph-div {{
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -180,7 +302,9 @@ class TadawulBranding:
             background: {TadawulBranding.COLORS['secondary_blue']};
         }}
         
-        /* Buttons - Gold accent theme */
+        /* ========================================
+           🔘 9. BUTTON STYLING
+           ======================================== */
         .stButton > button {{
             background: linear-gradient(135deg, {TadawulBranding.COLORS['primary_blue']} 0%, {TadawulBranding.COLORS['secondary_blue']} 100%);
             color: {TadawulBranding.COLORS['text_light']};
@@ -199,7 +323,9 @@ class TadawulBranding:
             box-shadow: 0 4px 12px rgba(255,215,0,0.3);
         }}
         
-        /* Success/Warning Colors - Enhanced */
+        /* ========================================
+           ✅ 10. SUCCESS/WARNING TEXT STYLING
+           ======================================== */
         .success-text {{
             color: {TadawulBranding.COLORS['success_green']};
             font-weight: 700;
@@ -212,7 +338,9 @@ class TadawulBranding:
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }}
         
-        /* Professional Tables - Dark theme */
+        /* ========================================
+           📋 11. TABLE STYLING
+           ======================================== */
         .stDataFrame {{
             border-radius: 12px;
             overflow: hidden;
@@ -220,7 +348,9 @@ class TadawulBranding:
             border: 1px solid {TadawulBranding.COLORS['accent_gold']};
         }}
         
-        /* Footer - Professional dark styling */
+        /* ========================================
+           🦶 12. FOOTER STYLING
+           ======================================== */
         .brand-footer {{
             text-align: center;
             padding: 2rem 1rem;
@@ -232,6 +362,9 @@ class TadawulBranding:
             border-radius: 10px 10px 0 0;
         }}
         
+        /* ========================================
+           🌍 13. SPECIAL FEATURES
+           ======================================== */
         /* Arabic Text Support */
         .arabic-text {{
             font-family: 'Cairo', 'Noto Sans Arabic', sans-serif;
@@ -251,6 +384,11 @@ class TadawulBranding:
         </style>
         """
     
+    # =========================================
+    # 🛠️ BRANDING UTILITY FUNCTIONS 🛠️
+    # =========================================
+    # These functions apply the styling and display branded elements
+    
     @staticmethod
     def apply_branding():
         """Apply complete TADAWUL NEXUS branding to Streamlit app"""
@@ -258,7 +396,15 @@ class TadawulBranding:
     
     @staticmethod
     def display_logo(logo_type="light", width=180):
-        """Display TADAWUL NEXUS logo"""
+        """
+        🏷️ LOGO DISPLAY FUNCTION
+        ========================
+        Display TADAWUL NEXUS logo with different styles
+        
+        Parameters:
+        - logo_type: "light", "dark", or "bilingual"  
+        - width: Size of the logo in pixels
+        """
         logo_files = {
             "light": "branding/logos/tadawul_nexus_logo.svg",
             "dark": "branding/logos/tadawul_nexus_logo_dark.svg", 
@@ -282,30 +428,35 @@ class TadawulBranding:
     
     @staticmethod
     def display_embedded_logo(width=180):
-        """Display embedded SVG logo as fallback - Updated to match professional image"""
+        """
+        🎨 EMBEDDED LOGO GENERATOR
+        =========================
+        Creates an SVG logo using the colors from the COLORS dictionary
+        This logo uses the defined color scheme automatically
+        """
         embedded_logo = f"""
         <div class="logo-container">
             <svg width="{width}" height="{int(width*0.3)}" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-                <!-- Circular logo background matching professional image -->
-                <circle cx="30" cy="30" r="28" fill="#1a472a" opacity="0.9"/>
-                <circle cx="30" cy="30" r="25" fill="#2c5f41"/>
+                <!-- Circular logo background using defined colors -->
+                <circle cx="30" cy="30" r="28" fill="{TadawulBranding.COLORS['dark_teal']}" opacity="0.9"/>
+                <circle cx="30" cy="30" r="25" fill="{TadawulBranding.COLORS['secondary_blue']}"/>
                 
                 <!-- Inner circular design with blue and gold -->
-                <circle cx="30" cy="30" r="20" fill="#0066CC" opacity="0.8"/>
-                <circle cx="30" cy="30" r="15" fill="none" stroke="#FFD700" stroke-width="2"/>
+                <circle cx="30" cy="30" r="20" fill="{TadawulBranding.COLORS['primary_blue']}" opacity="0.8"/>
+                <circle cx="30" cy="30" r="15" fill="none" stroke="{TadawulBranding.COLORS['accent_gold']}" stroke-width="2"/>
                 
                 <!-- Stylized "S" curve design -->
-                <path d="M 20,22 Q 30,18 40,22 Q 30,26 20,22" fill="#FFD700"/>
-                <path d="M 20,38 Q 30,34 40,38 Q 30,42 20,38" fill="#FFD700"/>
+                <path d="M 20,22 Q 30,18 40,22 Q 30,26 20,22" fill="{TadawulBranding.COLORS['accent_gold']}"/>
+                <path d="M 20,38 Q 30,34 40,38 Q 30,42 20,38" fill="{TadawulBranding.COLORS['accent_gold']}"/>
                 
                 <!-- Central connecting element -->
-                <circle cx="30" cy="30" r="5" fill="#FFFFFF"/>
-                <circle cx="30" cy="30" r="3" fill="#0066CC"/>
+                <circle cx="30" cy="30" r="5" fill="{TadawulBranding.COLORS['text_light']}"/>
+                <circle cx="30" cy="30" r="3" fill="{TadawulBranding.COLORS['primary_blue']}"/>
                 
-                <!-- Professional text matching image style -->
-                <text x="65" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">TADAWUL</text>
-                <text x="65" y="42" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="#FFFFFF">NEXUS</text>
-                <text x="65" y="52" font-family="Arial, sans-serif" font-size="8" fill="#B0BEC5">Where Saudi Markets Meet Intelligence</text>
+                <!-- Professional text using defined colors -->
+                <text x="65" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="{TadawulBranding.COLORS['text_light']}">TADAWUL</text>
+                <text x="65" y="42" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="{TadawulBranding.COLORS['text_light']}">NEXUS</text>
+                <text x="65" y="52" font-family="Arial, sans-serif" font-size="8" fill="{TadawulBranding.COLORS['text_gray']}">Where Saudi Markets Meet Intelligence</text>
             </svg>
         </div>
         """
@@ -313,7 +464,16 @@ class TadawulBranding:
     
     @staticmethod
     def display_header(title="TADAWUL NEXUS", tagline="primary", include_logo=True):
-        """Display branded header with logo and title"""
+        """
+        🎯 HEADER DISPLAY FUNCTION
+        ==========================
+        Display branded header with logo and title
+        
+        Parameters:
+        - title: Main title text
+        - tagline: Key from TAGLINES dictionary
+        - include_logo: Whether to show logo above header
+        """
         if include_logo:
             TadawulBranding.display_logo()
         
@@ -329,7 +489,11 @@ class TadawulBranding:
     
     @staticmethod
     def display_footer():
-        """Display branded footer"""
+        """
+        🦶 FOOTER DISPLAY FUNCTION
+        ==========================
+        Display branded footer at bottom of page
+        """
         footer_html = f"""
         <div class="brand-footer">
             <p>TADAWUL NEXUS © 2025 | {TadawulBranding.TAGLINES['primary']}</p>
@@ -340,9 +504,18 @@ class TadawulBranding:
         """
         st.markdown(footer_html, unsafe_allow_html=True)
     
+    # =========================================
+    # 📊 METRIC DISPLAY FUNCTIONS 📊
+    # =========================================
+    # Functions to display colored metrics using the defined color scheme
+    
     @staticmethod
     def success_metric(label, value, delta=None):
-        """Display success-styled metric"""
+        """
+        ✅ SUCCESS METRIC DISPLAY
+        ========================
+        Display metric in success green color
+        """
         if delta:
             st.markdown(f'<p class="success-text">{label}: {value} ({delta})</p>', 
                        unsafe_allow_html=True)
@@ -352,7 +525,11 @@ class TadawulBranding:
     
     @staticmethod
     def warning_metric(label, value, delta=None):
-        """Display warning-styled metric"""
+        """
+        ⚠️ WARNING METRIC DISPLAY
+        =========================
+        Display metric in warning red color
+        """
         if delta:
             st.markdown(f'<p class="warning-text">{label}: {value} ({delta})</p>', 
                        unsafe_allow_html=True)

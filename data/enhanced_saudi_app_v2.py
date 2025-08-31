@@ -18,21 +18,6 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 import json
-from datetime import datetime, timedelta
-from components.hyper_themes import (
-    get_hyper_themes, 
-    get_hyper_theme_css, 
-    apply_complete_css,
-    custom_title,
-    custom_error, 
-    custom_success,
-    custom_warning,
-    update_branding_colors,
-    update_branding_fonts,
-    reset_to_default_theme,
-    force_theme_refresh,
-    apply_theme_with_preview
-)
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
@@ -73,23 +58,6 @@ try:
     RISK_INFO_AVAILABLE = True
 except ImportError:
     RISK_INFO_AVAILABLE = False
-
-# Import risk management center
-try:
-    from risk_management_center import risk_management_center
-    RISK_MANAGEMENT_AVAILABLE = True
-except ImportError:
-    RISK_MANAGEMENT_AVAILABLE = False
-
-# Import standalone theme customizer
-try:
-    import sys
-    import os
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    from theme_customizer import theme_customizer
-    STANDALONE_THEME_AVAILABLE = True
-except ImportError:
-    STANDALONE_THEME_AVAILABLE = False
 
 # Create a simple AI simulation for demonstration if AI engine not available
 if not AI_AVAILABLE:
@@ -135,6 +103,113 @@ if not AI_AVAILABLE:
         return signals
         
         return signals
+
+# =============================================================================
+# 🎨 THEME CUSTOMIZATION FUNCTIONS
+# =============================================================================
+
+def update_branding_colors(new_colors):
+    """Update colors in the branding file"""
+    try:
+        branding_file_path = "branding/tadawul_branding.py"
+        
+        # Read the current file
+        with open(branding_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Update each color in the COLORS dictionary
+        for color_name, color_value in new_colors.items():
+            # Find the pattern for this color
+            pattern = f"'{color_name}': '#[A-Fa-f0-9]{{6}}'"
+            replacement = f"'{color_name}': '{color_value}'"
+            
+            import re
+            content = re.sub(pattern, replacement, content)
+        
+        # Write the updated content back
+        with open(branding_file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        return True
+    except Exception as e:
+        st.error(f"Error updating colors: {e}")
+        return False
+
+def update_branding_fonts(font_config):
+    """Update font configuration in the branding file"""
+    try:
+        branding_file_path = "branding/tadawul_branding.py"
+        
+        # Read the current file
+        with open(branding_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Add font configuration section if it doesn't exist
+        font_section = f'''
+    # ========================================
+    # 📝 FONT CONFIGURATION
+    # ========================================
+    
+    FONTS = {{
+        'h1_size': '{font_config["h1_size"]}rem',
+        'h2_size': '{font_config["h2_size"]}rem',
+        'h3_size': '{font_config["h3_size"]}rem',
+        'body_size': '{font_config["body_size"]}rem',
+        'caption_size': '{font_config["caption_size"]}rem',
+        'header_weight': {font_config["header_weight"]},
+        'body_weight': {font_config["body_weight"]},
+    }}
+'''
+        
+        # Check if FONTS section already exists
+        if 'FONTS = {' in content:
+            # Replace existing FONTS section
+            import re
+            pattern = r'FONTS = \{[^}]*\}'
+            content = re.sub(pattern, font_section.strip(), content, flags=re.DOTALL)
+        else:
+            # Add FONTS section after COLORS
+            colors_end = content.find('}', content.find('COLORS = {'))
+            if colors_end != -1:
+                content = content[:colors_end + 1] + font_section + content[colors_end + 1:]
+        
+        # Write the updated content back
+        with open(branding_file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        return True
+    except Exception as e:
+        st.error(f"Error updating fonts: {e}")
+        return False
+
+def reset_to_default_theme():
+    """Reset theme to default colors and fonts"""
+    default_colors = {
+        'primary_blue': '#0066CC',
+        'secondary_blue': '#1e3a5f',
+        'accent_gold': '#FFD700',
+        'dark_teal': '#0f2240',
+        'background_dark': '#0d1b2a',
+        'text_light': '#FFFFFF',
+        'text_gray': '#B0BEC5',
+        'success_green': '#4CAF50',
+        'warning_red': '#F44336',
+        'chart_orange': '#FF9800',
+    }
+    
+    default_fonts = {
+        'h1_size': 2.5,
+        'h2_size': 2.0,
+        'h3_size': 1.5,
+        'body_size': 1.0,
+        'caption_size': 0.85,
+        'header_weight': 600,
+        'body_weight': 400,
+    }
+    
+    return update_branding_colors(default_colors) and update_branding_fonts(default_fonts)
+
+# =============================================================================
 
 # Broker name standardization function
 def normalize_broker_name(broker_name):
@@ -186,60 +261,415 @@ st.set_page_config(
 )
 
 
-# =============================================================================
-# 🎨 GLOBAL THEME APPLICATION
-# =============================================================================
+# ========================================
+# TADAWUL NEXUS - PROFESSIONAL CSS STYLING
+# Organized by UI Components for Easy Customization
+# ========================================
 
-# Initialize session state for theme - DEFAULT TO DARK CHARCOAL
-if 'current_theme' not in st.session_state:
-    st.session_state.current_theme = "dark_charcoal"
-if 'theme_applied' not in st.session_state:
-    st.session_state.theme_applied = False
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-# Apply global theme with complete CSS and hyper optimizations
-def apply_global_theme():
-    """Apply complete theme system with all CSS styling and immediate table updates"""
-    import time
-    
-    if 'current_theme' not in st.session_state:
-        st.session_state.current_theme = "dark_charcoal"
-    
-    # Apply complete CSS first
-    apply_complete_css()
-    
-    # Apply theme-specific optimizations
-    themes = get_hyper_themes()
-    current_theme_colors = themes[st.session_state.current_theme]
-    theme_css = get_hyper_theme_css(current_theme_colors)
-    st.markdown(theme_css, unsafe_allow_html=True)
-    
-    # Force immediate table updates with additional CSS
-    table_refresh_css = f"""
-    <style id="table-refresh-{int(time.time() * 1000)}">
-    /* FORCE TABLE REFRESH */
-    div[data-testid="dataframe"] {{
-        background: {current_theme_colors['table_bg']} !important;
-        border: 2px solid {current_theme_colors['border']} !important;
-        border-radius: 12px !important;
-        animation: fadeIn 0.3s ease;
-    }}
-    div[data-testid="dataframe"] thead th {{
-        background: {current_theme_colors['header_bg']} !important;
-        color: {current_theme_colors['table_text']} !important;
-    }}
-    div[data-testid="dataframe"] tbody td {{
-        background: {current_theme_colors['cell_bg']} !important;
-        color: {current_theme_colors['table_text']} !important;
-    }}
-    @keyframes fadeIn {{ 0% {{ opacity: 0.8; }} 100% {{ opacity: 1; }} }}
-    </style>
-    """
-    st.markdown(table_refresh_css, unsafe_allow_html=True)
+/* ========================================
+   🎨 GLOBAL THEME SETTINGS
+   CUSTOMIZE: Main colors and fonts
+   ======================================== */
 
-# Apply the global theme IMMEDIATELY
-apply_global_theme()
-st.session_state.theme_applied = True
+* {
+    font-family: 'Inter', sans-serif;
+}
 
+/* MAIN APP BACKGROUND */
+.stApp {
+    background: linear-gradient(135deg, #0f2240 0%, #1e3a5f 50%, #0f1419 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+/* ========================================
+   📊 MAIN HEADER - "TADAWUL NEXUS" Title
+   CUSTOMIZE: App title styling and branding
+   ======================================== */
+
+.main-header {
+    background: linear-gradient(135deg, #0066CC 0%, #1e3a5f 50%, #0f2240 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 102, 204, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   📋 SIDEBAR NAVIGATION
+   CUSTOMIZE: Left navigation panel
+   ======================================== */
+
+/* Multiple selectors to ensure sidebar background changes */
+div[data-testid="stSidebar"],
+.css-1d391kg,
+section[data-testid="stSidebar"],
+.sidebar .sidebar-content {
+    background: linear-gradient(180deg, #6e7072 0%, #1e3a5f 100%) !important;
+}
+
+/* Additional selector for newer Streamlit versions */
+div[data-testid="stSidebar"] > div {
+    background: linear-gradient(180deg, #0f2240 0%, #1e3a5f 100%) !important;
+}
+
+div[data-testid="stSidebar"] .element-container {
+    background: rgba(255, 255, 255, 0.05);
+    margin: 0.3rem 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+div[data-testid="stSidebar"] .element-container:hover {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* SIDEBAR TEXT COLORS */
+div[data-testid="stSidebar"] .stMarkdown,
+div[data-testid="stSidebar"] .element-container,
+div[data-testid="stSidebar"] .stText {
+    color: #2c3e50;
+}
+
+div[data-testid="stSidebar"] h1,
+div[data-testid="stSidebar"] h2,
+div[data-testid="stSidebar"] h3,
+div[data-testid="stSidebar"] h4 {
+    color: #1565c0;
+}
+
+/* ========================================
+   📊 PORTFOLIO OVERVIEW SECTION
+   CUSTOMIZE: "Portfolio Overview" title and main metrics
+   ======================================== */
+
+/* Section headers like "Portfolio Overview" */
+.section-header {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+/* Portfolio metrics (Total Value, Cost, P&L) */
+div[data-testid="metric-container"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+div[data-testid="metric-container"] label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+div[data-testid="metric-container"] div[data-testid="metric-value"] {
+    font-weight: 700;
+    font-size: 24px;
+    color: #ffffff;
+}
+
+div[data-testid="metric-container"] div[data-testid="metric-delta"] {
+    color: #000000;
+    font-weight: 500;
+}
+
+/* ========================================
+   📈 PORTFOLIO HOLDINGS TABLE
+   CUSTOMIZE: Stock holdings data table styling
+   ======================================== */
+
+.stDataFrame {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.stDataFrame, .stDataFrame td, .stDataFrame th, .stDataFrame div {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================================
+   🔧 FORM CONTROLS - Input Fields & Buttons
+   CUSTOMIZE: Add/Edit stock forms
+   ======================================== */
+
+/* Text Input Labels (Quantity, Price labels) */
+.stTextInput > label,
+.stNumberInput > label,
+.stSelectbox > label,
+.stDateInput > label {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Input Field Styling */
+.stTextInput input,
+.stNumberInput input,
+.stDateInput input {
+    background-color: #2d3748;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+}
+
+/* Button Styling */
+.stButton > button {
+    color: #ffffff;
+    background: linear-gradient(135deg, #0066CC 0%, #1e3a5f 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(135deg, #00b142 0%, #009e38 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 206, 76, 0.3);
+}
+
+/* Checkbox and Radio Labels */
+.stCheckbox label, .stRadio label {
+    color: #ffffff;
+}
+
+/* ========================================
+   🔽 DROPDOWN MENUS
+   CUSTOMIZE: Stock selection dropdowns
+   ======================================== */
+
+.stSelectbox div[data-testid="stSelectbox"] {
+    color: #ffffff;
+}
+
+.stSelectbox div[data-baseweb="select"] {
+    background-color: #2d3748;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+    border-radius: 8px;
+}
+
+.stSelectbox div[data-baseweb="select"] > div {
+    background-color: #2d3748;
+    color: #ffffff;
+}
+
+.stSelectbox div[data-baseweb="select"] span {
+    color: #ffffff;
+}
+
+.stSelectbox div[data-baseweb="select"] input {
+    color: #ffffff;
+    background-color: #2d3748;
+}
+
+.stSelectbox div[data-baseweb="select"] svg {
+    fill: #ffffff;
+}
+
+/* Dropdown Menu Options */
+ul[role="listbox"] {
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+li[role="option"] {
+    background-color: #2d3748;
+    color: #ffffff;
+    padding: 8px 12px;
+}
+
+li[role="option"]:hover {
+    background-color: #4a5568;
+    color: #ffffff;
+}
+
+li[role="option"][aria-selected="true"] {
+    background-color: #1565c0;
+    color: #ffffff;
+}
+
+.stMultiSelect div[data-baseweb="select"] {
+    background-color: #2d3748;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+}
+
+.stMultiSelect div[data-baseweb="select"] span {
+    color: #ffffff;
+}
+
+/* ========================================
+   📊 MARKET PERFORMANCE CARDS
+   CUSTOMIZE: Top gainers/losers display
+   ======================================== */
+
+.gainer-card {
+    background: linear-gradient(135deg, #00C851 0%, #007E33 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    color: white;
+    margin: 0.5rem 0;
+}
+
+.loser-card {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    color: white;
+    margin: 0.5rem 0;
+}
+
+.market-metric {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e3f2fd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.market-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ========================================
+   📋 CARD COMPONENTS
+   CUSTOMIZE: General card layouts
+   ======================================== */
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.portfolio-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+.ai-signal-card {
+    background: linear-gradient(135deg, rgba(0, 206, 76, 0.1) 0%, rgba(0, 158, 56, 0.1) 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: white;
+    margin: 1rem 0;
+    border: 1px solid rgba(0, 206, 76, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.metric-card {
+    background: linear-gradient(135deg, rgba(0, 206, 76, 0.1) 0%, rgba(0, 158, 56, 0.1) 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(0, 206, 76, 0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+}
+
+/* ========================================
+   📱 NAVIGATION TABS
+   CUSTOMIZE: Page navigation tabs
+   ======================================== */
+
+.stTabs [data-baseweb="tab-list"] button {
+    color: #000000;
+}
+
+.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
+    color: #0066CC;
+}
+
+.stRadio > div {
+    background: white;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin: 0.4rem 0;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stRadio > div:hover {
+    border-color: #1565c0;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(21,101,192,0.2);
+}
+
+/* ========================================
+   📄 GENERAL CONTENT
+   CUSTOMIZE: Main page text and content
+   ======================================== */
+
+.main .block-container {
+    color: #ffffff;
+}
+
+.market-table {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* ========================================
+   🔔 NOTIFICATION MESSAGES
+   CUSTOMIZE: Success/warning messages
+   ======================================== */
+
+.success-card {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.warning-card {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 def load_portfolio():
     """Load portfolio from file"""
@@ -559,66 +989,40 @@ def calculate_portfolio_value(portfolio, stocks_db=None):
     }
 
 def display_top_gainers_losers():
-    """Display top gainers and losers tables with expanded movers sections - FIXED FOR USER SCREENSHOTS"""
+    """Display top gainers and losers tables - LIVE DATA ONLY"""
     st.markdown("""
     <div class="section-header">
-        📊 Saudi Market Performance - Live Data from TASI (Saudi Exchange)
+        📊 Saudi Market Performance - Live Data from saudiexchange.sa & Yahoo Finance
     </div>
     """, unsafe_allow_html=True)
     
     # Display data source information
     st.info("""
-    📡 **Live Data Sources (in order of priority):**
+    📡 **Live Data Sources:**
     1. **Primary**: Saudi Exchange (saudiexchange.sa) official website
-    2. **Fallback**: Yahoo Finance (.SR suffix for Saudi stocks)
-    3. **REAL TASI DATA** - All prices fetched live, no cached or demo data
-    
-    🔄 **Current Status**: Live data fetching in progress...
+    2. **Fallback**: Yahoo Finance (.SR suffix) 
+    3. **NO HARDCODED DATA** - All prices are fetched in real-time
     """)
     
-    # Get live market summary with expanded data
-    live_data_available = False
-    
-    with st.spinner("🔄 Fetching live TASI market data..."):
+    # Get live market summary
+    with st.spinner("🔄 Fetching live market data..."):
         if SAUDI_EXCHANGE_AVAILABLE:
             try:
                 market_data = get_market_summary()
                 
                 if market_data and market_data.get('success'):
-                    live_data_available = True
-                    
-                    # Show debug info
-                    st.success(f"✅ Successfully fetched data for {market_data.get('total_stocks', 0)} stocks")
-                    if market_data.get('timestamp'):
-                        st.caption(f"Last updated: {market_data['timestamp']}")
-                    
-                    # Debug: Show data source info
-                    with st.expander("🔧 Debug: Data Source Information"):
-                        st.write(f"**Data Source**: {market_data.get('data_source', 'Unknown')}")
-                        st.write(f"**Total Stocks**: {market_data.get('total_stocks', 0)}")
-                        st.write(f"**Top Gainers Count**: {len(market_data.get('top_gainers', []))}")
-                        st.write(f"**Top Losers Count**: {len(market_data.get('top_losers', []))}")
-                        if market_data.get('top_gainers'):
-                            st.write("**Sample Gainer Data**:")
-                            sample_gainer = market_data['top_gainers'][0]
-                            st.json(sample_gainer)
-                    
-                    # FIXED: Top Gainers and Losers - 10 items each to match TASI
                     col1, col2 = st.columns(2)
                     
                     with col1:
-                        st.markdown("### 📈 Top 10 Gainers (TASI)")
+                        st.markdown("### 📈 Top 10 Gainers (Live)")
                         if market_data.get('top_gainers'):
                             gainers_df = pd.DataFrame(market_data['top_gainers'])
                             if not gainers_df.empty:
-                                # Take first 10 or show what we have
-                                gainers_df = gainers_df.head(10)
-                                
                                 # Format the DataFrame for display
                                 display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
                                 if all(col in gainers_df.columns for col in display_cols):
                                     gainers_display = gainers_df[display_cols].copy()
-                                    gainers_display['change_pct'] = gainers_display['change_pct'].apply(lambda x: f"+{x:.2f}%" if x >= 0 else f"{x:.2f}%")
+                                    gainers_display['change_pct'] = gainers_display['change_pct'].apply(lambda x: f"+{x:.2f}%")
                                     gainers_display['current_price'] = gainers_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
                                     gainers_display.columns = ['Symbol', 'Company', 'Price', 'Change']
                                     
@@ -628,20 +1032,15 @@ def display_top_gainers_losers():
                                         hide_index=True
                                     )
                                 else:
-                                    st.dataframe(gainers_df.head(10), use_container_width=True, hide_index=True)
-                            else:
-                                st.warning("📊 No market data available - all stocks may be flat")
+                                    st.dataframe(gainers_df, use_container_width=True, hide_index=True)
                         else:
                             st.warning("📊 No gainers data available from live sources")
                     
                     with col2:
-                        st.markdown("### 📉 Top 10 Losers (TASI)")
+                        st.markdown("### 📉 Top 10 Losers (Live)")
                         if market_data.get('top_losers'):
                             losers_df = pd.DataFrame(market_data['top_losers'])
                             if not losers_df.empty:
-                                # Take first 10 or show what we have
-                                losers_df = losers_df.head(10)
-                                
                                 # Format the DataFrame for display
                                 display_cols = ['symbol', 'name_en', 'current_price', 'change_pct']
                                 if all(col in losers_df.columns for col in display_cols):
@@ -656,198 +1055,24 @@ def display_top_gainers_losers():
                                         hide_index=True
                                     )
                                 else:
-                                    st.dataframe(losers_df.head(10), use_container_width=True, hide_index=True)
-                            else:
-                                st.warning("📊 No market data available - all stocks may be flat")
+                                    st.dataframe(losers_df, use_container_width=True, hide_index=True)
                         else:
                             st.warning("📊 No losers data available from live sources")
                     
-                    st.markdown("---")
-                    
-                    # ADDED: Movers by Volume and Value sections as requested in screenshots
-                    st.markdown("### 📊 Market Movers - Volume & Value")
-                    
-                    col3, col4 = st.columns(2)
-                    
-                    with col3:
-                        st.markdown("#### 📊 Movers by Volume")
-                        if market_data.get('volume_movers') or market_data.get('top_gainers'):
-                            # Use volume movers if available, otherwise use gainers data with volume info
-                            volume_data = market_data.get('volume_movers', market_data.get('top_gainers', []))
-                            if volume_data:
-                                volume_df = pd.DataFrame(volume_data[:10])  # Top 10 by volume
-                                
-                                # Create volume movers display
-                                if not volume_df.empty:
-                                    if 'volume' in volume_df.columns and 'symbol' in volume_df.columns:
-                                        volume_display = volume_df[['symbol', 'name_en', 'volume', 'current_price']].copy()
-                                        volume_display['volume'] = volume_display['volume'].apply(lambda x: f"{x:,}" if pd.notna(x) else "N/A")
-                                        volume_display['current_price'] = volume_display['current_price'].apply(lambda x: f"{x:.2f} SAR" if pd.notna(x) else "N/A")
-                                        volume_display.columns = ['Symbol', 'Company', 'Volume', 'Price']
-                                        st.dataframe(volume_display, use_container_width=True, hide_index=True)
-                                    else:
-                                        # Fallback if volume column not available
-                                        st.info("📊 Volume data not available in current feed")
-                                        basic_display = volume_df[['symbol', 'name_en']].head(5)
-                                        basic_display.columns = ['Symbol', 'Company']
-                                        st.dataframe(basic_display, use_container_width=True, hide_index=True)
-                            else:
-                                st.info("📊 No volume movers data available")
-                        else:
-                            st.info("📊 Volume movers data not available from current source")
-                    
-                    with col4:
-                        st.markdown("#### 💰 Movers by Value")
-                        if market_data.get('value_movers') or market_data.get('top_gainers'):
-                            # Use value movers if available, otherwise calculate from available data
-                            value_data = market_data.get('value_movers', market_data.get('top_gainers', []))
-                            if value_data:
-                                value_df = pd.DataFrame(value_data[:10])  # Top 10 by value
-                                
-                                # Create value movers display
-                                if not value_df.empty:
-                                    if 'market_cap' in value_df.columns or 'value' in value_df.columns:
-                                        value_col = 'market_cap' if 'market_cap' in value_df.columns else 'value'
-                                        value_display = value_df[['symbol', 'name_en', value_col, 'current_price']].copy()
-                                        value_display[value_col] = value_display[value_col].apply(lambda x: f"{x:,.0f}" if pd.notna(x) and x > 0 else "N/A")
-                                        value_display['current_price'] = value_display['current_price'].apply(lambda x: f"{x:.2f} SAR" if pd.notna(x) else "N/A")
-                                        value_display.columns = ['Symbol', 'Company', 'Market Value', 'Price']
-                                        st.dataframe(value_display, use_container_width=True, hide_index=True)
-                                    else:
-                                        # Fallback display
-                                        st.info("📊 Market value data not available in current feed")
-                                        basic_display = value_df[['symbol', 'name_en', 'current_price']].head(5)
-                                        basic_display['current_price'] = basic_display['current_price'].apply(lambda x: f"{x:.2f} SAR")
-                                        basic_display.columns = ['Symbol', 'Company', 'Price']
-                                        st.dataframe(basic_display, use_container_width=True, hide_index=True)
-                            else:
-                                st.info("📊 No value movers data available")
-                        else:
-                            st.info("📊 Value movers data not available from current source")
-                    
                     # Display data source and timestamp
-                    source_info = market_data.get('data_source', 'Live Market Data')
-                    
-                    # Determine the actual source from the data
-                    if 'Yahoo Finance' in source_info or any('Yahoo Finance' in str(stock.get('data_source', '')) for stock in market_data.get('all_stocks', [])):
-                        primary_source = "🔄 **Primary Source**: Yahoo Finance (Saudi stocks with .SR suffix)"
-                        reliability = "✅ **Reliability**: High - Real-time TASI market data"
-                    else:
-                        primary_source = "🔄 **Primary Source**: Saudi Exchange Official Website"
-                        reliability = "✅ **Reliability**: Highest - Direct from TASI"
-                    
                     st.success(f"""
-                    {primary_source}
-                    {reliability}
-                    📊 **Stocks Processed**: {market_data.get('total_stocks', 'Unknown')} companies
+                    ✅ **Live Data Status**: {market_data['total_stocks']} stocks fetched successfully
                     🕒 **Last Updated**: {market_data.get('timestamp', 'Unknown')}
+                    📡 **Source**: {market_data.get('data_source', 'Live Market Data')}
                     """)
                     
-                    # Show technical details in expandable section
-                    with st.expander("� Technical Data Source Details"):
-                        st.text(f"Data Source: {market_data.get('data_source', 'Unknown')}")
-                        st.text(f"Total Stocks: {market_data.get('total_stocks', 0)}")
-                        st.text(f"Timestamp: {market_data.get('timestamp', 'N/A')}")
-                    
                 else:
-                    error_msg = market_data.get('error', 'Unknown error') if market_data else 'No response from fetcher'
-                    st.error(f"❌ Could not fetch live TASI data: {error_msg}")
-                    if market_data:
-                        st.warning(f"🔍 Debug Info: Received response but success={market_data.get('success', 'undefined')}")
-                    else:
-                        st.warning("🔍 Debug Info: No response received from get_market_summary()")
+                    st.error(f"❌ Could not fetch live market data: {market_data.get('error', 'Unknown error')}")
                     
             except Exception as e:
-                st.error(f"❌ Error fetching live TASI data: {str(e)}")
-                st.info("🔄 Will show demo data for testing purposes")
-                import traceback
-                with st.expander("🔧 Technical Details"):
-                    st.text(traceback.format_exc())
+                st.error(f"❌ Error fetching live market data: {str(e)}")
         else:
-            st.warning("❌ Saudi Exchange fetcher not available. Please check the saudi_exchange_fetcher.py module.")
-    
-    # Show demo/fallback data if live data is not available or user wants to see it
-    if not live_data_available or st.checkbox("Show Demo Data for Testing", value=False):
-        if not live_data_available:
-            st.info("💡 Live data unavailable - Showing demo data that matches TASI format")
-        
-        # FIXED: Expanded demo data to show 10 items each (matching TASI format)
-        demo_gainers = [
-            {"Symbol": "4160", "Company": "Thimar Development", "Price": "40.04 SAR", "Change": "+10.00%"},
-            {"Symbol": "2130", "Company": "Saudi Industrial Development", "Price": "33.12 SAR", "Change": "+9.96%"},
-            {"Symbol": "4270", "Company": "Saudi Public Procurement", "Price": "12.63 SAR", "Change": "+5.60%"},
-            {"Symbol": "4191", "Company": "Abo Moati Al Motaheda", "Price": "40.88 SAR", "Change": "+4.82%"},
-            {"Symbol": "4291", "Company": "National Care Company", "Price": "166.00 SAR", "Change": "+4.73%"},
-            {"Symbol": "2222", "Company": "Saudi Arabian Oil Company", "Price": "27.45 SAR", "Change": "+4.20%"},
-            {"Symbol": "1120", "Company": "Al Rajhi Bank", "Price": "84.60 SAR", "Change": "+3.85%"},
-            {"Symbol": "2010", "Company": "Saudi Basic Industries Corp", "Price": "123.20 SAR", "Change": "+3.40%"},
-            {"Symbol": "7010", "Company": "Saudi Telecom Company", "Price": "94.80 SAR", "Change": "+3.15%"},
-            {"Symbol": "1180", "Company": "Saudi National Bank", "Price": "28.95 SAR", "Change": "+2.90%"}
-        ]
-        
-        demo_losers = [
-            {"Symbol": "2020", "Company": "SABIC Agri-Nutrients", "Price": "85.20 SAR", "Change": "-4.50%"},
-            {"Symbol": "1182", "Company": "Amlak International", "Price": "12.80 SAR", "Change": "-3.80%"},
-            {"Symbol": "6050", "Company": "Saudi Fisheries", "Price": "45.60 SAR", "Change": "-3.20%"},
-            {"Symbol": "4180", "Company": "Fitaihi Group", "Price": "28.90 SAR", "Change": "-2.90%"},
-            {"Symbol": "3080", "Company": "Eastern Province Cement", "Price": "67.40 SAR", "Change": "-2.50%"},
-            {"Symbol": "4001", "Company": "Dallah Healthcare Company", "Price": "98.75 SAR", "Change": "-2.15%"},
-            {"Symbol": "4002", "Company": "Al Mouwasat Medical Services", "Price": "156.40 SAR", "Change": "-1.95%"},
-            {"Symbol": "2090", "Company": "Jarir Marketing Co", "Price": "179.60 SAR", "Change": "-1.70%"},
-            {"Symbol": "4020", "Company": "Dar Al Arkan Real Estate", "Price": "11.84 SAR", "Change": "-1.50%"},
-            {"Symbol": "2050", "Company": "Savola Group", "Price": "31.25 SAR", "Change": "-1.25%"}
-        ]
-        
-        # ADDED: Demo Volume and Value movers
-        demo_volume_movers = [
-            {"Symbol": "2222", "Company": "Saudi Arabian Oil Company", "Volume": "15,420,150", "Price": "27.45 SAR"},
-            {"Symbol": "1120", "Company": "Al Rajhi Bank", "Volume": "8,750,280", "Price": "84.60 SAR"},
-            {"Symbol": "2010", "Company": "Saudi Basic Industries Corp", "Volume": "6,890,340", "Price": "123.20 SAR"},
-            {"Symbol": "7010", "Company": "Saudi Telecom Company", "Volume": "5,240,180", "Price": "94.80 SAR"},
-            {"Symbol": "1180", "Company": "Saudi National Bank", "Volume": "4,950,750", "Price": "28.95 SAR"},
-            {"Symbol": "4160", "Company": "Thimar Development", "Volume": "3,840,220", "Price": "40.04 SAR"},
-            {"Symbol": "2130", "Company": "Saudi Industrial Development", "Volume": "3,120,480", "Price": "33.12 SAR"},
-            {"Symbol": "4270", "Company": "Saudi Public Procurement", "Volume": "2,890,150", "Price": "12.63 SAR"},
-            {"Symbol": "4020", "Company": "Dar Al Arkan Real Estate", "Volume": "2,650,890", "Price": "11.84 SAR"},
-            {"Symbol": "2050", "Company": "Savola Group", "Volume": "2,340,670", "Price": "31.25 SAR"}
-        ]
-        
-        demo_value_movers = [
-            {"Symbol": "2222", "Company": "Saudi Arabian Oil Company", "Market Value": "2,198,000,000", "Price": "27.45 SAR"},
-            {"Symbol": "1120", "Company": "Al Rajhi Bank", "Market Value": "252,800,000", "Price": "84.60 SAR"},
-            {"Symbol": "2010", "Company": "Saudi Basic Industries Corp", "Market Value": "221,760,000", "Price": "123.20 SAR"},
-            {"Symbol": "7010", "Company": "Saudi Telecom Company", "Market Value": "189,600,000", "Price": "94.80 SAR"},
-            {"Symbol": "1180", "Company": "Saudi National Bank", "Market Value": "144,750,000", "Price": "28.95 SAR"},
-            {"Symbol": "1010", "Company": "Riyad Bank", "Market Value": "126,450,000", "Price": "42.15 SAR"},
-            {"Symbol": "1050", "Company": "Banque Saudi Fransi", "Market Value": "98,720,000", "Price": "65.81 SAR"},
-            {"Symbol": "2090", "Company": "Jarir Marketing Co", "Market Value": "89,800,000", "Price": "179.60 SAR"},
-            {"Symbol": "4002", "Company": "Al Mouwasat Medical Services", "Market Value": "78,200,000", "Price": "156.40 SAR"},
-            {"Symbol": "4001", "Company": "Dallah Healthcare Company", "Market Value": "69,125,000", "Price": "98.75 SAR"}
-        ]
-        
-        # Display demo sections
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("### 📈 Top 10 Gainers (Demo)")
-            st.dataframe(pd.DataFrame(demo_gainers), hide_index=True, use_container_width=True)
-        
-        with col2:
-            st.markdown("### 📉 Top 10 Losers (Demo)") 
-            st.dataframe(pd.DataFrame(demo_losers), hide_index=True, use_container_width=True)
-        
-        st.markdown("---")
-        
-        # ADDED: Demo Volume and Value movers sections
-        col3, col4 = st.columns(2)
-        
-        with col3:
-            st.markdown("#### 📊 Movers by Volume (Demo)")
-            st.dataframe(pd.DataFrame(demo_volume_movers), hide_index=True, use_container_width=True)
-        
-        with col4:
-            st.markdown("#### 💰 Movers by Value (Demo)")
-            st.dataframe(pd.DataFrame(demo_value_movers), hide_index=True, use_container_width=True)
+            st.error("❌ Saudi Exchange fetcher not available. Please check the saudi_exchange_fetcher.py module.")
     
     # Manual test section for individual stocks
     with st.expander("🧪 Test Individual Stock Prices (Live Data)"):
@@ -872,6 +1097,35 @@ def display_top_gainers_losers():
                         st.error(f"❌ Failed to fetch live data for {test_symbol}: {error_msg}")
             else:
                 st.warning("Please enter a stock symbol")
+                
+    # Fallback demo section when live data is not available
+    if not SAUDI_EXCHANGE_AVAILABLE or st.checkbox("Show Demo Data for Testing", value=False):
+        st.info("💡 Showing demo data - Enable live data fetcher for real prices")    # Demo data
+    demo_gainers = [
+        {"Symbol": "4160", "Company": "Thimar Development", "Price": "40.04 SAR", "Change": "+10.00%"},
+        {"Symbol": "2130", "Company": "Saudi Industrial Development", "Price": "33.12 SAR", "Change": "+9.96%"},
+        {"Symbol": "4270", "Company": "Saudi Public Procurement", "Price": "12.63 SAR", "Change": "+5.60%"},
+        {"Symbol": "4191", "Company": "Abo Moati Al Motaheda", "Price": "40.88 SAR", "Change": "+4.82%"},
+        {"Symbol": "4291", "Company": "National Care Company", "Price": "166.00 SAR", "Change": "+4.73%"}
+    ]
+    
+    demo_losers = [
+        {"Symbol": "2020", "Company": "SABIC Agri-Nutrients", "Price": "85.20 SAR", "Change": "-4.50%"},
+        {"Symbol": "1182", "Company": "Amlak International", "Price": "12.80 SAR", "Change": "-3.80%"},
+        {"Symbol": "6050", "Company": "Saudi Fisheries", "Price": "45.60 SAR", "Change": "-3.20%"},
+        {"Symbol": "4180", "Company": "Fitaihi Group", "Price": "28.90 SAR", "Change": "-2.90%"},
+        {"Symbol": "3080", "Company": "Eastern Province Cement", "Price": "67.40 SAR", "Change": "-2.50%"}
+    ]
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("### [UP] Top Gainers")
+        st.dataframe(pd.DataFrame(demo_gainers), hide_index=True, use_container_width=True)
+    
+    with col2:
+        st.markdown("### [DOWN] Top Losers") 
+        st.dataframe(pd.DataFrame(demo_losers), hide_index=True, use_container_width=True)
 
 def main():
     """Main application function"""
@@ -2536,120 +2790,6 @@ def main():
                 hide_index=True
             )
         
-        st.markdown("---")
-        
-        # Comprehensive All Stocks Market Table
-        st.markdown("### 📊 Comprehensive Market Overview - All Stocks")
-        
-        if SAUDI_EXCHANGE_AVAILABLE:
-            with st.spinner("🔄 Fetching comprehensive market data..."):
-                try:
-                    market_summary = get_market_summary()
-                    
-                    if market_summary and market_summary.get('success'):
-                        all_stocks_data = market_summary.get('all_stocks', [])
-                        
-                        if all_stocks_data:
-                            # Create comprehensive DataFrame
-                            comprehensive_df = pd.DataFrame(all_stocks_data)
-                            
-                            # Format the data for display
-                            if not comprehensive_df.empty:
-                                display_columns = {
-                                    'symbol': 'Symbol',
-                                    'name_en': 'Company Name',
-                                    'sector': 'Sector',
-                                    'current_price': 'Price (SAR)',
-                                    'change': 'Change (SAR)',
-                                    'change_pct': 'Change %',
-                                    'volume': 'Volume',
-                                    'value': 'Value (SAR)'
-                                }
-                                
-                                # Select and rename columns
-                                available_cols = [col for col in display_columns.keys() if col in comprehensive_df.columns]
-                                formatted_df = comprehensive_df[available_cols].copy()
-                                
-                                # Format numerical columns
-                                if 'current_price' in formatted_df.columns:
-                                    formatted_df['current_price'] = formatted_df['current_price'].apply(lambda x: f"{x:.2f}")
-                                if 'change' in formatted_df.columns:
-                                    formatted_df['change'] = formatted_df['change'].apply(lambda x: f"{x:+.2f}")
-                                if 'change_pct' in formatted_df.columns:
-                                    formatted_df['change_pct'] = formatted_df['change_pct'].apply(lambda x: f"{x:+.2f}%")
-                                if 'volume' in formatted_df.columns:
-                                    formatted_df['volume'] = formatted_df['volume'].apply(lambda x: f"{x:,}")
-                                if 'value' in formatted_df.columns:
-                                    formatted_df['value'] = formatted_df['value'].apply(lambda x: f"{x:,.0f}")
-                                
-                                # Rename columns
-                                formatted_df.columns = [display_columns.get(col, col) for col in formatted_df.columns]
-                                
-                                # Add download button
-                                csv_data = formatted_df.to_csv(index=False)
-                                st.download_button(
-                                    label="📥 Download Market Data (CSV)",
-                                    data=csv_data,
-                                    file_name=f"saudi_market_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                                    mime="text/csv"
-                                )
-                                
-                                # Display the table
-                                st.dataframe(
-                                    formatted_df,
-                                    use_container_width=True,
-                                    hide_index=True,
-                                    height=400  # Limit height for better UX
-                                )
-                                
-                                # Summary statistics
-                                col1, col2, col3, col4 = st.columns(4)
-                                
-                                with col1:
-                                    st.metric(
-                                        "Total Stocks",
-                                        len(all_stocks_data),
-                                        help="Total stocks with live data"
-                                    )
-                                
-                                with col2:
-                                    gainers = [s for s in all_stocks_data if s.get('change_pct', 0) > 0]
-                                    st.metric(
-                                        "Gainers",
-                                        len(gainers),
-                                        f"{(len(gainers)/len(all_stocks_data)*100):.1f}%"
-                                    )
-                                
-                                with col3:
-                                    losers = [s for s in all_stocks_data if s.get('change_pct', 0) < 0]
-                                    st.metric(
-                                        "Losers",
-                                        len(losers),
-                                        f"{(len(losers)/len(all_stocks_data)*100):.1f}%"
-                                    )
-                                
-                                with col4:
-                                    total_volume = sum(s.get('volume', 0) for s in all_stocks_data)
-                                    st.metric(
-                                        "Total Volume",
-                                        f"{total_volume:,}",
-                                        help="Combined trading volume"
-                                    )
-                            else:
-                                st.warning("📊 No market data available to display")
-                        else:
-                            st.warning("📊 No comprehensive market data available")
-                    else:
-                        error_msg = market_summary.get('error', 'Unknown error') if market_summary else 'No response'
-                        st.error(f"❌ Failed to fetch market data: {error_msg}")
-                        
-                except Exception as e:
-                    st.error(f"❌ Error loading comprehensive market data: {str(e)}")
-        else:
-            st.warning("❌ Live market data fetcher not available")
-        
-        st.markdown("---")
-        
         st.markdown("### [UP] Market Trends")
         
         # Market overview
@@ -3666,69 +3806,296 @@ def main():
                 mime="text/csv"
             )
     
-    elif selected_page == "⚠️ Risk Management":
-        # Use the imported risk management center if available
-        if RISK_MANAGEMENT_AVAILABLE:
-            # Load portfolio data for risk analysis
-            portfolio = load_portfolio()
+    elif selected_page == "  Risk Management":
+        st.markdown("##   Risk Management Center")
+        st.caption("    | Portfolio Risk Analysis")
+        
+        # Load portfolio data
+        portfolio = load_portfolio()
+        
+        if not portfolio:
+            st.warning("⚠️ No portfolio data found. Please set up your portfolio first in the '⚙️ Portfolio Setup' section.")
+            st.info("📋 Navigate to Portfolio Setup to add stocks to your portfolio first.")
+            return
+
+        # Calculate portfolio metrics - using CONSOLIDATED portfolio for consistency
+        try:
+            consolidated_portfolio = consolidate_portfolio_by_symbol(portfolio)
+            portfolio_value = calculate_portfolio_value(consolidated_portfolio, stocks_db)
+            total_value = portfolio_value.get('total_value', 0)
+            total_cost = portfolio_value.get('total_cost', 0)
+            total_return = ((total_value - total_cost) / total_cost * 100) if total_cost > 0 else 0
+        except:
+            total_value = 0
+            total_cost = 0
+            total_return = 0
+        
+        # Calculate basic risk metrics
+        portfolio_returns = []
+        if len(portfolio) > 1:
+            # Generate sample daily returns for demonstration
+            import numpy as np
+            np.random.seed(42)
+            portfolio_returns = np.random.normal(0.001, 0.02, 30)  # 30 days of returns
+        
+        volatility = np.std(portfolio_returns) * np.sqrt(252) * 100 if len(portfolio_returns) > 0 else 0
+        max_drawdown = abs(min(np.cumsum(portfolio_returns))) * 100 if len(portfolio_returns) > 0 else 0
+        
+        # Calculate beta (simplified - assume correlation with market)
+        beta = 1.0 + (volatility - 15) / 20  # Simplified beta calculation
+        
+        # Calculate Sharpe ratio (simplified)
+        risk_free_rate = 2.5
+        sharpe_ratio = (total_return - risk_free_rate) / volatility if volatility > 0 else 0
+        
+        # --- Key Risk Metrics Section ---
+        st.markdown("### [CHART] Key Risk Metrics |   ")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric(
+                "[DOWN] Max Drawdown",
+                f"-{max_drawdown:.1f}%",
+                help="    | Largest peak-to-trough decline"
+            )
+        
+        with col2:
+            st.metric(
+                "[UP] Portfolio Beta",
+                f"{beta:.2f}",
+                help="    | Sensitivity to market movements (1.0 = same as market)"
+            )
+        
+        with col3:
+            st.metric(
+                "[CHART] Volatility",
+                f"{volatility:.1f}%",
+                help="  | Annualized portfolio volatility"
+            )
+        
+        with col4:
+            st.metric(
+                "  Sharpe Ratio",
+                f"{sharpe_ratio:.2f}",
+                help="    | Risk-adjusted return measure (higher is better)"
+            )
+        
+        # --- Risk Tolerance Settings ---
+        st.markdown("---")
+        st.markdown("###   Risk Tolerance & Thresholds |   ")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### Stop-Loss & Take-Profit Settings")
+            stop_loss = st.slider(
+                "Set Stop-Loss Threshold (%)",
+                min_value=1.0,
+                max_value=50.0,
+                value=10.0,
+                step=1.0,
+                help="Alert when any stock drops by this percentage"
+            )
             
-            if portfolio:
-                # Get market data for risk calculations
-                consolidated_portfolio = consolidate_portfolio_by_symbol(portfolio)
-                portfolio_value = calculate_portfolio_value(consolidated_portfolio, stocks_db)
-                
-                # Convert portfolio to DataFrame format expected by risk_management_center
-                portfolio_df = pd.DataFrame(consolidated_portfolio)
-                
-                # Add sector information if available
-                if not portfolio_df.empty and 'symbol' in portfolio_df.columns:
-                    sectors = []
-                    for symbol in portfolio_df['symbol']:
-                        if symbol in stocks_db:
-                            sector = stocks_db[symbol].get('sector', 'Unknown')
-                        else:
-                            sector = 'Unknown'
-                        sectors.append(sector)
-                    portfolio_df['Sector'] = sectors
-                    
-                    # Add weights for diversification analysis
-                    if 'quantity' in portfolio_df.columns:
-                        # Get current prices for value calculation
-                        current_prices = []
-                        for symbol in portfolio_df['symbol']:
-                            stock_data = get_stock_data(symbol, stocks_db)
-                            current_prices.append(stock_data.get('current_price', 0))
-                        portfolio_df['current_price'] = current_prices
-                        
-                        portfolio_df['Value'] = portfolio_df['quantity'] * portfolio_df['current_price']
-                        total_value = portfolio_df['Value'].sum()
-                        portfolio_df['Weight'] = portfolio_df['Value'] / total_value if total_value > 0 else 0
-                
-                # Get basic market data (you can enhance this with real market data)
-                market_data = {
-                    'tasi_index': 11500,  # Example TASI value
-                    'market_volatility': 0.25,
-                    'risk_free_rate': 0.05
-                }
-                
-                # Call the risk management center
-                risk_management_center(portfolio_df, market_data)
+            take_profit = st.slider(
+                "Set Take-Profit Threshold (%)",
+                min_value=5.0,
+                max_value=100.0,
+                value=20.0,
+                step=5.0,
+                help="Alert when any stock gains by this percentage"
+            )
+        
+        with col2:
+            st.markdown("#### Risk Tolerance Level")
+            risk_tolerance = st.slider(
+                "Risk Tolerance (0=Conservative, 100=Aggressive)",
+                min_value=0,
+                max_value=100,
+                value=50,
+                help="Adjust how aggressive your investment strategy should be"
+            )
+            
+            # Risk level description
+            if risk_tolerance <= 30:
+                risk_level = "  Conservative"
+                risk_desc = "Focus on stable, dividend-paying stocks"
+            elif risk_tolerance <= 70:
+                risk_level = "  Moderate"
+                risk_desc = "Balanced mix of growth and defensive stocks"
             else:
-                st.warning("⚠️ No portfolio data found. Please set up your portfolio first in the '⚙️ Portfolio Setup' section.")
-                st.info("📋 Navigate to Portfolio Setup to add stocks to your portfolio first.")
+                risk_level = "[ROCKET] Aggressive"
+                risk_desc = "High-growth, volatile stocks with higher potential returns"
+            
+            st.info(f"**{risk_level}**: {risk_desc}")
+        
+        # Alert summary
+        st.info(f"  **Alert Settings**: You'll be notified when any stock drops by {stop_loss}% or gains {take_profit}%")
+        
+        # --- Portfolio Composition Risk ---
+        st.markdown("---")
+        st.markdown("###   Portfolio Composition & Diversification Risk |   ")
+        
+        # Calculate sector allocation
+        sector_allocation = {}
+        broker_allocation = {}
+        total_val = 0
+        
+        for stock in portfolio:
+            symbol = stock.get('symbol', '')
+            quantity = stock.get('quantity', 0)
+            purchase_price = stock.get('purchase_price', 0)
+            broker = stock.get('broker', 'Unknown')
+            position_value = quantity * purchase_price
+            total_val += position_value
+            
+            # Get sector from database
+            stock_info = stocks_db.get(symbol, {})
+            sector = stock_info.get('sector', 'Unknown')
+            
+            sector_allocation[sector] = sector_allocation.get(sector, 0) + position_value
+            broker_allocation[broker] = broker_allocation.get(broker, 0) + position_value
+        
+        # Convert to percentages
+        if total_val > 0:
+            sector_pct = {sector: (value / total_val * 100) for sector, value in sector_allocation.items()}
+            broker_pct = {broker: (value / total_val * 100) for broker, value in broker_allocation.items()}
         else:
-            # Fallback to basic risk management if the module is not available
-            st.markdown("## ⚠️ Risk Management Center")
-            st.caption("تحليل المخاطر المالية للمحفظة | Portfolio Risk Analysis")
-            st.warning("⚠️ Risk Management Center module not available. Please ensure risk_management_center.py is in the apps directory.")
-            st.info("💡 The Risk Management Center provides advanced portfolio risk analysis including:")
-            st.markdown("""
-            - **Portfolio Risk Metrics**: Max Drawdown, Beta, Volatility, Sharpe Ratio
-            - **Stop-Loss & Take-Profit Settings**: Customizable risk thresholds
-            - **Diversification Analysis**: Sector and broker concentration risk
-            - **Scenario Simulation**: Market stress testing
-            - **Risk Alerts**: Automated risk monitoring
-            """)
+            sector_pct = {}
+            broker_pct = {}
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### Sector Diversification")
+            if sector_pct:
+                # Create a simple bar chart data
+                sector_df = pd.DataFrame(list(sector_pct.items()), columns=['Sector', 'Percentage'])
+                st.bar_chart(sector_df.set_index('Sector')['Percentage'])
+                
+                # Check for concentration risk
+                max_sector_pct = max(sector_pct.values()) if sector_pct else 0
+                if max_sector_pct > 50:
+                    st.warning(f"WARNING: High concentration risk: {max_sector_pct:.1f}% in one sector")
+                elif max_sector_pct > 30:
+                    st.info(f"[IDEA] Moderate concentration: {max_sector_pct:.1f}% in top sector")
+                else:
+                    st.success("[OK] Good sector diversification")
+            else:
+                st.info("No sector data available")
+        
+        with col2:
+            st.markdown("#### Broker Diversification")
+            if broker_pct:
+                broker_df = pd.DataFrame(list(broker_pct.items()), columns=['Broker', 'Percentage'])
+                st.bar_chart(broker_df.set_index('Broker')['Percentage'])
+                
+                # Check for broker concentration
+                max_broker_pct = max(broker_pct.values()) if broker_pct else 0
+                if max_broker_pct > 80:
+                    st.warning(f"WARNING: High broker concentration: {max_broker_pct:.1f}% with one broker")
+                else:
+                    st.success("[OK] Good broker diversification")
+            else:
+                st.info("No broker data available")
+        
+        # --- Scenario Analysis ---
+        st.markdown("---")
+        st.markdown("### [DOWN] Scenario Analysis |  ")
+        
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            scenario = st.selectbox(
+                "Choose a Market Stress Scenario",
+                [
+                    "Oil Price Drop (-20%)",
+                    "Interest Rate Hike (+2%)",
+                    "Geopolitical Tension",
+                    "Global Recession",
+                    "Currency Devaluation (SAR)"
+                ]
+            )
+            
+            # Simulate scenario impact
+            scenario_impacts = {
+                "Oil Price Drop (-20%)": -8.5,
+                "Interest Rate Hike (+2%)": -6.2,
+                "Geopolitical Tension": -12.3,
+                "Global Recession": -15.8,
+                "Currency Devaluation (SAR)": -4.1
+            }
+            
+            impact = scenario_impacts.get(scenario, -5.0)
+            
+        with col2:
+            st.metric(
+                "Estimated Impact",
+                f"{impact}%",
+                delta=f"SAR {(total_value * impact / 100):,.0f}",
+                help="Simulated impact on portfolio value"
+            )
+        
+        # Show scenario details
+        if impact < -10:
+            st.error(f"  **High Risk Scenario**: {scenario} could significantly impact your portfolio")
+        elif impact < -5:
+            st.warning(f"  **Moderate Risk**: {scenario} may cause some portfolio volatility")
+        else:
+            st.info(f"  **Low Risk**: {scenario} likely to have minimal impact")
+        
+        # --- Risk Alerts ---
+        st.markdown("---")
+        st.markdown("###   Active Risk Alerts |   ")
+
+        # Check for various risk conditions
+        alerts = []
+        
+        if volatility > 25:
+            alerts.append("WARNING: High portfolio volatility detected - consider rebalancing")
+        
+        if max_drawdown > 20:
+            alerts.append("WARNING: Significant drawdown risk - review stop-loss settings")
+        
+        if max_sector_pct > 50:
+            alerts.append("WARNING: Over-concentration in one sector - diversify holdings")
+        
+        if beta > 1.5:
+            alerts.append("WARNING: High market sensitivity - portfolio more volatile than market")
+        
+        if len(portfolio) < 5:
+            alerts.append("[IDEA] Consider adding more stocks for better diversification")
+        
+        if alerts:
+            for alert in alerts:
+                st.warning(alert)
+        else:
+            st.success("[OK] No active risk alerts - portfolio appears well-balanced")
+        
+        # --- Educational Content ---
+        if RISK_INFO_AVAILABLE:
+            show_risk_info()
+        else:
+            # Fallback educational content
+            with st.expander("  Understanding Risk Management |      "):
+                st.markdown("""
+                **Risk management** helps you protect your portfolio from unexpected losses and optimize your investment strategy.
+                
+                **Key Concepts:**
+                - **Volatility**: Measures how much your portfolio value fluctuates
+                - **Beta**: Shows how sensitive your portfolio is to market movements
+                - **Sharpe Ratio**: Measures risk-adjusted returns (higher is better)  
+                - **Diversification**: Spreading investments across sectors and assets
+                
+                **   **                      .
+                
+                **   :**
+                - ** **:          
+                - ** **:            
+                - **   **:        
+                - ** **:          
+                """)
     
     elif selected_page == "📁 Import/Export Data":
         st.markdown("## 📁 Import/Export Data")
@@ -4233,481 +4600,130 @@ def main():
         st.markdown("## 🎨 Theme Customizer")
         st.caption("🎨 Real-time color and font customization for TADAWUL NEXUS")
         
-        # Option to use standalone or integrated theme customizer
-        theme_mode = st.radio(
-            "Choose Theme Customizer Mode:",
-            ["🚀 Enhanced (Integrated)", "🎯 Simple (Standalone)"],
-            help="Enhanced: Full-featured theme customizer | Simple: Basic color and font selection"
-        )
+        # Create tabs for different customization options
+        color_tab, font_tab, preview_tab = st.tabs(["🎨 Colors", "📝 Fonts", "👁️ Preview"])
         
-        if theme_mode == "🎯 Simple (Standalone)" and STANDALONE_THEME_AVAILABLE:
+        with color_tab:
+            st.markdown("### 🎨 Color Palette Configuration")
+            st.info("💡 Change colors below and see them apply instantly to your dashboard!")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("#### 🔵 Primary Theme Colors")
+                primary_blue = st.color_picker("Primary Blue", "#0066CC", help="Main brand color for buttons and headers")
+                secondary_blue = st.color_picker("Secondary Blue", "#1e3a5f", help="Cards and container backgrounds")
+                accent_gold = st.color_picker("Accent Gold", "#FFD700", help="Borders, highlights, and hover effects")
+                dark_teal = st.color_picker("Dark Navy", "#0f2240", help="Sidebar and background gradients")
+                
+            with col2:
+                st.markdown("#### 🖤 Background & Text Colors")
+                background_dark = st.color_picker("Background Dark", "#0d1b2a", help="Main dark background")
+                text_light = st.color_picker("Text Light", "#FFFFFF", help="White text for dark backgrounds")
+                text_gray = st.color_picker("Text Gray", "#B0BEC5", help="Gray text for subtitles")
+                
+                st.markdown("#### 🎯 Status Colors")
+                success_green = st.color_picker("Success Green", "#4CAF50", help="Positive values and success")
+                warning_red = st.color_picker("Warning Red", "#F44336", help="Negative values and warnings")
+                chart_orange = st.color_picker("Chart Orange", "#FF9800", help="Charts and alerts")
+            
+            # Apply colors button
+            if st.button("🎨 Apply Color Changes", type="primary"):
+                # Update the branding file with new colors
+                new_colors = {
+                    'primary_blue': primary_blue,
+                    'secondary_blue': secondary_blue,
+                    'accent_gold': accent_gold,
+                    'dark_teal': dark_teal,
+                    'background_dark': background_dark,
+                    'text_light': text_light,
+                    'text_gray': text_gray,
+                    'success_green': success_green,
+                    'warning_red': warning_red,
+                    'chart_orange': chart_orange,
+                }
+                
+                if update_branding_colors(new_colors):
+                    st.success("✅ Colors updated successfully! Refresh the page to see changes.")
+                    st.balloons()
+                else:
+                    st.error("❌ Failed to update colors. Please try again.")
+        
+        with font_tab:
+            st.markdown("### 📝 Font Configuration")
+            st.info("💡 Customize font sizes for different text elements")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("#### 📖 Header Sizes")
+                h1_size = st.slider("H1 Font Size (rem)", 2.0, 4.0, 2.5, 0.1)
+                h2_size = st.slider("H2 Font Size (rem)", 1.5, 3.0, 2.0, 0.1)
+                h3_size = st.slider("H3 Font Size (rem)", 1.2, 2.5, 1.5, 0.1)
+                
+            with col2:
+                st.markdown("#### 📝 Body Text")
+                body_size = st.slider("Body Font Size (rem)", 0.8, 1.5, 1.0, 0.05)
+                caption_size = st.slider("Caption Font Size (rem)", 0.6, 1.2, 0.85, 0.05)
+                
+                st.markdown("#### 🎛️ Font Weight")
+                header_weight = st.selectbox("Header Weight", [300, 400, 500, 600, 700], index=3)
+                body_weight = st.selectbox("Body Weight", [300, 400, 500], index=1)
+            
+            # Apply fonts button
+            if st.button("📝 Apply Font Changes", type="primary"):
+                font_config = {
+                    'h1_size': h1_size,
+                    'h2_size': h2_size,
+                    'h3_size': h3_size,
+                    'body_size': body_size,
+                    'caption_size': caption_size,
+                    'header_weight': header_weight,
+                    'body_weight': body_weight,
+                }
+                
+                if update_branding_fonts(font_config):
+                    st.success("✅ Font settings updated successfully! Refresh the page to see changes.")
+                    st.balloons()
+                else:
+                    st.error("❌ Failed to update fonts. Please try again.")
+        
+        with preview_tab:
+            st.markdown("### 👁️ Live Preview")
+            st.info("🔍 Preview how your customizations will look")
+            
+            # Sample elements to preview
+            st.markdown("#### Sample Header Elements")
+            st.markdown("# H1: TADAWUL NEXUS Dashboard")
+            st.markdown("## H2: Portfolio Overview")
+            st.markdown("### H3: Stock Analysis")
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Portfolio Value", "125,750 SAR", "5.2%")
+            with col2:
+                st.metric("Today's Gain", "6,540 SAR", "3.1%")
+            with col3:
+                st.metric("Total Stocks", "12", "2")
+            
+            # Sample buttons and alerts
+            st.markdown("#### Sample Interactive Elements")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.button("🔵 Primary Button")
+            with col2:
+                st.success("✅ Success Message")
+            with col3:
+                st.error("❌ Warning Message")
+            
+            # Reset to defaults
             st.markdown("---")
-            st.info("🎯 Using your standalone theme customizer")
-            theme_customizer()  # Call your standalone function
-        
-        elif theme_mode == "🚀 Enhanced (Integrated)":
-            st.markdown("---")
-            # Create tabs for different customization options
-            portfolio_tab, color_tab, font_tab, preview_tab = st.tabs(["📊 Portfolio Table", "🎨 Colors", "📝 Fonts", "👁️ Preview"])
-            
-            with portfolio_tab:
-                st.markdown("### 📊 Portfolio Table Color Control")
-                st.info("🎯 **Click any theme button below and watch your portfolio table colors change instantly!**")
-                
-                # Initialize session state for theme - FORCE DARK CHARCOAL AS DEFAULT
-                if 'current_theme' not in st.session_state:
-                    st.session_state.current_theme = "dark_charcoal"
-                if 'theme_applied' not in st.session_state:
-                    st.session_state.theme_applied = False
-                    # Force apply dark charcoal theme immediately
-                    apply_global_theme()
-                
-                # Portfolio Table Quick Presets with Dynamic Names
-                st.markdown("#### ⚡ **Portfolio Table Instant Themes**")
-                st.markdown("**🚀 Click any button below for instant table color changes!**")
-                
-                # Add immediate reset button
-                reset_col, info_col = st.columns([1, 2])
-                with reset_col:
-                    if st.button("🔄 Reset to Default", help="Reset to default dark charcoal theme", type="primary"):
-                        apply_theme_with_preview("dark_charcoal")
-                        st.success("✅ Reset to Dark Charcoal theme!")
-                        st.rerun()
-                
-                with info_col:
-                    st.markdown("**Current Theme:** `" + st.session_state.current_theme.replace('_', ' ').title() + "`")
-                
-                st.markdown("---")
-                
-                # Define theme display names and descriptions (moved to broader scope)
-                theme_info = {
-                    "dark_charcoal": {"name": "⚫ Dark Charcoal", "color": "Deep Slate Gray", "help": "Professional charcoal theme with dark gray tones"},
-                    "professional_blue": {"name": "🔵 Ocean Blue", "color": "Professional Blue", "help": "Corporate blue theme with navy accents"},
-                    "financial_green": {"name": "🟢 Forest Green", "color": "Financial Green", "help": "Success-oriented green theme with emerald tones"},
-                    "saudi_gold": {"name": "🟡 Royal Gold", "color": "Luxury Gold", "help": "Premium gold theme with rich golden hues"}
-                }
-                
-                preset_col1, preset_col2, preset_col3, preset_col4 = st.columns(4)
-                
-                theme_changed = False
-                
-                with preset_col1:
-                    theme_key = "dark_charcoal"
-                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
-                                help=theme_info[theme_key]['help'], key="dark_theme_btn"):
-                        apply_theme_with_preview(theme_key)
-                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
-                        st.rerun()
-                        
-                with preset_col2:
-                    theme_key = "professional_blue"
-                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
-                                help=theme_info[theme_key]['help'], key="blue_theme_btn"):
-                        apply_theme_with_preview(theme_key)
-                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
-                        st.rerun()
-                
-                with preset_col3:
-                    theme_key = "financial_green"
-                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
-                                help=theme_info[theme_key]['help'], key="green_theme_btn"):
-                        apply_theme_with_preview(theme_key)
-                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
-                        st.rerun()
-                
-                with preset_col4:
-                    theme_key = "saudi_gold"
-                    if st.button(f"**{theme_info[theme_key]['name']}**\n{theme_info[theme_key]['color']}", 
-                                help=theme_info[theme_key]['help'], key="gold_theme_btn"):
-                        apply_theme_with_preview(theme_key)
-                        st.success(f"✅ Applied {theme_info[theme_key]['name']}!")
-                        st.rerun()
-                
-                st.markdown("---")
-                
-                # Enhanced Instructions with Dynamic Theme Colors
-                current_theme = st.session_state.get('current_theme', 'dark_charcoal')
-                theme_colors = {
-                    "dark_charcoal": {"bg": "rgba(45, 52, 64, 0.3)", "border": "#88C0D0", "accent": "#00FF88"},
-                    "professional_blue": {"bg": "rgba(35, 90, 150, 0.3)", "border": "#5E81AC", "accent": "#88C0D0"},
-                    "financial_green": {"bg": "rgba(46, 125, 50, 0.3)", "border": "#A3BE8C", "accent": "#D08770"},
-                    "saudi_gold": {"bg": "rgba(200, 160, 40, 0.3)", "border": "#EBCB8B", "accent": "#BF616A"}
-                }
-                
-                # Get current theme colors or use default
-                colors = theme_colors.get(current_theme, theme_colors["dark_charcoal"])
-                
-                st.markdown(f"""
-                <div style="background: {colors['bg']}; border-left: 4px solid {colors['border']}; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                <h3 style="color: #ffffff; margin-top: 0;">📋 <strong>How to Use Theme Customizer:</strong></h3>
-                
-                <p style="color: #E5E9F0; line-height: 1.6;">
-                1. <strong style="color: {colors['accent']};">🎯 Click any theme button above</strong> → See instant table color changes<br>
-                2. <strong style="color: {colors['accent']};">📊 Go to "Portfolio & Trading" page</strong> → View your portfolio with new colors<br>
-                3. <strong style="color: {colors['accent']};">🔄 Use Reset button</strong> → Return to default theme anytime<br>
-                4. <strong style="color: {colors['accent']};">⚡ All changes apply instantly</strong> → No need to refresh or reload
-                </p>
-                
-                <p style="color: #FFD700; font-weight: 500;"><strong>💡 Pro Tip:</strong> The theme applies to ALL tables in the app (Portfolio, Top Gainers, Market Data, etc.)</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Force refresh after any theme change
-                force_theme_refresh()
-                st.session_state.theme_applied = True
-                
-                # Show success message with theme name if theme was changed
-                if theme_changed:
-                    current_theme_display = theme_info[st.session_state.current_theme]
-                    st.success(f"✅ {current_theme_display['name']} - {current_theme_display['color']} theme applied!")
-                    st.rerun()
-                
-                # Display current theme with actual color description
-                current_theme_display = theme_info[st.session_state.current_theme]
-                st.info(f"🎨 Current Theme: **{current_theme_display['name']} - {current_theme_display['color']}**")
-                
-                st.markdown("---")
-                
-                # Live Portfolio Preview with Current Theme
-                st.markdown("#### 👁️ Portfolio Table Preview")
-                
-                # Get current theme colors for preview - SOLID THEMES
-                themes = {
-                    "dark_charcoal": {
-                        "table_bg": "rgba(30, 40, 50, 1.0)",           # Completely solid dark background
-                        "border": "rgba(60, 70, 90, 1.0)",            # Solid border
-                        "header_bg": "rgba(50, 60, 80, 1.0)",         # Solid header background
-                        "cell_bg": "rgba(35, 45, 60, 1.0)",           # Solid cell background
-                        "text": "#ffffff",                             # Pure white text
-                        "shadow": "rgba(0, 0, 0, 0.8)"               # Strong shadow
-                    },
-                    "professional_blue": {
-                        "table_bg": "rgba(15, 76, 150, 1.0)",         # Solid blue background
-                        "border": "rgba(25, 86, 160, 1.0)",          # Solid blue border
-                        "header_bg": "rgba(20, 81, 155, 1.0)",       # Solid blue header
-                        "cell_bg": "rgba(10, 71, 145, 1.0)",         # Solid blue cells
-                        "text": "#ffffff",                             # Pure white text
-                        "shadow": "rgba(15, 76, 150, 0.8)"           # Blue shadow
-                    },
-                    "financial_green": {
-                        "table_bg": "rgba(46, 125, 50, 1.0)",         # Solid green background
-                        "border": "rgba(56, 135, 60, 1.0)",          # Solid green border
-                        "header_bg": "rgba(51, 130, 55, 1.0)",       # Solid green header
-                        "cell_bg": "rgba(41, 120, 45, 1.0)",         # Solid green cells
-                        "text": "#ffffff",                             # Pure white text
-                        "shadow": "rgba(46, 125, 50, 0.8)"           # Green shadow
-                    },
-                    "saudi_gold": {
-                        "table_bg": "rgba(180, 140, 20, 1.0)",        # Solid gold background
-                        "border": "rgba(200, 160, 40, 1.0)",         # Solid gold border
-                        "header_bg": "rgba(190, 150, 30, 1.0)",      # Solid gold header
-                        "cell_bg": "rgba(170, 130, 10, 1.0)",        # Solid gold cells
-                        "text": "#000000",                             # Pure black text for contrast
-                        "shadow": "rgba(180, 140, 20, 0.8)"          # Gold shadow
-                    }
-                }
-                
-                current_colors = themes.get(st.session_state.current_theme, themes["dark_charcoal"])
-                
-                st.markdown(f"""
-                <div style="
-                    background: {current_colors['table_bg']};
-                    border: 2px solid {current_colors['border']};
-                    border-radius: 12px;
-                    overflow: hidden;
-                    box-shadow: 0 4px 15px {current_colors['shadow']};
-                    margin: 1rem 0;
-                ">
-                    <div style="background: {current_colors['header_bg']}; color: {current_colors['text']}; padding: 0.8rem; font-weight: bold;">
-                        Symbol | Company | Quantity | Price | Value
-                    </div>
-                    <div style="background: {current_colors['cell_bg']}; color: {current_colors['text']}; padding: 0.6rem;">
-                        2222 | Saudi Aramco | 100 | 28.50 SAR | 2,850.00 SAR
-                    </div>
-                    <div style="background: {current_colors['cell_bg']}; color: {current_colors['text']}; padding: 0.6rem;">
-                        1120 | Al Rajhi Bank | 50 | 85.00 SAR | 4,250.00 SAR
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                st.info("� The preview above shows how your portfolio table will look with the current theme. Use the preset buttons above to switch themes instantly!")
-            
-            with color_tab:
-                st.markdown("### 🎨 Color Palette Configuration")
-                st.info("💡 Change colors below and see them apply instantly to your dashboard!")
-                
-                # Add Quick Presets (inspired by your file)
-                st.markdown("#### ⚡ Quick Color Presets")
-                preset_col1, preset_col2, preset_col3, preset_col4 = st.columns(4)
-                
-                with preset_col1:
-                    if st.button("🔵 Default Blue", help="TADAWUL NEXUS default theme"):
-                        primary_color = "#0066CC"
-                        secondary_color = "#1e3a5f"
-                        accent_color = "#FFD700"
-                        dark_background = "#0f2240"
-                
-                with preset_col2:
-                    if st.button("🟢 Saudi Green", help="Saudi-inspired green theme"):
-                        primary_color = "#00AA44"
-                        secondary_color = "#1a4d2e"
-                        accent_color = "#FFD700"
-                        dark_background = "#0d2818"
-                
-                with preset_col3:
-                    if st.button("🟡 Gold Luxury", help="Premium gold theme"):
-                        primary_color = "#DAA520"
-                        secondary_color = "#4a3728"
-                        accent_color = "#FFD700"
-                        dark_background = "#2d1810"
-                
-                with preset_col4:
-                    if st.button("⚫ Dark Mode", help="Pure dark theme"):
-                        primary_color = "#333333"
-                        secondary_color = "#1a1a1a"
-                        accent_color = "#666666"
-                        dark_background = "#0a0a0a"
-                
-                st.markdown("---")
-                
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown("#### 🎨 Main Theme Colors")
-                    
-                    # Dynamic color picker labels based on current selection
-                    primary_color = st.color_picker(
-                        "🔴 Primary Color", 
-                        "#0066CC", 
-                        help="Main brand color for buttons and headers"
-                    )
-                    st.markdown(f"<div style='background:{primary_color}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    secondary_color = st.color_picker(
-                        "🔵 Secondary Color", 
-                        "#1e3a5f", 
-                        help="Cards and container backgrounds"
-                    )
-                    st.markdown(f"<div style='background:{secondary_color}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    accent_color = st.color_picker(
-                        "🟡 Accent Color", 
-                        "#FFD700", 
-                        help="Borders, highlights, and hover effects"
-                    )
-                    st.markdown(f"<div style='background:{accent_color}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    dark_background = st.color_picker(
-                        "⚫ Background Color", 
-                        "#0f2240", 
-                        help="Sidebar and background gradients"
-                    )
-                    st.markdown(f"<div style='background:{dark_background}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                with col2:
-                    st.markdown("#### 🖤 Text & Status Colors")
-                    
-                    background_main = st.color_picker(
-                        "🌑 Main Background", 
-                        "#0d1b2a", 
-                        help="Main dark background"
-                    )
-                    st.markdown(f"<div style='background:{background_main}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    text_primary = st.color_picker(
-                        "⚪ Primary Text", 
-                        "#FFFFFF", 
-                        help="White text for dark backgrounds"
-                    )
-                    st.markdown(f"<div style='background:{text_primary}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    text_secondary = st.color_picker(
-                        "🔘 Secondary Text", 
-                        "#B0BEC5", 
-                        help="Gray text for subtitles"
-                    )
-                    st.markdown(f"<div style='background:{text_secondary}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                    
-                    st.markdown("**Status Colors:**")
-                    col2a, col2b = st.columns(2)
-                    with col2a:
-                        success_color = st.color_picker("🟢 Success", "#4CAF50", help="Positive values")
-                        st.markdown(f"<div style='background:{success_color}; height:15px; border-radius:3px; margin:2px 0;'></div>", unsafe_allow_html=True)
-                        
-                    with col2b:
-                        warning_color = st.color_picker("🔴 Warning", "#F44336", help="Negative values")
-                        st.markdown(f"<div style='background:{warning_color}; height:15px; border-radius:3px; margin:2px 0;'></div>", unsafe_allow_html=True)
-                    
-                    chart_color = st.color_picker("🟠 Chart Accent", "#FF9800", help="Charts and alerts")
-                    st.markdown(f"<div style='background:{chart_color}; height:20px; border-radius:5px; margin:5px 0;'></div>", unsafe_allow_html=True)
-                
-                # Live Preview
-                st.markdown("#### 🎯 Live Color Preview")
-                st.markdown(f"""
-                <div style="
-                    background: linear-gradient(135deg, {primary_color} 0%, {secondary_color} 50%, {dark_background} 100%);
-                    color: {text_primary};
-                    padding: 1.5rem;
-                    border-radius: 10px;
-                    border: 2px solid {accent_color};
-                    text-align: center;
-                    margin: 1rem 0;
-                ">
-                    <h3 style="color: {accent_color}; margin: 0;">🏛️ TADAWUL NEXUS</h3>
-                    <p style="color: {text_secondary}; margin: 0.5rem 0;">Your selected color scheme preview</p>
-                    <span style="background: {success_color}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">✅ Success</span>
-                    <span style="background: {warning_color}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">❌ Warning</span>
-                    <span style="background: {chart_color}; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; margin: 0.2rem;">📊 Chart</span>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Apply colors button
-                if st.button("🎨 Apply Color Changes", type="primary"):
-                    # Update the branding file with new colors
-                    new_colors = {
-                        'primary_blue': primary_color,
-                        'secondary_blue': secondary_color,
-                        'accent_gold': accent_color,
-                        'dark_teal': dark_background,
-                        'background_dark': background_main,
-                        'text_light': text_primary,
-                        'text_gray': text_secondary,
-                        'success_green': success_color,
-                        'warning_red': warning_color,
-                        'chart_orange': chart_color,
-                    }
-                    
-                    if update_branding_colors(new_colors):
-                        st.success("✅ Colors updated successfully! Refresh the page to see changes.")
-                        st.balloons()
-                    else:
-                        st.error("❌ Failed to update colors. Please try again.")
-            
-            with font_tab:
-                st.markdown("### 📝 Font Configuration")
-                st.info("💡 Customize font sizes and family for different text elements")
-                
-                # Add Font Family Selection (from your file)
-                st.markdown("#### 🔤 Font Family Selection")
-                font_family = st.selectbox(
-                    "Choose Font Family", 
-                    ["Inter (Default)", "Arial", "sans-serif", "serif", "monospace", "Georgia", "Times New Roman"],
-                    help="Select the main font family for the application"
-                )
-                
-                # Live Font Preview (inspired by your file)
-                font_css = {
-                    "Inter (Default)": "'Inter', sans-serif",
-                    "Arial": "Arial, sans-serif", 
-                    "sans-serif": "sans-serif",
-                    "serif": "serif",
-                    "monospace": "monospace",
-                    "Georgia": "Georgia, serif",
-                    "Times New Roman": "'Times New Roman', serif"
-                }
-                
-                selected_font = font_css.get(font_family, "'Inter', sans-serif")
-                
-                st.markdown(f"""
-                <div style="
-                    font-family: {selected_font};
-                    background: rgba(255, 255, 255, 0.05);
-                    padding: 1rem;
-                    border-radius: 8px;
-                    border: 1px solid #FFD700;
-                    margin: 1rem 0;
-                ">
-                    <h2 style="font-family: {selected_font}; color: #FFD700;">📊 Font Preview</h2>
-                    <p style="font-family: {selected_font}; color: #FFFFFF;">This is how your selected font will appear in the application.</p>
-                    <small style="font-family: {selected_font}; color: #B0BEC5;">Sample caption text in the selected font family.</small>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                st.markdown("---")
-                
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown("#### 📖 Header Sizes")
-                    h1_size = st.slider("H1 Font Size (rem)", 2.0, 4.0, 2.5, 0.1)
-                    h2_size = st.slider("H2 Font Size (rem)", 1.5, 3.0, 2.0, 0.1)
-                    h3_size = st.slider("H3 Font Size (rem)", 1.2, 2.5, 1.5, 0.1)
-                    
-                with col2:
-                    st.markdown("#### 📝 Body Text")
-                    body_size = st.slider("Body Font Size (rem)", 0.8, 1.5, 1.0, 0.05)
-                    caption_size = st.slider("Caption Font Size (rem)", 0.6, 1.2, 0.85, 0.05)
-                    
-                    st.markdown("#### 🎛️ Font Weight")
-                    header_weight = st.selectbox("Header Weight", [300, 400, 500, 600, 700], index=3)
-                    body_weight = st.selectbox("Body Weight", [300, 400, 500], index=1)
-                
-                # Apply fonts button
-                if st.button("📝 Apply Font Changes", type="primary"):
-                    font_config = {
-                        'font_family': selected_font,
-                        'h1_size': h1_size,
-                        'h2_size': h2_size,
-                        'h3_size': h3_size,
-                        'body_size': body_size,
-                        'caption_size': caption_size,
-                        'header_weight': header_weight,
-                        'body_weight': body_weight,
-                    }
-                    
-                    if update_branding_fonts(font_config):
-                        st.success("✅ Font settings updated successfully! Refresh the page to see changes.")
-                        st.balloons()
-                    else:
-                        st.error("❌ Failed to update fonts. Please try again.")
-            
-            with preview_tab:
-                st.markdown("### 👁️ Live Preview")
-                st.info("🔍 Preview how your customizations will look")
-                
-                # Sample elements to preview
-                st.markdown("#### Sample Header Elements")
-                st.markdown("# H1: TADAWUL NEXUS Dashboard")
-                st.markdown("## H2: Portfolio Overview")
-                st.markdown("### H3: Stock Analysis")
-                
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("Portfolio Value", "125,750 SAR", "5.2%")
-                with col2:
-                    st.metric("Today's Gain", "6,540 SAR", "3.1%")
-                with col3:
-                    st.metric("Total Stocks", "12", "2")
-                
-                # Sample buttons and alerts
-                st.markdown("#### Sample Interactive Elements")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.button("🔵 Primary Button")
-                with col2:
-                    st.success("✅ Success Message")
-                with col3:
-                    st.error("❌ Warning Message")
-                
-                # Reset to defaults
-                st.markdown("---")
-                if st.button("🔄 Reset to Default Theme", type="secondary"):
-                    if reset_to_default_theme():
-                        st.success("✅ Theme reset to defaults! Refresh the page to see changes.")
-                        st.snow()
-                    else:
-                        st.error("❌ Failed to reset theme.")
-        
-        elif theme_mode == "🎯 Simple (Standalone)" and not STANDALONE_THEME_AVAILABLE:
-            # Fallback if standalone theme customizer is not available
-            st.warning("⚠️ Standalone theme customizer not available. Please check theme_customizer.py file.")
-            st.info("💡 Make sure theme_customizer.py is in the root directory to use standalone mode.")
-            st.code("""
-# Your theme_customizer.py file should be in the root directory with:
-def theme_customizer():
-    # Your theme customization code here
-    pass
-            """)
+            if st.button("🔄 Reset to Default Theme", type="secondary"):
+                if reset_to_default_theme():
+                    st.success("✅ Theme reset to defaults! Refresh the page to see changes.")
+                    st.snow()
+                else:
+                    st.error("❌ Failed to reset theme.")
     
     # Add professional footer
     if BRANDING_AVAILABLE:

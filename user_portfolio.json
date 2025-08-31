@@ -1,12 +1,12 @@
 [
   {
     "symbol": "1010",
-    "quantity": 3911,
-    "purchase_price": 27.763482485297878,
+    "quantity": 3811,
+    "purchase_price": 27.58,
     "purchase_date": "2025-08-23",
     "broker": "BSF Capital",
     "notes": "",
-    "last_updated": "2025-08-23T16:49:48.364550"
+    "last_updated": "2025-08-30T14:00:15.504661"
   },
   {
     "symbol": "1020",

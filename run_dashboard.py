@@ -20,8 +20,8 @@ def main():
         return 1
     
     try:
-        print("🚀 Starting Saudi Stock Market Trading Signals Dashboard...")
-        print("📊 Loading complete database with 259 Tadawul stocks...")
+        print("🚀 Starting TADAWUL NEXUS - Enhanced Saudi Intelligence Platform...")
+        print("📊 Loading complete database with 700+ Tadawul stocks...")
         print("🔗 Dashboard will open at: http://localhost:8501")
         print("🛑 Press Ctrl+C to stop the dashboard")
         print("\n" + "="*60)

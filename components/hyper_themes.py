@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 def get_hyper_themes():
-    """Get all available themes with hyper-optimized color schemes"""
+    """Get all available themes with hyper-optimized color schemes - SOLID BACKGROUNDS FOR MAXIMUM VISIBILITY"""
     return {
         "dark_charcoal": {
             "name": "Dark Charcoal (Sleek & Professional)",
@@ -20,12 +20,12 @@ def get_hyper_themes():
             "background": "#1A1A1A",
             "surface": "#2C3E50",
             "text": "#ECF0F1",
-            "table_bg": "rgba(45, 52, 64, 0.9)",
-            "border": "rgba(88, 91, 112, 0.6)",
-            "header_bg": "rgba(59, 66, 82, 0.85)",
-            "cell_bg": "rgba(50, 57, 70, 0.8)",
+            "table_bg": "rgba(45, 52, 64, 1.0)",        # SOLID: More opaque for better visibility
+            "border": "rgba(88, 91, 112, 1.0)",         # SOLID: Fully opaque borders
+            "header_bg": "rgba(59, 66, 82, 1.0)",       # SOLID: Fully opaque header
+            "cell_bg": "rgba(50, 57, 70, 1.0)",         # SOLID: Fully opaque cells
             "table_text": "#E5E9F0",
-            "shadow": "rgba(0, 0, 0, 0.2)",
+            "shadow": "rgba(0, 0, 0, 0.4)",
             "success": "#00FF88",
             "error": "#FF4444",
             "warning": "#FFA500"
@@ -38,12 +38,12 @@ def get_hyper_themes():
             "background": "#0d1b2a",
             "surface": "#1e3a5f",
             "text": "#FFFFFF",
-            "table_bg": "rgba(35, 90, 150, 0.85)",
-            "border": "rgba(55, 110, 170, 0.6)",
-            "header_bg": "rgba(45, 100, 160, 0.85)",
-            "cell_bg": "rgba(40, 95, 155, 0.8)",
+            "table_bg": "rgba(35, 90, 150, 1.0)",       # SOLID: Fully opaque blue
+            "border": "rgba(55, 110, 170, 1.0)",        # SOLID: Fully opaque blue border
+            "header_bg": "rgba(45, 100, 160, 1.0)",     # SOLID: Fully opaque blue header
+            "cell_bg": "rgba(40, 95, 155, 1.0)",        # SOLID: Fully opaque blue cells
             "table_text": "#F0F4F8",
-            "shadow": "rgba(35, 90, 150, 0.2)",
+            "shadow": "rgba(35, 90, 150, 0.4)",
             "success": "#00FF88",
             "error": "#FF4444",
             "warning": "#FFA500"
@@ -56,12 +56,12 @@ def get_hyper_themes():
             "background": "#0d1b0f",
             "surface": "#1a2e1a",
             "text": "#E8F5E8",
-            "table_bg": "rgba(46, 125, 50, 0.85)",
-            "border": "rgba(66, 145, 70, 0.6)",
-            "header_bg": "rgba(56, 135, 60, 0.85)",
-            "cell_bg": "rgba(51, 130, 55, 0.8)",
+            "table_bg": "rgba(46, 125, 50, 1.0)",       # SOLID: Fully opaque green
+            "border": "rgba(66, 145, 70, 1.0)",         # SOLID: Fully opaque green border
+            "header_bg": "rgba(56, 135, 60, 1.0)",      # SOLID: Fully opaque green header
+            "cell_bg": "rgba(51, 130, 55, 1.0)",        # SOLID: Fully opaque green cells
             "table_text": "#F1F8E9",
-            "shadow": "rgba(46, 125, 50, 0.2)",
+            "shadow": "rgba(46, 125, 50, 0.4)",
             "success": "#00FF88",
             "error": "#FF4444", 
             "warning": "#FFA500"
@@ -74,12 +74,12 @@ def get_hyper_themes():
             "background": "#1A1A0A",
             "surface": "#2F2F1F",
             "text": "#FFF8DC",
-            "table_bg": "rgba(200, 160, 40, 0.85)",
-            "border": "rgba(220, 180, 60, 0.6)",
-            "header_bg": "rgba(210, 170, 50, 0.85)",
-            "cell_bg": "rgba(195, 155, 35, 0.8)",
-            "table_text": "#1A1A1A",
-            "shadow": "rgba(200, 160, 40, 0.2)",
+            "table_bg": "rgba(200, 160, 40, 1.0)",      # SOLID: Fully opaque gold
+            "border": "rgba(220, 180, 60, 1.0)",        # SOLID: Fully opaque gold border
+            "header_bg": "rgba(210, 170, 50, 1.0)",     # SOLID: Fully opaque gold header
+            "cell_bg": "rgba(195, 155, 35, 1.0)",       # SOLID: Fully opaque gold cells
+            "table_text": "#1A1A1A",                    # Dark text for gold background
+            "shadow": "rgba(200, 160, 40, 0.4)",
             "success": "#00FF88",
             "error": "#FF4444",
             "warning": "#FFA500"
@@ -92,33 +92,53 @@ def get_hyper_theme_css(theme_colors):
     Returns enhanced, high-performance CSS for theme application with stronger specificity
     Focus: Speed, simplicity, and effectiveness with proper table color updates
     """
-    return f"""
-    <style>
-    /* HYPER THEME - Enhanced with Strong Specificity */
+    import time
+    timestamp = int(time.time() * 1000)  # Add timestamp for cache busting
     
-    /* Table Container Styling */
+    return f"""
+    <style id="hyper-theme-{timestamp}">
+    /* HYPER THEME - Enhanced with Strong Specificity - {timestamp} */
+    
+    /* Force immediate CSS refresh */
+    html, body {{ animation: theme-refresh-{timestamp} 0.1s ease; }}
+    @keyframes theme-refresh-{timestamp} {{ 0% {{ opacity: 0.99; }} 100% {{ opacity: 1; }} }}
+    
+    /* Table Container Styling - MAXIMUM PRIORITY */
     div[data-testid="dataframe"],
     div[data-testid="dataframe"] > div,
-    .stDataFrame {{
+    .stDataFrame,
+    [data-testid="dataframe"],
+    section[data-testid="stDataFrame"] {{
         background: {theme_colors['table_bg']} !important;
         border: 2px solid {theme_colors['border']} !important;
         border-radius: 12px !important;
         box-shadow: 0 4px 16px {theme_colors['shadow']} !important;
         margin: 10px 0 !important;
+        overflow: hidden !important;
     }}
 
-    /* Table Element Styling */
+    /* Force table element background */
     div[data-testid="dataframe"] table,
-    .stDataFrame table {{
+    .stDataFrame table,
+    [data-testid="dataframe"] table {{
         background-color: {theme_colors['table_bg']} !important;
+        background: {theme_colors['table_bg']} !important;
         width: 100% !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
     }}
 
-    /* Header Row Styling - Maximum Specificity */
+    /* Header Row Styling - ABSOLUTE MAXIMUM SPECIFICITY */
     div[data-testid="dataframe"] thead th,
     div[data-testid="dataframe"] thead tr th,
+    div[data-testid="dataframe"] table thead th,
+    div[data-testid="dataframe"] table thead tr th,
     .stDataFrame thead th,
-    .stDataFrame thead tr th {{
+    .stDataFrame thead tr th,
+    .stDataFrame table thead th,
+    .stDataFrame table thead tr th,
+    [data-testid="dataframe"] thead th,
+    [data-testid="dataframe"] thead tr th {{
         background-color: {theme_colors['header_bg']} !important;
         background: {theme_colors['header_bg']} !important;
         color: {theme_colors['table_text']} !important;
@@ -126,14 +146,21 @@ def get_hyper_theme_css(theme_colors):
         padding: 12px 8px !important;
         text-align: center !important;
         border-bottom: 2px solid {theme_colors['border']} !important;
+        border-right: 1px solid {theme_colors['border']} !important;
         font-size: 14px !important;
     }}
 
-    /* Data Cell Styling - Maximum Specificity */
+    /* Data Cell Styling - ABSOLUTE MAXIMUM SPECIFICITY */
     div[data-testid="dataframe"] tbody td,
     div[data-testid="dataframe"] tbody tr td,
+    div[data-testid="dataframe"] table tbody td,
+    div[data-testid="dataframe"] table tbody tr td,
     .stDataFrame tbody td,
-    .stDataFrame tbody tr td {{
+    .stDataFrame tbody tr td,
+    .stDataFrame table tbody td,
+    .stDataFrame table tbody tr td,
+    [data-testid="dataframe"] tbody td,
+    [data-testid="dataframe"] tbody tr td {{
         background-color: {theme_colors['cell_bg']} !important;
         background: {theme_colors['cell_bg']} !important;
         color: {theme_colors['table_text']} !important;
@@ -142,40 +169,165 @@ def get_hyper_theme_css(theme_colors):
         font-size: 13px !important;
     }}
     
-    /* Text Elements Inside Cells */
+    /* Text Elements Inside Cells - Force text color */
     div[data-testid="dataframe"] tbody td *,
     div[data-testid="dataframe"] tbody tr td *,
+    div[data-testid="dataframe"] table tbody td *,
+    div[data-testid="dataframe"] table tbody tr td *,
     .stDataFrame tbody td *,
-    .stDataFrame tbody tr td * {{
+    .stDataFrame tbody tr td *,
+    .stDataFrame table tbody td *,
+    .stDataFrame table tbody tr td *,
+    [data-testid="dataframe"] tbody td *,
+    [data-testid="dataframe"] tbody tr td * {{
         color: {theme_colors['table_text']} !important;
         background: transparent !important;
+    }}
+    
+    /* Header Text Elements - Force text color */
+    div[data-testid="dataframe"] thead th *,
+    div[data-testid="dataframe"] thead tr th *,
+    div[data-testid="dataframe"] table thead th *,
+    div[data-testid="dataframe"] table thead tr th *,
+    .stDataFrame thead th *,
+    .stDataFrame thead tr th *,
+    .stDataFrame table thead th *,
+    .stDataFrame table thead tr th *,
+    [data-testid="dataframe"] thead th *,
+    [data-testid="dataframe"] thead tr th * {{
+        color: {theme_colors['table_text']} !important;
+        background: transparent !important;
+    }}
+    
+    /* ALL text inside dataframes - Nuclear option for text color */
+    div[data-testid="dataframe"] span,
+    div[data-testid="dataframe"] p,
+    div[data-testid="dataframe"] div,
+    div[data-testid="dataframe"] text,
+    .stDataFrame span,
+    .stDataFrame p,
+    .stDataFrame div,
+    .stDataFrame text,
+    [data-testid="dataframe"] span,
+    [data-testid="dataframe"] p,
+    [data-testid="dataframe"] div,
+    [data-testid="dataframe"] text {{
+        color: {theme_colors['table_text']} !important;
+    }}
+    
+    /* Force text color in ALL table descendants */
+    div[data-testid="dataframe"] *,
+    .stDataFrame *,
+    [data-testid="dataframe"] * {{
+        color: {theme_colors['table_text']} !important;
     }}
 
     /* Row Hover Effects */
     div[data-testid="dataframe"] tbody tr:hover,
     div[data-testid="dataframe"] tbody tr:hover td,
+    div[data-testid="dataframe"] table tbody tr:hover,
+    div[data-testid="dataframe"] table tbody tr:hover td,
     .stDataFrame tbody tr:hover,
-    .stDataFrame tbody tr:hover td {{
+    .stDataFrame tbody tr:hover td,
+    .stDataFrame table tbody tr:hover,
+    .stDataFrame table tbody tr:hover td,
+    [data-testid="dataframe"] tbody tr:hover,
+    [data-testid="dataframe"] tbody tr:hover td {{
         background-color: {theme_colors['header_bg']} !important;
         background: {theme_colors['header_bg']} !important;
         color: {theme_colors['table_text']} !important;
+        transition: all 0.2s ease !important;
     }}
     
-    /* Alternating Row Colors */
+    /* Alternating Row Colors - Force background */
     div[data-testid="dataframe"] tbody tr:nth-child(even),
     div[data-testid="dataframe"] tbody tr:nth-child(even) td,
+    div[data-testid="dataframe"] table tbody tr:nth-child(even),
+    div[data-testid="dataframe"] table tbody tr:nth-child(even) td,
     .stDataFrame tbody tr:nth-child(even),
-    .stDataFrame tbody tr:nth-child(even) td {{
+    .stDataFrame tbody tr:nth-child(even) td,
+    .stDataFrame table tbody tr:nth-child(even),
+    .stDataFrame table tbody tr:nth-child(even) td,
+    [data-testid="dataframe"] tbody tr:nth-child(even),
+    [data-testid="dataframe"] tbody tr:nth-child(even) td {{
         background-color: {theme_colors['cell_bg']} !important;
         background: {theme_colors['cell_bg']} !important;
     }}
     
     div[data-testid="dataframe"] tbody tr:nth-child(odd),
     div[data-testid="dataframe"] tbody tr:nth-child(odd) td,
+    div[data-testid="dataframe"] table tbody tr:nth-child(odd),
+    div[data-testid="dataframe"] table tbody tr:nth-child(odd) td,
     .stDataFrame tbody tr:nth-child(odd),
-    .stDataFrame tbody tr:nth-child(odd) td {{
+    .stDataFrame tbody tr:nth-child(odd) td,
+    .stDataFrame table tbody tr:nth-child(odd),
+    .stDataFrame table tbody tr:nth-child(odd) td,
+    [data-testid="dataframe"] tbody tr:nth-child(odd),
+    [data-testid="dataframe"] tbody tr:nth-child(odd) td {{
         background-color: {theme_colors['table_bg']} !important;
         background: {theme_colors['table_bg']} !important;
+    }}
+    
+    /* Force immediate update with !important and higher specificity */
+    * div[data-testid="dataframe"] {{
+        background: {theme_colors['table_bg']} !important;
+        border: 2px solid {theme_colors['border']} !important;
+    }}
+    
+    * div[data-testid="dataframe"] table {{
+        background: {theme_colors['table_bg']} !important;
+    }}
+    
+    * div[data-testid="dataframe"] thead th {{
+        background: {theme_colors['header_bg']} !important;
+        color: {theme_colors['table_text']} !important;
+    }}
+    
+    * div[data-testid="dataframe"] tbody td {{
+        background: {theme_colors['cell_bg']} !important;
+        color: {theme_colors['table_text']} !important;
+    }}
+    
+    /* COMPREHENSIVE TEXT COLOR OVERRIDE - All possible text elements */
+    .stDataFrame,
+    .stDataFrame *,
+    div[data-testid="dataframe"],
+    div[data-testid="dataframe"] *,
+    [data-testid="dataframe"],
+    [data-testid="dataframe"] * {{
+        color: {theme_colors['table_text']} !important;
+    }}
+    
+    /* Force text color in Streamlit markdown and text elements */
+    .stMarkdown,
+    .stMarkdown *,
+    .stText,
+    .stText *,
+    p, span, div, text {{
+        color: #E5E9F0 !important;
+    }}
+    
+    /* Main content area text color fixes */
+    .main .block-container,
+    .main .block-container *,
+    section.main,
+    section.main * {{
+        color: #E5E9F0 !important;
+    }}
+    
+    /* Streamlit form elements and content */
+    .stSelectbox label,
+    .stTextInput label,
+    .stButton,
+    .stRadio label,
+    .stCheckbox label {{
+        color: #E5E9F0 !important;
+    }}
+    
+    /* App container text color override */
+    .stApp,
+    .stApp * {{
+        color: #E5E9F0 !important;
     }}
     </style>
     """
@@ -878,7 +1030,9 @@ def force_theme_refresh():
 
 
 def apply_theme_with_preview(theme_name):
-    """Apply theme and show immediate preview"""
+    """Apply theme and show immediate preview with forced refresh"""
+    import time
+    
     themes = get_hyper_themes()
     if theme_name in themes:
         st.session_state.current_theme = theme_name
@@ -887,15 +1041,37 @@ def apply_theme_with_preview(theme_name):
         # Apply complete CSS first
         apply_complete_css()
         
-        # Apply theme-specific CSS with high priority
+        # Apply theme-specific CSS with high priority and timestamp for cache busting
         theme_css = get_hyper_theme_css(theme_colors)
         st.markdown(theme_css, unsafe_allow_html=True)
         
-        # Force refresh
+        # Force multiple refresh attempts for better compatibility
         force_theme_refresh()
         
-        # Show immediate feedback
-        st.success(f"✅ Applied {theme_colors['name']} theme!")
+        # Additional immediate CSS injection for tables
+        immediate_table_css = f"""
+        <style>
+        /* IMMEDIATE TABLE UPDATE */
+        div[data-testid="dataframe"] {{
+            background: {theme_colors['table_bg']} !important;
+            border: 2px solid {theme_colors['border']} !important;
+            border-radius: 12px !important;
+        }}
+        div[data-testid="dataframe"] thead th {{
+            background: {theme_colors['header_bg']} !important;
+            color: {theme_colors['table_text']} !important;
+        }}
+        div[data-testid="dataframe"] tbody td {{
+            background: {theme_colors['cell_bg']} !important;
+            color: {theme_colors['table_text']} !important;
+        }}
+        </style>
+        """
+        st.markdown(immediate_table_css, unsafe_allow_html=True)
+        
+        # Store theme in session state for persistence
+        st.session_state.theme_applied = True
+        st.session_state.last_theme_update = int(time.time() * 1000)
         
         return True
     return False
