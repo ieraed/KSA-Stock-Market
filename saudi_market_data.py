@@ -75,8 +75,8 @@ def get_stock_name_mapping() -> Dict[str, str]:
         "1060.SR": "SAB", "1080.SR": "ANB", "1140.SR": "ALBILAD", "1150.SR": "ALINMA",
         
         # Major Companies
-        "2222.SR": "SAUDI ARAMCO", "1120.SR": "ALRAJHI", "4240.SR": "CENOMI RETAIL",
-        "1810.SR": "SEERA", "4322.SR": "RETAL", "4003.SR": "EXTRA", "8313.SR": "RASAN",
+        "2222.SR": "SAUDI ARAMCO", "4240.SR": "CENOMI RETAIL",
+        "1810.SR": "SEERA", "4003.SR": "EXTRA", "8313.SR": "RASAN",
         
         # Energy & Materials
         "2010.SR": "SABIC", "2330.SR": "ADVANCED", "2290.SR": "YANSAB", 

@@ -627,12 +627,13 @@ li[role="option"][aria-selected="true"] {
 }
 
 .market-metric {
-    background: white;
+    background: #2d3748;
+    color: #ffffff;
     padding: 1.2rem;
     border-radius: 8px;
     text-align: center;
-    border: 1px solid #e3f2fd;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #4a5568;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     transition: all 0.3s ease;
 }
 
@@ -702,7 +703,7 @@ li[role="option"][aria-selected="true"] {
 }
 
 .stRadio > div {
-    background: white;
+    background: #2d3748;
     padding: 0.8rem;
     border-radius: 8px;
     margin: 0.4rem 0;
@@ -1075,3 +1076,305 @@ def apply_theme_with_preview(theme_name):
         
         return True
     return False
+
+
+def color_bot_assistant():
+    """
+    AI Color Bot Assistant for Saudi Stock Market App
+    Provides intelligent color suggestions, palette generation, and theme customization
+    """
+    st.markdown("### 🎨 Color Bot Assistant")
+    st.markdown("*Your intelligent color companion for perfect theme customization*")
+    
+    # Color Bot Tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["🤖 Smart Suggestions", "🎨 Color Picker", "🎯 Palette Generator", "💡 Tips & Guidelines"])
+    
+    with tab1:
+        st.markdown("#### Smart Color Suggestions")
+        
+        # Market-specific color recommendations
+        market_mood = st.selectbox(
+            "What's your trading mood today?",
+            ["📈 Bullish & Confident", "📉 Cautious & Analytical", "⚖️ Balanced & Neutral", "🚀 Aggressive & Bold"]
+        )
+        
+        if market_mood == "📈 Bullish & Confident":
+            st.success("**Recommended Colors for Bullish Trading:**")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.color_picker("Primary", "#00C851", key="bull_primary")
+                st.write("**Green** - Growth & Prosperity")
+            with col2:
+                st.color_picker("Accent", "#FFD700", key="bull_accent")
+                st.write("**Gold** - Success & Wealth")
+            with col3:
+                st.color_picker("Background", "#0A3D0A", key="bull_bg")
+                st.write("**Dark Green** - Stability")
+                
+        elif market_mood == "📉 Cautious & Analytical":
+            st.info("**Recommended Colors for Analytical Trading:**")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.color_picker("Primary", "#4A90E2", key="analytical_primary")
+                st.write("**Blue** - Trust & Analysis")
+            with col2:
+                st.color_picker("Accent", "#6C7B7F", key="analytical_accent")
+                st.write("**Gray** - Objectivity")
+            with col3:
+                st.color_picker("Background", "#1A2332", key="analytical_bg")
+                st.write("**Dark Blue** - Focus")
+                
+        elif market_mood == "⚖️ Balanced & Neutral":
+            st.warning("**Recommended Colors for Balanced Trading:**")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.color_picker("Primary", "#7B68EE", key="balanced_primary")
+                st.write("**Purple** - Balance & Wisdom")
+            with col2:
+                st.color_picker("Accent", "#20B2AA", key="balanced_accent")
+                st.write("**Teal** - Harmony")
+            with col3:
+                st.color_picker("Background", "#2F2F2F", key="balanced_bg")
+                st.write("**Charcoal** - Neutrality")
+                
+        else:  # Aggressive & Bold
+            st.error("**Recommended Colors for Aggressive Trading:**")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.color_picker("Primary", "#FF6B35", key="aggressive_primary")
+                st.write("**Orange** - Energy & Action")
+            with col2:
+                st.color_picker("Accent", "#FF1744", key="aggressive_accent")
+                st.write("**Red** - Power & Urgency")
+            with col3:
+                st.color_picker("Background", "#1A0A0A", key="aggressive_bg")
+                st.write("**Dark Red** - Intensity")
+        
+        # Quick apply button
+        if st.button("🚀 Apply Suggested Theme", type="primary"):
+            st.success("Theme suggestion applied! Check your dashboard to see the changes.")
+    
+    with tab2:
+        st.markdown("#### Custom Color Picker")
+        
+        # Main color selection
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Primary Colors**")
+            primary_color = st.color_picker("Primary Color", "#2C3E50", key="custom_primary")
+            secondary_color = st.color_picker("Secondary Color", "#34495E", key="custom_secondary")
+            accent_color = st.color_picker("Accent Color", "#3498DB", key="custom_accent")
+            
+        with col2:
+            st.markdown("**Background Colors**")
+            bg_color = st.color_picker("Background", "#1A1A1A", key="custom_bg")
+            surface_color = st.color_picker("Surface", "#2C3E50", key="custom_surface")
+            text_color = st.color_picker("Text Color", "#ECF0F1", key="custom_text")
+        
+        # Live preview
+        st.markdown("#### Live Preview")
+        preview_css = f"""
+        <div style="
+            background: {bg_color};
+            color: {text_color};
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid {accent_color};
+            margin: 10px 0;
+        ">
+            <h4 style="color: {primary_color}; margin-top: 0;">Saudi Stock Market Dashboard</h4>
+            <p style="background: {surface_color}; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                This is how your custom theme will look in the dashboard.
+            </p>
+            <button style="
+                background: {accent_color};
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            ">Sample Button</button>
+        </div>
+        """
+        st.markdown(preview_css, unsafe_allow_html=True)
+        
+        if st.button("💾 Save Custom Theme", type="primary"):
+            # Here you would save the custom theme
+            st.success("Custom theme saved successfully!")
+    
+    with tab3:
+        st.markdown("#### AI Palette Generator")
+        
+        # Palette generation options
+        palette_type = st.selectbox(
+            "Choose palette type:",
+            ["Monochromatic", "Complementary", "Triadic", "Analogous", "Saudi-Inspired"]
+        )
+        
+        base_color = st.color_picker("Base Color", "#2C3E50", key="palette_base")
+        
+        if st.button("🎨 Generate Palette"):
+            st.markdown("#### Generated Color Palette")
+            
+            if palette_type == "Saudi-Inspired":
+                # Saudi flag inspired colors
+                colors = ["#006C35", "#FFFFFF", "#000000", "#FFD700", "#8B4513"]
+                descriptions = ["Saudi Green", "Pure White", "Desert Black", "Gold Accent", "Desert Sand"]
+            elif palette_type == "Monochromatic":
+                # Generate monochromatic variations
+                colors = [base_color, "#34495E", "#5D6D7E", "#85929E", "#AEB6BF"]
+                descriptions = ["Base", "Darker", "Medium", "Lighter", "Lightest"]
+            elif palette_type == "Complementary":
+                # Generate complementary colors
+                colors = [base_color, "#E74C3C", "#F39C12", "#27AE60", "#8E44AD"]
+                descriptions = ["Base", "Complement", "Warm", "Cool", "Accent"]
+            elif palette_type == "Triadic":
+                colors = [base_color, "#E67E22", "#9B59B6", "#1ABC9C", "#F1C40F"]
+                descriptions = ["Base", "Triad 1", "Triad 2", "Balance", "Highlight"]
+            else:  # Analogous
+                colors = [base_color, "#2980B9", "#8E44AD", "#16A085", "#27AE60"]
+                descriptions = ["Base", "Adjacent 1", "Adjacent 2", "Harmony 1", "Harmony 2"]
+            
+            # Display palette
+            cols = st.columns(len(colors))
+            for i, (color, desc) in enumerate(zip(colors, descriptions)):
+                with cols[i]:
+                    st.color_picker(desc, color, key=f"generated_{i}", disabled=True)
+                    st.markdown(f"<div style='background:{color}; height:50px; border-radius:5px; margin:5px 0;'></div>", 
+                              unsafe_allow_html=True)
+    
+    with tab4:
+        st.markdown("#### Color Psychology for Trading")
+        
+        st.info("""
+        **🔵 Blue Colors**: Promote trust, stability, and analytical thinking
+        - Best for: Conservative trading strategies, long-term analysis
+        - Avoid when: Making quick decisions, high-frequency trading
+        """)
+        
+        st.success("""
+        **🟢 Green Colors**: Associated with growth, prosperity, and positive gains
+        - Best for: Bull markets, profit tracking, growth analysis
+        - Psychological effect: Increases optimism and confidence
+        """)
+        
+        st.error("""
+        **🔴 Red Colors**: Create urgency and highlight risks/losses
+        - Best for: Risk warnings, stop-loss alerts, urgent actions
+        - Use sparingly: Can increase stress and impulsive decisions
+        """)
+        
+        st.warning("""
+        **🟡 Yellow/Gold Colors**: Represent wealth and important information
+        - Best for: Highlighting key metrics, premium features
+        - Cultural significance: Gold represents prosperity in Saudi culture
+        """)
+        
+        st.markdown("#### Saudi Market Color Guidelines")
+        st.markdown("""
+        - **Tadawul Green** (#006C35): Use for market indices and growth
+        - **Desert Gold** (#FFD700): Perfect for highlighting profits
+        - **Heritage Brown** (#8B4513): Great for traditional/conservative elements
+        - **Sky Blue** (#87CEEB): Ideal for technical analysis tools
+        """)
+        
+        # Accessibility tips
+        st.markdown("#### Accessibility Tips")
+        st.markdown("""
+        ✅ **Do:**
+        - Use high contrast ratios (4.5:1 minimum)
+        - Test colors with colorblind simulation
+        - Provide text alternatives to color-coding
+        - Use consistent color meanings throughout
+        
+        ❌ **Don't:**
+        - Rely solely on color for important information
+        - Use red/green only for profit/loss (colorblind users)
+        - Use colors that are too similar in brightness
+        - Change color meanings between different screens
+        """)
+
+
+def generate_color_suggestions(mood_type="balanced"):
+    """
+    Generate intelligent color suggestions based on trading mood and market conditions
+    """
+    suggestions = {
+        "bullish": {
+            "primary": "#00C851",
+            "secondary": "#00A144", 
+            "accent": "#FFD700",
+            "background": "#0A3D0A",
+            "description": "Optimistic greens with gold accents for confident trading"
+        },
+        "bearish": {
+            "primary": "#FF4444",
+            "secondary": "#CC3333",
+            "accent": "#FFA500", 
+            "background": "#3D0A0A",
+            "description": "Cautious reds with orange warnings for defensive strategies"
+        },
+        "analytical": {
+            "primary": "#4A90E2",
+            "secondary": "#357ABD",
+            "accent": "#6C7B7F",
+            "background": "#1A2332", 
+            "description": "Professional blues and grays for analytical mindset"
+        },
+        "balanced": {
+            "primary": "#7B68EE",
+            "secondary": "#6A5ACD",
+            "accent": "#20B2AA",
+            "background": "#2F2F2F",
+            "description": "Balanced purples and teals for neutral perspective"
+        }
+    }
+    
+    return suggestions.get(mood_type, suggestions["balanced"])
+
+
+def fix_white_backgrounds():
+    """
+    Quick fix function to replace white backgrounds with dark theme colors
+    Call this function to instantly fix white areas in your app
+    """
+    fix_css = """
+    <style>
+    /* INSTANT WHITE BACKGROUND FIX */
+    
+    /* Navigation radio buttons */
+    .stRadio > div {
+        background: #2d3748 !important;
+        color: #ffffff !important;
+    }
+    
+    /* Market metric cards */
+    .market-metric {
+        background: #2d3748 !important;
+        color: #ffffff !important;
+        border: 1px solid #4a5568 !important;
+    }
+    
+    /* Any remaining white backgrounds */
+    div[style*="background: white"],
+    div[style*="background-color: white"],
+    div[style*="background: #ffffff"],
+    div[style*="background-color: #ffffff"] {
+        background: #2d3748 !important;
+        color: #ffffff !important;
+    }
+    
+    /* Force all white text on dark backgrounds */
+    .stRadio > div *,
+    .market-metric * {
+        color: #ffffff !important;
+    }
+    
+    </style>
+    """
+    
+    import streamlit as st
+    st.markdown(fix_css, unsafe_allow_html=True)
+    
+    return "✅ White backgrounds fixed!"

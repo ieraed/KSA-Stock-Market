@@ -5,6 +5,9 @@ Checks if CSS separation is complete and all theme functions are accessible
 
 # Test imports from the new theme system
 try:
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from components.hyper_themes import (
         get_hyper_themes, 
         get_hyper_theme_css, 
